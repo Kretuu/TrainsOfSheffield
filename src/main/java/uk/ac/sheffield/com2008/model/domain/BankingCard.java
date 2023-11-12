@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class BankingCard {
     private String holderName;
-    private String number;
+    private Long number;
     private Date expiryDate;
     private int cvv;
 
-    public BankingCard(String holderName, String number, Date expiryDate, int cvv) {
+    public BankingCard(String holderName, Long number, Date expiryDate, int cvv) {
         this.holderName = holderName;
         this.number = number;
         this.expiryDate = expiryDate;
@@ -28,7 +28,7 @@ public class BankingCard {
         this.holderName = holderName;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(Long number) {
         this.number = number;
     }
 
