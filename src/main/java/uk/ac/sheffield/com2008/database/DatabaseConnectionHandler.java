@@ -22,18 +22,15 @@ public class DatabaseConnectionHandler {
         ds = new HikariDataSource(config);
     }
 
-    public static ResultSet select(PreparedStatement statement) {
-        Connection connection = null;
-        ResultSet result = null;
-        try {
-            connection = getConnection();
-            result = statement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeQuery(connection, statement);
+    public static ResultSet select(String query, Object... params) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        for(int i = 0; i < params.length; i++) {
+            statement.setObject(i + 1, params[i]);
         }
-        return result;
+
+        return statement.executeQuery();
     }
 
     public static void update(PreparedStatement statement) {
@@ -49,7 +46,8 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    private static void closeQuery(Connection connection, PreparedStatement statement) {
+
+    public static void closeQuery(Connection connection, PreparedStatement statement) {
         if(connection != null){
             try {
                 connection.close();
