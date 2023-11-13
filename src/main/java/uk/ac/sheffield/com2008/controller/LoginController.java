@@ -16,5 +16,8 @@ public class LoginController extends ViewController{
     public void login(String email, String password){
         System.out.println(email);
         System.out.println(password);
+
+        //TRANSITION to Browse Items view
+        BrowseItemsController browseItemsController = new BrowseItemsController();
     }
 }
