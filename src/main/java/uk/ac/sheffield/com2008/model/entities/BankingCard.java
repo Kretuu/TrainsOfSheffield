@@ -1,4 +1,4 @@
-package uk.ac.sheffield.com2008.model.domain;
+package uk.ac.sheffield.com2008.model.entities;
 
 import java.util.Date;
 

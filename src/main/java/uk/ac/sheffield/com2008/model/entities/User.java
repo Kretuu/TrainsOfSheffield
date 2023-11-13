@@ -1,28 +1,47 @@
 package uk.ac.sheffield.com2008.model.entities;
 
-import uk.ac.sheffield.com2008.model.domain.Basket;
-
 public class User {
-    private int id;
+    private final String uuid;
+    private final String salt;
     private String email;
-    private String password;
+    private String passwordHash;
     private Basket basket;
     private PersonalDetails personalDetails;
 
-    public User(int id, String email, String password, Basket basket, PersonalDetails personalDetails) {
-        this.id = id;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public User(
+            String uuid, String email,
+            String passwordHash, String salt, Basket basket,
+            PersonalDetails personalDetails) {
+        this.uuid = uuid;
         this.email = email;
-        this.password = password;
+        this.passwordHash = passwordHash;
+        this.salt = salt;
         this.basket = basket;
         this.personalDetails = personalDetails;
     }
 
-    public User(int id, String email, String password, PersonalDetails personalDetails) {
-        this(id, email, password, null, personalDetails);
+    public User(String uuid, String email, String password, String salt,  PersonalDetails personalDetails) {
+        this(uuid, email, password, salt, null, personalDetails);
     }
 
     public Basket getBasket() {
         return basket;
+    }
+
+    public String getSalt() {
+        return salt;
     }
 
     public void setBasket(Basket basket) {

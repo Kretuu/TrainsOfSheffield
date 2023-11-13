@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 public class LoginView extends View{
 
@@ -68,9 +67,7 @@ public class LoginView extends View{
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loginController.login(
-                        emailField.getText(),
-                        String.copyValueOf(passwordField.getPassword()));
+                loginController.login(emailField.getText(), passwordField.getPassword());
             }
         });
 

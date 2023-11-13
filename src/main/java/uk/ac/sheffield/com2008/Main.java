@@ -11,6 +11,14 @@ public class Main {
     public static void main(String[] args) {
         DatabaseConnectionHandler.connectToDatabase();
 
+//        char[] password = "P4$$word".toCharArray();
+//        try {
+//            new AuthenticationManager()
+//                    .registerUser(   "test@test.eu", password, "Jakub", "Kreczetowski");
+//        } catch (EmailAlreadyInUseException e) {
+//            throw new RuntimeException(e);
+//        }
+
         JFrame frame = FrameManager.getMainFrame();
         LoginController loginController = new LoginController();
     }
