@@ -16,7 +16,7 @@ public class LoginController extends ViewController{
         authenticationManager = new AuthenticationManager();
         setFrameContent(loginView);
     }
-
+  
     public void login(String email, char[] password){
         //Validate all fields
 
@@ -29,5 +29,7 @@ public class LoginController extends ViewController{
             return;
         }
         System.out.println("Logged in");
+        //TRANSITION to Browse Items view
+        BrowseItemsController browseItemsController = new BrowseItemsController();
     }
 }

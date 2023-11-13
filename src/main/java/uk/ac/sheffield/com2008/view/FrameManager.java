@@ -31,7 +31,6 @@ public class FrameManager {
         mainFrame.add(view);
 
         mainFrame.setLocationRelativeTo(null);
-        mainFrame.setVisible(true);
         mainFrame.revalidate();
         mainFrame.repaint();
     }

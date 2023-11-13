@@ -7,11 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LoginView extends JPanel{
+public class LoginView extends View{
 
-    /**
-     *
-     */
     private LoginController loginController;
     public LoginView(LoginController loginController){
         this.loginController = loginController;
