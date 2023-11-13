@@ -2,9 +2,6 @@ package uk.ac.sheffield.com2008;
 
 import uk.ac.sheffield.com2008.controller.LoginController;
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
-import uk.ac.sheffield.com2008.exceptions.EmailAlreadyInUseException;
-import uk.ac.sheffield.com2008.model.domain.AuthenticationManager;
-import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
 import uk.ac.sheffield.com2008.view.FrameManager;
 
 import javax.swing.*;

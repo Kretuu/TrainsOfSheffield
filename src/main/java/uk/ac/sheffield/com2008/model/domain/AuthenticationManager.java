@@ -10,7 +10,7 @@ import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
 import uk.ac.sheffield.com2008.util.UUIDGenerator;
 
 public class AuthenticationManager {
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
     public AuthenticationManager(){
         userDAO = new UserDAO();

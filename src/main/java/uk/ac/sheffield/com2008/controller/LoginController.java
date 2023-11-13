@@ -10,7 +10,7 @@ import uk.ac.sheffield.com2008.view.LoginView;
 public class LoginController extends ViewController{
 
     public LoginView loginView;
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     public LoginController(){
         loginView = new LoginView(this);
         authenticationManager = new AuthenticationManager();

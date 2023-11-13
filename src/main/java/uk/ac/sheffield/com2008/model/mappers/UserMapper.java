@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class UserMapper {
     public static User mapResultSetToUser(ResultSet resultSet) throws SQLException {
-        User user = null;
+        User user;
         long cardNumber = resultSet.getLong("Users.cardNumber");
         BankingCard bankingCard = null;
         if (cardNumber != 0) {

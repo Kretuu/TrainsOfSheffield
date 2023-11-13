@@ -1,8 +1,8 @@
 package uk.ac.sheffield.com2008.model.entities;
 
 public class User {
-    private String uuid;
-    private String salt;
+    private final String uuid;
+    private final String salt;
     private String email;
     private String passwordHash;
     private Basket basket;
