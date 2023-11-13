@@ -2,11 +2,14 @@ package uk.ac.sheffield.com2008.view;
 
 import uk.ac.sheffield.com2008.controller.BrowseItemsController;
 import uk.ac.sheffield.com2008.controller.LoginController;
+import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.entities.Product;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class BrowseItemsView extends View {
     BrowseItemsController browseItemsController;
@@ -35,9 +38,10 @@ public class BrowseItemsView extends View {
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
         productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Example: Creating 10 rows with product labels
-        for (int i = 1; i <= 10; i++) {
-            JLabel productLabel = new JLabel("Product " + i);
+        //create product rows
+        ArrayList<Product> products = ProductDAO.getAllProducts();
+        for (Product product : products) {
+            JLabel productLabel = new JLabel(product.toString());
             productLabel.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(Color.BLACK), // Border around each row
                     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Inner padding
