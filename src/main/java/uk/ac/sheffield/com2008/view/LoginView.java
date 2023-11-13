@@ -71,9 +71,7 @@ public class LoginView extends JPanel{
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loginController.login(
-                        emailField.getText(),
-                        String.copyValueOf(passwordField.getPassword()));
+                loginController.login(emailField.getText(), passwordField.getPassword());
             }
         });
 

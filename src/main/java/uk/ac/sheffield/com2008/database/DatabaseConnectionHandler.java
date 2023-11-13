@@ -33,34 +33,14 @@ public class DatabaseConnectionHandler {
         return statement.executeQuery();
     }
 
-    public static void update(PreparedStatement statement) {
-        Connection connection = null;
-        ResultSet result = null;
-        try {
-            connection = getConnection();
-            result = statement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeQuery(connection, statement);
-        }
-    }
+    public static Boolean insert(String query, Object... params) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(query);
 
+        for(int i = 0; i < params.length; i++) {
+            statement.setObject(i + 1, params[i]);
+        }
 
-    public static void closeQuery(Connection connection, PreparedStatement statement) {
-        if(connection != null){
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(statement != null){
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        return statement.execute();
     }
 }
