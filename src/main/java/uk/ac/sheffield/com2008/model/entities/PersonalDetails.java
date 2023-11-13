@@ -1,7 +1,5 @@
 package uk.ac.sheffield.com2008.model.entities;
 
-import uk.ac.sheffield.com2008.model.domain.BankingCard;
-
 public class PersonalDetails {
     private String forename;
     private String surname;
