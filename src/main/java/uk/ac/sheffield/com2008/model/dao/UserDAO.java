@@ -39,6 +39,9 @@ public class UserDAO {
 
     public User verifyPassword(String userEmail, char[] password) {
         User user = getUserByEmail(userEmail);
+        if(user == null) {
+            return null;
+        }
         String passwordHash = HashedPasswordGenerator.hashPassword(password, user.getSalt());
 
         if(user.getPasswordHash().equals(passwordHash)) {
