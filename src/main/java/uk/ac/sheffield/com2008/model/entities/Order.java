@@ -12,13 +12,15 @@ public class Order {
     private Status status;
     // Product -> Quantity
     private HashMap<Product, Integer> orderLines;
+    private String userUUID;
 
-    public Order(int orderNumber, Date dateOrdered, float totalPrice, Status status){
+    public Order(int orderNumber, Date dateOrdered, float totalPrice, Status status, String userUUID){
         this.orderNumber = orderNumber;
         this.dateOrdered = dateOrdered;
         this.totalPrice = totalPrice;
         this.status = status;
         orderLines = new HashMap<>();
+        this.userUUID = userUUID;
     }
 
     /**
@@ -62,6 +64,10 @@ public class Order {
     public float getTotalPrice(){
         //TODO: Calculate Total Price and return it
         return totalPrice;
+    }
+
+    public String getUserUUID(){
+        return userUUID;
     }
 
     @Override

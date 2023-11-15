@@ -1,7 +1,9 @@
 package uk.ac.sheffield.com2008.model.domain;
 
+import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.User;
 
 /**
  * Mediator class between Order object in memory, UI actions, and database
@@ -16,11 +18,10 @@ public class OrderManager {
      * Creates a new blank, pending order
      * @return fresh order
      */
-    private static Order createNewOrder(){
-        //TODO: OrderDAO CREATE NEW ORDER
-        // TODO: GRAB THE NEW ORDER CREATED
-
-        return null;
+    private static Order createNewOrder(User user){
+        OrderDAO.createOrder(user);
+        Order order = OrderDAO.getUsersBasket(user);
+        return order;
     }
 
     //TODO: Function that returns a list of orderlines for given order
@@ -50,10 +51,11 @@ public class OrderManager {
     /**
      * Set an order as confirmed
      * @param order order to confirm
+     * @param user the user who that order belongs to
      */
-    public static void confirmOrder(Order order){
+    public static void confirmOrder(Order order, User user){
         order.setAsConfirmed();
-        createNewOrder();
+        createNewOrder(user);
         //TODO: OrderDAO UPDATE status FOR ORDER
     }
 

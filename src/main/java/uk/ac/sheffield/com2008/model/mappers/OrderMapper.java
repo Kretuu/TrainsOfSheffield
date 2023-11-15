@@ -19,7 +19,8 @@ public class OrderMapper {
                 resultSet.getInt("orderNumber"),
                 resultSet.getDate("dateOrdered"),
                 resultSet.getFloat("totalPrice"),
-                status);
+                status,
+                resultSet.getString("userUUID"));
 
         return order;
     }
