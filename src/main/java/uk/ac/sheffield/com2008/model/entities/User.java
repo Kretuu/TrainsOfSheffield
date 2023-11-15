@@ -5,7 +5,7 @@ public class User {
     private final String salt;
     private String email;
     private String passwordHash;
-    private Basket basket;
+    private Order basket;
     private PersonalDetails personalDetails;
 
     public String getPasswordHash() {
@@ -22,7 +22,7 @@ public class User {
 
     public User(
             String uuid, String email,
-            String passwordHash, String salt, Basket basket,
+            String passwordHash, String salt, Order basket,
             PersonalDetails personalDetails) {
         this.uuid = uuid;
         this.email = email;
@@ -36,7 +36,7 @@ public class User {
         this(uuid, email, password, salt, null, personalDetails);
     }
 
-    public Basket getBasket() {
+    public Order getBasket() {
         return basket;
     }
 
@@ -44,7 +44,7 @@ public class User {
         return salt;
     }
 
-    public void setBasket(Basket basket) {
+    public void setBasket(Order basket) {
         this.basket = basket;
     }
 
