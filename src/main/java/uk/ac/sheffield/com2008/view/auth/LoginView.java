@@ -1,12 +1,13 @@
 package uk.ac.sheffield.com2008.view.auth;
 
 import uk.ac.sheffield.com2008.controller.LoginController;
-import uk.ac.sheffield.com2008.controller.SignupController;
+import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.View;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginView extends JPanel {
+public class LoginView extends View {
 
     private final LoginController loginController;
     public LoginView(LoginController loginController){
@@ -51,7 +52,7 @@ public class LoginView extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 0.5; // Set weightx to make buttons equally sized
         gbc.fill = GridBagConstraints.HORIZONTAL; // Fill horizontally
-        registerButton.addActionListener(e -> new SignupController());
+        registerButton.addActionListener(e -> loginController.getNavigation().navigate(Navigation.SIGNUP));
         buttonPanel.add(registerButton, gbc);
 
         // Login button

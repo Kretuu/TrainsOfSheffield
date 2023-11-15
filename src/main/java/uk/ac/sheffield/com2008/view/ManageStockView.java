@@ -5,9 +5,9 @@ import uk.ac.sheffield.com2008.controller.StaffController;
 import javax.swing.*;
 import java.awt.*;
 
-public class ManageStockView extends JPanel {
+public class ManageStockView extends View {
 
-    private StaffController staffController;
+    private final StaffController staffController;
 
     public ManageStockView(StaffController staffController) {
         this.staffController = staffController;

@@ -1,13 +1,23 @@
 package uk.ac.sheffield.com2008.controller;
 
-import uk.ac.sheffield.com2008.view.FrameManager;
+import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.navigation.NavigationManager;
+import uk.ac.sheffield.com2008.view.View;
 
-import javax.swing.*;
-import java.awt.*;
+public abstract class ViewController {
+    protected final NavigationManager navigation;
+    protected View view;
 
-public class ViewController {
+    public ViewController(NavigationManager navigationManager, Navigation id) {
+        this.navigation = navigationManager;
+        navigation.registerController(id, this);
+    }
 
-    void setFrameContent(JPanel panel){
-        FrameManager.setView(panel);
+    public View getView() {
+        return view;
+    }
+
+    public NavigationManager getNavigation() {
+        return navigation;
     }
 }
