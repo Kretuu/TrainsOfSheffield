@@ -1,15 +1,14 @@
-package uk.ac.sheffield.com2008.view;
+package uk.ac.sheffield.com2008.view.auth;
 
 import uk.ac.sheffield.com2008.controller.LoginController;
+import uk.ac.sheffield.com2008.controller.SignupController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class LoginView extends View{
+public class LoginView extends JPanel {
 
-    private LoginController loginController;
+    private final LoginController loginController;
     public LoginView(LoginController loginController){
         this.loginController = loginController;
         InitializeUI();
@@ -52,10 +51,7 @@ public class LoginView extends View{
         gbc.gridy = 0;
         gbc.weightx = 0.5; // Set weightx to make buttons equally sized
         gbc.fill = GridBagConstraints.HORIZONTAL; // Fill horizontally
-        registerButton.addActionListener(e -> {
-            // Add logic for register button click
-            // You can switch to another state or perform other actions
-        });
+        registerButton.addActionListener(e -> new SignupController());
         buttonPanel.add(registerButton, gbc);
 
         // Login button
@@ -64,12 +60,7 @@ public class LoginView extends View{
         gbc.gridy = 0;
         buttonPanel.add(loginButton, gbc);
         // Adding ActionListener as an anonymous function
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loginController.login(emailField.getText(), passwordField.getPassword());
-            }
-        });
+        loginButton.addActionListener(e -> loginController.login(emailField.getText(), passwordField.getPassword()));
 
         // Add the button panel below the text fields
         gbc.gridx = 0;
