@@ -33,13 +33,21 @@ public class ProductDAO {
         return products;
     }
 
+    /**
+     * Gets first product that satisfies query
+     * @param fieldName
+     * @param value
+     * @return
+     */
     private static Product getProductByField(String fieldName, Object value) {
         String query = "SELECT * FROM Products WHERE " + fieldName + " = ?";
         Product product = null;
 
         try {
             ResultSet resultSet = DatabaseConnectionHandler.select(query, value);
-            product = ProductMapper.mapResultSetToProduct(resultSet);
+            if(resultSet.next()){
+                product = ProductMapper.mapResultSetToProduct(resultSet);
+            }
             resultSet.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
