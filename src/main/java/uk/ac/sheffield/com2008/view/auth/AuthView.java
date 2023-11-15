@@ -1,0 +1,17 @@
+package uk.ac.sheffield.com2008.view.auth;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class AuthView extends JPanel {
+    protected JPanel panel;
+    public AuthView() {
+        setLayout(new GridBagLayout());
+
+        JPanel centerPane = new JPanel();
+        centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.Y_AXIS));
+        centerPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(centerPane);
+        this.panel = centerPane;
+    }
+}

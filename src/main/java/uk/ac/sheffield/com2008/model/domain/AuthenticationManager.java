@@ -36,5 +36,6 @@ public class AuthenticationManager {
         String hashedPassword = HashedPasswordGenerator.hashPassword(password, salt);
         user = new User(uuid, userEmail, hashedPassword, salt, personalDetails);
         userDAO.createUser(user);
+        AppSessionCache.getInstance().setUserLoggedIn(user);
     }
 }

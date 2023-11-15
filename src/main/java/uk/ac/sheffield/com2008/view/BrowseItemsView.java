@@ -1,14 +1,12 @@
 package uk.ac.sheffield.com2008.view;
 
 import uk.ac.sheffield.com2008.controller.BrowseItemsController;
-import uk.ac.sheffield.com2008.controller.LoginController;
+import uk.ac.sheffield.com2008.controller.StaffController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class BrowseItemsView extends View {
@@ -59,12 +57,10 @@ public class BrowseItemsView extends View {
         add(scrollPane, BorderLayout.CENTER);
 
         // Set up the Staff Area button action
-        staffAreaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Add your action when the Staff Area button is clicked
-                // For example, open a new view or perform some action
-            }
+        staffAreaButton.addActionListener(e -> {
+            new StaffController();
+            // Add your action when the Staff Area button is clicked
+            // For example, open a new view or perform some action
         });
     }
 }
