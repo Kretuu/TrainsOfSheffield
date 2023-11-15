@@ -53,7 +53,7 @@ public class OrderDAO {
      * @param user the user who the new order belongs to
      */
     public static void createOrder(User user){
-        String query = "INSERT INTO Orders (dateOrdered, status, totalPrice, userUUID) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Orders (dateOrdered, status, totalPrice, userUUID) VALUES (?, ?, ?, ?)";
 
         try {
             DatabaseConnectionHandler.insert(
