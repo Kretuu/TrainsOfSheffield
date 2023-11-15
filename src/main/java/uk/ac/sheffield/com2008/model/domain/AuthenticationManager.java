@@ -44,6 +44,8 @@ public class AuthenticationManager {
         userDAO.createUser(user);
 
         //GENERATE A NEW BLANK ORDER (BASKET) FOR THEM
-        OrderDAO.createOrder(user);
+        Order newOrder = OrderManager.createNewOrder(user);
+        user.setBasket(newOrder);
+        AppSessionCache.getInstance().setUserLoggedIn(user);
     }
 }

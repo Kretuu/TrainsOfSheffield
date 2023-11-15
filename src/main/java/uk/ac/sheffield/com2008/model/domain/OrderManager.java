@@ -18,7 +18,7 @@ public class OrderManager {
      * Creates a new blank, pending order
      * @return fresh order
      */
-    private static Order createNewOrder(User user){
+    public static Order createNewOrder(User user){
         OrderDAO.createOrder(user);
         Order order = OrderDAO.getUsersBasket(user);
         return order;
