@@ -1,26 +1,15 @@
 package uk.ac.sheffield.com2008;
 
-import uk.ac.sheffield.com2008.controller.LoginController;
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
-import uk.ac.sheffield.com2008.view.FrameManager;
+import uk.ac.sheffield.com2008.navigation.NavigationManager;
 
-import javax.swing.*;
 
 
 public class Main {
     public static void main(String[] args) {
         DatabaseConnectionHandler.connectToDatabase();
-
-//        char[] password = "P4$$word".toCharArray();
-//        try {
-//            new AuthenticationManager()
-//                    .registerUser(   "test@test.eu", password, "Jakub", "Kreczetowski");
-//        } catch (EmailAlreadyInUseException e) {
-//            throw new RuntimeException(e);
-//        }
-
-        JFrame frame = FrameManager.getMainFrame();
-        LoginController loginController = new LoginController();
+        new NavigationManager();
+        onDisable();
     }
 
     private static void onDisable() {
@@ -30,7 +19,7 @@ public class Main {
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
-                System.out.println(e.toString());
+                e.printStackTrace();
             }
         }, "Shutdown-thread"));
     }
