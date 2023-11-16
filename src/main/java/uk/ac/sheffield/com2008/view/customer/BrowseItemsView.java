@@ -18,6 +18,11 @@ public class BrowseItemsView extends View {
         InitializeUI();
     }
 
+    public void onRefresh(){
+        removeAll();
+        InitializeUI();
+    }
+
     public void InitializeUI(){
         setLayout(new BorderLayout());
 

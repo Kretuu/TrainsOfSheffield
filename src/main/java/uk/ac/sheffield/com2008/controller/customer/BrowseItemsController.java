@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class BrowseItemsController extends ViewController {
 
     public BrowseItemsView browseItemsView;
+    private ArrayList<Product> allProducts;
     public BrowseItemsController(NavigationManager navigationManager, Navigation id){
         //initialise view link
         super(navigationManager, id);
@@ -20,9 +21,17 @@ public class BrowseItemsController extends ViewController {
         browseItemsView = (BrowseItemsView) view;
 
     }
-    public ArrayList<Product> getAllProducts(){
-        return ProductDAO.getAllProducts();
+
+    public void onNavigateTo(){
+        System.out.println("navigated to BrowseItems");
+        allProducts = ProductDAO.getAllProducts();
+        browseItemsView.onRefresh();
     }
 
-
+    public ArrayList<Product> getAllProducts(){
+        if(allProducts != null){
+            return allProducts;
+        }
+        return new ArrayList<>();
+    }
 }
