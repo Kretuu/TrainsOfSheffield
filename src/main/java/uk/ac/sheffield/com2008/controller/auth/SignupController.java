@@ -1,25 +1,30 @@
-package uk.ac.sheffield.com2008.controller;
+package uk.ac.sheffield.com2008.controller.auth;
 
+import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.exceptions.EmailAlreadyInUseException;
 import uk.ac.sheffield.com2008.model.domain.AuthenticationManager;
+import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.auth.SignupView;
 
 public class SignupController extends ViewController {
-    private final SignupView signupView;
     private final AuthenticationManager authenticationManager;
+    private final SignupView signupView;
 
-    public SignupController() {
-        signupView = new SignupView(this);
+    public SignupController(NavigationManager navigationManager, Navigation id) {
+        super(navigationManager, id);
+        view = new SignupView(this);
+        signupView = (SignupView) view;
         authenticationManager = new AuthenticationManager();
-        setFrameContent(signupView);
     }
 
     public void signup(String email, char[] password, String firstname, String surname) {
         try {
             authenticationManager.registerUser(email, password, firstname, surname);
-            new BrowseItemsController();
+            navigation.navigate(Navigation.CUSTOMER);
         } catch (EmailAlreadyInUseException e) {
             signupView.updateErrorMessage(e.getMessage());
         }
     }
+
 }

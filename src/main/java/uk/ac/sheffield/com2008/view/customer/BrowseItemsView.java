@@ -1,15 +1,15 @@
-package uk.ac.sheffield.com2008.view;
+package uk.ac.sheffield.com2008.view.customer;
 
-import uk.ac.sheffield.com2008.controller.BrowseItemsController;
-import uk.ac.sheffield.com2008.controller.StaffController;
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.modals.AddProductToCartModal;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class BrowseItemsView extends View {
     BrowseItemsController browseItemsController;
@@ -81,9 +81,10 @@ public class BrowseItemsView extends View {
 
         // Set up the Staff Area button action
         staffAreaButton.addActionListener(e -> {
-            new StaffController();
             // Add your action when the Staff Area button is clicked
             // For example, open a new view or perform some action
         });
+        // Set up the Staff Area button action
+        staffAreaButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.STAFF));
     }
 }

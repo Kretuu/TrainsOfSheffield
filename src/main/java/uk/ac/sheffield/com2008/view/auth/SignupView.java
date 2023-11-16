@@ -1,8 +1,8 @@
 package uk.ac.sheffield.com2008.view.auth;
 
 import uk.ac.sheffield.com2008.config.Colors;
-import uk.ac.sheffield.com2008.controller.LoginController;
-import uk.ac.sheffield.com2008.controller.SignupController;
+import uk.ac.sheffield.com2008.controller.auth.SignupController;
+import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.ui.CustomInputField;
 import uk.ac.sheffield.com2008.util.ValidationManager;
 
@@ -24,7 +24,7 @@ public class SignupView extends AuthView {
     }
 
     private void initializeUI() {
-        errorMessage = new JLabel("");
+        errorMessage = new JLabel(" ");
         errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
         panel.add(errorMessage);
 
@@ -50,7 +50,7 @@ public class SignupView extends AuthView {
             // Add logic for register button click
             // You can switch to another state or perform other actions
         });
-        cancelButton.addActionListener(e -> new LoginController());
+        cancelButton.addActionListener(e -> signupController.getNavigation().navigate(Navigation.LOGIN));
     }
 
     private void createTextFields() {
