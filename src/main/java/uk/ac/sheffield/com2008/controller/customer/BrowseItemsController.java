@@ -3,6 +3,8 @@ package uk.ac.sheffield.com2008.controller.customer;
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.domain.OrderManager;
+import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
@@ -23,7 +25,6 @@ public class BrowseItemsController extends ViewController {
     }
 
     public void onNavigateTo(){
-        System.out.println("navigated to BrowseItems");
         allProducts = ProductDAO.getAllProducts();
         browseItemsView.onRefresh();
     }
@@ -34,4 +35,24 @@ public class BrowseItemsController extends ViewController {
         }
         return new ArrayList<>();
     }
+
+    /**
+     * Adds an orderline consisting of a product and quantity to the order.
+     * Will update the quantity if this product already exists.
+     * @param product
+     * @param quantity
+     */
+    public void addProductToBasket(Product product, int quantity){
+        Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
+        //if product already exists
+        if(!userBasket.hasProduct(product)){
+            System.out.println("Adding " + product.getProductCode() + " to order");
+            OrderManager.addProductToOrder(userBasket, product, quantity);
+        }else{
+            System.out.println("Modifying " + product.getProductCode() + " quantity in order");
+            OrderManager.modifyProductQuantity(userBasket, product, quantity);
+        }
+        userBasket.PrintFullOrder();
+    }
+
 }

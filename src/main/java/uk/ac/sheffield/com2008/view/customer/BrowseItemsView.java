@@ -65,7 +65,10 @@ public class BrowseItemsView extends View {
             addToCartButton.addActionListener(e -> {
                 System.out.println("clicked ADD for product: " + product.toString());
                 // Create an instance of the AddProductToCartModal class
-                AddProductToCartModal modal = new AddProductToCartModal((JFrame) SwingUtilities.getWindowAncestor(productPanel), product);
+                AddProductToCartModal modal = new AddProductToCartModal(
+                        browseItemsController,
+                        (JFrame) SwingUtilities.getWindowAncestor(productPanel),
+                        product);
 
                 modal.setVisible(true); // Show the modal dialog
             });
@@ -84,11 +87,6 @@ public class BrowseItemsView extends View {
 
         add(scrollPane, BorderLayout.CENTER);
 
-        // Set up the Staff Area button action
-        staffAreaButton.addActionListener(e -> {
-            // Add your action when the Staff Area button is clicked
-            // For example, open a new view or perform some action
-        });
         // Set up the Staff Area button action
         staffAreaButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.STAFF));
     }

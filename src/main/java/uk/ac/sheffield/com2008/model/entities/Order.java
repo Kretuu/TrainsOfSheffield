@@ -24,34 +24,44 @@ public class Order {
     }
 
     /**
-     * Add an orderline to this order
+     * Add an orderline to this order. +Recalculates total price for order.
      * @param product the product object
      * @param quantity the quantity
      */
     public void addProduct(Product product, Integer quantity){
 
-        //check if this product already is in the order, in which case
-        // we would just add more onto the quantity
-        if (orderLines.containsKey(product)) {
-            orderLines.put(product, orderLines.get(product) + quantity);
-        } else {
-            // If not, add the Product to the map
-            orderLines.put(product, quantity);
+        if(hasProduct(product)){
+            throw new RuntimeException("Tried to add a product to an Order that already has this product. Modify the quantity instead.");
         }
+        orderLines.put(product, quantity);
         calculateTotalPrice();
     }
 
     /**
-     * Changes the quantity in an orderline
+     * Returns whether given product is in this order
+     * @param product
+     * @return
      */
-    public void modifyQuantity(Product product, int newQuantity){
-        orderLines.put(product, newQuantity);
+    public boolean hasProduct(Product product){
+        return orderLines.containsKey(product);
+    }
+
+    /**
+     * Changes the quantity in an orderline. +Recalculates total price for order.
+     */
+    public void modifyQuantity(Product product, int addedQuantity){
+        if(!hasProduct(product)){
+            throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
+        }
+        orderLines.put(product, orderLines.get(product) + addedQuantity);
         calculateTotalPrice();
     }
 
     public void calculateTotalPrice(){
-        totalPrice = totalPrice;
-        //TODO calculate total price
+        totalPrice = 0;
+        orderLines.forEach((product, quantity) -> {
+            totalPrice += product.getPrice() * quantity;
+        });
     }
 
     public void setAsConfirmed(){
@@ -62,16 +72,50 @@ public class Order {
     }
 
     public float getTotalPrice(){
-        //TODO: Calculate Total Price and return it
         return totalPrice;
+    }
+
+    /**
+     * @return product * quantity of that product in the order
+     */
+    public float getOrderLinePrice(Product product){
+        if(!hasProduct(product)){
+            throw new RuntimeException("Order Object does not contain this product");
+        }
+        else{
+            return product.getPrice() * orderLines.get(product);
+        }
+    }
+
+    /**
+     * @param product
+     * @return quantity of given product in this order
+     */
+    public int getProductQuantity(Product product){
+        if(!hasProduct(product)){
+            throw new RuntimeException("Order Object does not contain this product");
+        }
+        else{
+            return orderLines.get(product);
+        }
     }
 
     public String getUserUUID(){
         return userUUID;
     }
+    public int getOrderNumber(){
+        return orderNumber;
+    }
 
     @Override
     public String toString(){
-        return "NUM: " + orderNumber + " STATUS: " + status.toString();
+        return "ORDERNUM:  " + orderNumber + " STATUS: " + status.toString() + " TOTAL PRICE: " + totalPrice;
+    }
+
+    public void PrintFullOrder(){
+        System.out.println(this.toString() + "CONTAINS: ");
+        orderLines.forEach((product, quantity) -> {
+            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + quantity);
+        });
     }
 }

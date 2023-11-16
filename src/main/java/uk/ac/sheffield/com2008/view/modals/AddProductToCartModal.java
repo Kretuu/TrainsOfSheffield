@@ -1,9 +1,13 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.util.math.Rounding;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,8 +17,9 @@ public class AddProductToCartModal extends JDialog {
     private JLabel productName;
     private JSpinner quantitySpinner;
     private JLabel totalPriceLabel;
+    private int selectedQuantity = 1;
 
-    public AddProductToCartModal(JFrame parentFrame, Product product) {
+    public AddProductToCartModal(BrowseItemsController browseItemsController, JFrame parentFrame, Product product) {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
 
         // Create a panel to hold the content
@@ -38,48 +43,64 @@ public class AddProductToCartModal extends JDialog {
         panel.add(topPanel, BorderLayout.NORTH);
 
         // Create a panel for quantity and add to cart button
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
 
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Create "Quantity:" label
         JLabel quantityLabel = new JLabel("Quantity:");
-        bottomPanel.add(quantityLabel);
+        buttonPanel.add(quantityLabel);
 
         // Create spinner for quantity selection
-        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 99, 1);
+        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, product.getStock(), 1);
         quantitySpinner = new JSpinner(spinnerModel);
-        bottomPanel.add(quantitySpinner);
+        quantitySpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                // Method called when the spinner value changes
+                selectedQuantity = (int) quantitySpinner.getValue();
+                float newPrice = product.getPrice() * selectedQuantity;
+                updateTotalPrice(newPrice);
+            }
+        });
+        buttonPanel.add(quantitySpinner);
 
         // Create "Add To Cart" button
         JButton addToCartButton = new JButton("Add To Cart");
         addToCartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Your custom function here
-                // For example, print the selected quantity
-                int selectedQuantity = (int) quantitySpinner.getValue();
-                System.out.println("Selected Quantity: " + selectedQuantity);
+                browseItemsController.addProductToBasket(product, selectedQuantity);
 
                 // Close the modal dialog
                 dispose();
             }
         });
+        buttonPanel.add(addToCartButton);
 
-        bottomPanel.add(addToCartButton);
+        JPanel totalPricePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        totalPriceLabel = new JLabel("Total Price: " + product.getPrice());
+        totalPricePanel.add(totalPriceLabel);
+        panel.add(totalPricePanel, BorderLayout.SOUTH);
+        bottomPanel.add(totalPricePanel);
+        bottomPanel.add(buttonPanel);
 
-        panel.add(bottomPanel, BorderLayout.CENTER);
-
-        JPanel totalPriceLabelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel totalPriceLabel = new JLabel("Total Price:");
-        totalPriceLabelPanel.add(totalPriceLabel);
-        panel.add(totalPriceLabelPanel, BorderLayout.SOUTH);
+        panel.add(bottomPanel, BorderLayout.SOUTH);
 
         // Set panel to the content pane of the dialog
         setContentPane(panel);
 
-        setSize(300, 200); // Set the size of the dialog
+        // Set the minimum size to ensure it doesn't become too small
+        setMinimumSize(new Dimension(300, 200));
+
+        // Set the maximum size to ensure it doesn't expand too much vertically
+        // Adjust the maximum height according to your requirements
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
+        setResizable(false);
         setLocationRelativeTo(parentFrame); // Center the dialog relative to the parent frame
     }
 
-    // You can create getter and setter methods for customLabel and quantitySpinner
-    // to modify their content or properties from outside this class if needed
+    private void updateTotalPrice(float newPrice){
+        totalPriceLabel.setText("Total Price: " + Rounding.roundToDecimalPlaces(newPrice, 2));
+    }
 }

@@ -34,7 +34,8 @@ public class OrderManager {
      */
     public static void addProductToOrder(Order order, Product product, int quantity){
         order.addProduct(product, quantity);
-        //TODO: OrderDAO INSERT NEW ORDERLINE
+        OrderDAO.createOrderLine(order, product);
+        OrderDAO.updateOrderTotalPrice(order);
     }
 
     /**
@@ -45,7 +46,8 @@ public class OrderManager {
      */
     public static void modifyProductQuantity(Order order, Product product, int newQuantity){
         order.modifyQuantity(product, newQuantity);
-        //TODO: OrderDAO UPDATE quantity FOR PRODUCT in this ORDER
+        OrderDAO.updateOrderLineQuantity(order, product);
+        OrderDAO.updateOrderTotalPrice(order);
     }
 
     /**
