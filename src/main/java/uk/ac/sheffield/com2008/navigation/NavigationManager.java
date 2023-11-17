@@ -40,6 +40,7 @@ public class NavigationManager {
         new SignupController(this, Navigation.SIGNUP);
         new BrowseItemsController(this, Navigation.CUSTOMER);
         new StaffController(this, Navigation.STAFF);
+        new StaffController(this,Navigation.PRODUCTRECORD);
     }
 
     public void registerController(Navigation id, ViewController controller) {
