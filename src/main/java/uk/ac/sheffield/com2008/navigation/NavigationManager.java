@@ -22,7 +22,7 @@ public class NavigationManager {
 
     public NavigationManager() {
         frame = new JFrame("Trains of Sheffield");
-        layout = new MainLayout();
+        layout = new MainLayout(this);
         // Set the frame to fullscreen windowed mode
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
