@@ -1,19 +1,18 @@
 package uk.ac.sheffield.com2008.view.customer;
 
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
-import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.modals.AddProductToCartModal;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
-public class BrowseItemsView extends View {
+public class BrowseItemsView extends CustomerView {
     BrowseItemsController browseItemsController;
     public BrowseItemsView(BrowseItemsController loginController){
+        super();
         browseItemsController = loginController;
         InitializeUI();
     }
@@ -63,7 +62,7 @@ public class BrowseItemsView extends View {
             // Create a button for "Add To Cart"
             JButton addToCartButton = new JButton("Add To Cart");
             addToCartButton.addActionListener(e -> {
-                System.out.println("clicked ADD for product: " + product.toString());
+                System.out.println("clicked ADD for product: " + product);
                 // Create an instance of the AddProductToCartModal class
                 AddProductToCartModal modal = new AddProductToCartModal(
                         browseItemsController,

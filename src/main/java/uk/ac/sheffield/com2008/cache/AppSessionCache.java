@@ -22,4 +22,8 @@ public class AppSessionCache {
     public void setUserLoggedIn(User userLoggedIn) {
         this.userLoggedIn = userLoggedIn;
     }
+
+    public void logoutUser() {
+        this.userLoggedIn = null;
+    }
 }
