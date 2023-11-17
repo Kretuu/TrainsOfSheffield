@@ -1,6 +1,8 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.util.math.Rounding;
 
@@ -17,6 +19,7 @@ public class AddProductToCartModal extends JDialog {
     private JLabel productName;
     private JSpinner quantitySpinner;
     private JLabel totalPriceLabel;
+    private JLabel noStockLabel;
     private int selectedQuantity = 1;
 
     public AddProductToCartModal(BrowseItemsController browseItemsController, JFrame parentFrame, Product product) {
@@ -52,7 +55,21 @@ public class AddProductToCartModal extends JDialog {
         buttonPanel.add(quantityLabel);
 
         // Create spinner for quantity selection
-        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, product.getStock(), 1);
+        int quantityInBasket = 0;
+        Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
+        userBasket.PrintFullOrder();
+        if(userBasket.hasProduct(product)){
+            System.out.println("User has this item in basket");
+            quantityInBasket = userBasket.getProductQuantity(product);
+        }
+        System.out.println(quantityInBasket);
+        int stockAvailableToAdd = product.getStock() - quantityInBasket;
+
+        SpinnerModel spinnerModel = new SpinnerNumberModel(
+                Math.min(1, stockAvailableToAdd),
+                Math.min(1, stockAvailableToAdd),
+                stockAvailableToAdd,
+                1);
         quantitySpinner = new JSpinner(spinnerModel);
         quantitySpinner.addChangeListener(new ChangeListener() {
             @Override
@@ -84,6 +101,17 @@ public class AddProductToCartModal extends JDialog {
         panel.add(totalPricePanel, BorderLayout.SOUTH);
         bottomPanel.add(totalPricePanel);
         bottomPanel.add(buttonPanel);
+
+        if(stockAvailableToAdd == 0){
+            noStockLabel = new JLabel("No Stock Left");
+            noStockLabel.setForeground(Color.RED);
+            noStockLabel.setFont(noStockLabel.getFont().deriveFont(Font.BOLD));
+            bottomPanel.add(noStockLabel);
+            JPanel noStockPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            noStockPanel.add(noStockLabel);
+            addToCartButton.setEnabled(false);
+            bottomPanel.add(noStockPanel);
+        }
 
         panel.add(bottomPanel, BorderLayout.SOUTH);
 
