@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.View;
 
 
@@ -15,14 +16,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class ManageStockView extends View {
 
-    private final StaffController staffController;
+    StaffController staffController;
 
-    public ManageStockView(StaffController staffController) {
+    public ManageStockView(StaffController staffController ) {
+        super();
         this.staffController = staffController;
-        InitializeUI();
+        initializeUI();
     }
 
-    public void InitializeUI() {
+    public void initializeUI() {
         setLayout(new BorderLayout());
 
         // Create a JPanel for the top section
@@ -106,7 +108,7 @@ public class ManageStockView extends View {
         productPanel.add(scrollPane);
         this.add(productPanel);
 
-        productRecordButton.addActionListener(e -> manageStockController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCTRECORD));
 
 
         // Set up the Product Record button action

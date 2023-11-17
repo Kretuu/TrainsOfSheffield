@@ -32,7 +32,7 @@ public class ProductRecordView extends View{
         filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         //Create a label for products in stock
-        JLabel welcomeLabel = new JLabel("Products in Stock");
+        JLabel welcomeLabel = new JLabel("Product Records");
         topPanel.add(welcomeLabel, BorderLayout.WEST);
 
         JButton staffAreaButton = new JButton("Logout");
