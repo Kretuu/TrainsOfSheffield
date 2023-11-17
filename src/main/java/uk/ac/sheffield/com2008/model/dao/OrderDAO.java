@@ -8,6 +8,7 @@ import uk.ac.sheffield.com2008.model.mappers.OrderMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class OrderDAO {
 
@@ -20,6 +21,7 @@ public class OrderDAO {
         String query = "SELECT * FROM Orders WHERE userUUID = ? " + " AND status = ?";
         Order order = null;
 
+        //Get basket itself
         try {
             ResultSet resultSet = DatabaseConnectionHandler.select(query, user.getUuid(), "PENDING");
             if(resultSet.next()){
@@ -29,6 +31,30 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        if(order == null){
+            return null;
+        }
+
+        //get orderlines of basket
+        String orderlinesQuery = "SELECT * FROM OrderLines WHERE orderNumber = ?";
+        try {
+            ResultSet resultSet = DatabaseConnectionHandler.select(orderlinesQuery, order.getOrderNumber());
+            while(resultSet.next()){
+
+                //get product associated with orderline
+                Product product = ProductDAO.getProductByCode(resultSet.getString("productCode"));
+                order.addProduct(
+                        product,
+                        resultSet.getInt("quantity")
+                );
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        order.PrintFullOrder();
+
         return order;
     }
 
