@@ -1,19 +1,25 @@
 package uk.ac.sheffield.com2008.view.customer;
 
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.View;
+import uk.ac.sheffield.com2008.view.modals.AddProductToCartModal;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class BrowseItemsView extends View {
-    BrowseItemsController controller;
+    BrowseItemsController browseItemsController;
     public BrowseItemsView(BrowseItemsController loginController){
-        controller = loginController;
+        browseItemsController = loginController;
+        InitializeUI();
+    }
+
+    public void onRefresh(){
+        removeAll();
         InitializeUI();
     }
 
@@ -38,17 +44,41 @@ public class BrowseItemsView extends View {
         productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         //create product rows
-        ArrayList<Product> products = ProductDAO.getAllProducts();
-        for (Product product : products) {
+        for (Product product : browseItemsController.getAllProducts()) {
+            // Create a panel to hold each row (label and button)
+            JPanel rowPanel = new JPanel(new BorderLayout());
+
+            // Create matte border between rows
+            Border matteBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK); // Border between rows
+            // Create empty border for inner padding
+            Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5); // Inner padding for the entire row
+            Border compoundBorder = BorderFactory.createCompoundBorder(matteBorder, emptyBorder);
+            rowPanel.setBorder(compoundBorder);
+
+            // Create a label for the product
             JLabel productLabel = new JLabel(product.toString());
-            productLabel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(Color.BLACK), // Border around each row
-                    BorderFactory.createEmptyBorder(5, 5, 5, 5) // Inner padding
-            ));
-            productLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align text to the left
-            productLabel.setAlignmentY(Component.CENTER_ALIGNMENT); // Center the text vertically
-            productLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, productLabel.getPreferredSize().height));
-            productPanel.add(productLabel);
+            productLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Inner padding
+            rowPanel.add(productLabel, BorderLayout.CENTER); // Add label to the center of the panel
+
+            // Create a button for "Add To Cart"
+            JButton addToCartButton = new JButton("Add To Cart");
+            addToCartButton.addActionListener(e -> {
+                System.out.println("clicked ADD for product: " + product.toString());
+                // Create an instance of the AddProductToCartModal class
+                AddProductToCartModal modal = new AddProductToCartModal(
+                        browseItemsController,
+                        (JFrame) SwingUtilities.getWindowAncestor(productPanel),
+                        product);
+
+                modal.setVisible(true); // Show the modal dialog
+            });
+            rowPanel.add(addToCartButton, BorderLayout.LINE_END); // Add button to the right of the panel
+
+            // Set the maximum height of the row panel to the height of the label + padding
+            rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, productLabel.getPreferredSize().height + 10)); // Adjust 10 for desired padding
+
+            // Add rowPanel to the productPanel
+            productPanel.add(rowPanel);
         }
 
         // Create a JScrollPane and set the productPanel as its view
@@ -58,6 +88,6 @@ public class BrowseItemsView extends View {
         add(scrollPane, BorderLayout.CENTER);
 
         // Set up the Staff Area button action
-        staffAreaButton.addActionListener(e -> controller.getNavigation().navigate(Navigation.STAFF));
+        staffAreaButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.STAFF));
     }
 }

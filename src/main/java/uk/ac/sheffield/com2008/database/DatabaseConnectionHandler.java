@@ -43,4 +43,15 @@ public class DatabaseConnectionHandler {
 
         return statement.execute();
     }
+
+    public static boolean update(String query, Object... params) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        for (int i = 0; i < params.length; i++) {
+            statement.setObject(i + 1, params[i]);
+        }
+
+        return statement.executeUpdate() > 0;
+    }
 }

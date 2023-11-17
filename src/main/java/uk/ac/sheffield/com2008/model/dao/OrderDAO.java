@@ -2,11 +2,13 @@ package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.model.mappers.OrderMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class OrderDAO {
 
@@ -19,6 +21,7 @@ public class OrderDAO {
         String query = "SELECT * FROM Orders WHERE userUUID = ? " + " AND status = ?";
         Order order = null;
 
+        //Get basket itself
         try {
             ResultSet resultSet = DatabaseConnectionHandler.select(query, user.getUuid(), "PENDING");
             if(resultSet.next()){
@@ -28,6 +31,30 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        if(order == null){
+            return null;
+        }
+
+        //get orderlines of basket
+        String orderlinesQuery = "SELECT * FROM OrderLines WHERE orderNumber = ?";
+        try {
+            ResultSet resultSet = DatabaseConnectionHandler.select(orderlinesQuery, order.getOrderNumber());
+            while(resultSet.next()){
+
+                //get product associated with orderline
+                Product product = ProductDAO.getProductByCode(resultSet.getString("productCode"));
+                order.addProduct(
+                        product,
+                        resultSet.getInt("quantity")
+                );
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        order.PrintFullOrder();
+
         return order;
     }
 
@@ -62,6 +89,58 @@ public class OrderDAO {
                     "PENDING",
                     0,
                     user.getUuid()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Adds a new orderline into the database
+     * @param order the order this line is a part of
+     */
+    public static void createOrderLine(Order order, Product product){
+        String query = "INSERT INTO OrderLines (orderNumber, quantity, orderPrice, productCode) VALUES (?, ?, ?, ?)";
+        try {
+            DatabaseConnectionHandler.insert(
+                    query,
+                    order.getOrderNumber(),
+                    order.getProductQuantity(product),
+                    order.getOrderLinePrice(product),
+                    product.getProductCode()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Given an Order and Product, updates the orderLine in the dabatase
+     * to match the quantity and totalprice of the Product in the Order
+     */
+    public static void updateOrderLineQuantity(Order order, Product product){
+        String updateQuery = "UPDATE OrderLines SET quantity = ?, orderPrice = ? WHERE orderNumber = ? AND productCode = ?";
+        try {
+            DatabaseConnectionHandler.update(
+                    updateQuery,
+                    order.getProductQuantity(product),
+                    order.getOrderLinePrice(product),
+                    order.getOrderNumber(),
+                    product.getProductCode()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void updateOrderTotalPrice(Order order){
+        String updateQuery = "UPDATE Orders SET totalPrice = ? WHERE orderNumber = ?";
+        try {
+            DatabaseConnectionHandler.update(
+                    updateQuery,
+                    order.getTotalPrice(),
+                    order.getOrderNumber()
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);

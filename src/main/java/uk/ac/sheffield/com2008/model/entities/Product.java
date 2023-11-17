@@ -22,8 +22,12 @@ public class Product {
 
     @Override
     public String toString(){
-        return productCode + " " + name + " " + gauge.toString() + " Gauge - " + brand + " " + price + " QTY: " + stock;
+        return productCode + " '" + name + "' " + gauge.toString() + " Gauge - " + brand + " " + price + " QTY: " + stock;
     }
+
+    public String printName(){
+        return productCode + " '" + name + "' " + gauge.toString() + " Gauge - " + brand;
+     }
 
     public String getProductCode() {
         return productCode;

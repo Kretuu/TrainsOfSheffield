@@ -49,6 +49,7 @@ public class NavigationManager {
     public void navigate(Navigation id) {
         ViewController controller = controllers.get(id);
         View view = controller.getView();
+        controller.onNavigateTo();
         //Check if View is Auth view. If it isn't, put the view into layout
         if(view instanceof AuthView) {
             frame.setContentPane(view);

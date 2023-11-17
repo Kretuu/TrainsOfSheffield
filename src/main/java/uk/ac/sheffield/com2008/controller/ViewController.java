@@ -20,4 +20,11 @@ public abstract class ViewController {
     public NavigationManager getNavigation() {
         return navigation;
     }
+
+    /**
+     * This function is called whenever a controller is navigated to
+     */
+    public void onNavigateTo(){
+
+    }
 }
