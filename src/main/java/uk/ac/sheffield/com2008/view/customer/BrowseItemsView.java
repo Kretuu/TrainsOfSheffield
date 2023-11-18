@@ -30,7 +30,7 @@ public class BrowseItemsView extends View {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel welcomeLabel = new JLabel("Welcome");
+        JLabel welcomeLabel = new JLabel("welcome");
         topPanel.add(welcomeLabel, BorderLayout.WEST);
 
 
