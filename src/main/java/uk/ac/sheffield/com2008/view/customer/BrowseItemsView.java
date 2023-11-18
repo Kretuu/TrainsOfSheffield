@@ -29,11 +29,21 @@ public class BrowseItemsView extends CustomerView {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel welcomeLabel = new JLabel("Welcome");
+        JLabel welcomeLabel = new JLabel("welcome");
         topPanel.add(welcomeLabel, BorderLayout.WEST);
 
+
+        JPanel topButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton staffAreaButton = new JButton("Staff Area");
-        topPanel.add(staffAreaButton, BorderLayout.EAST);
+        JButton basketButton = new JButton("Basket");
+        topButtonsPanel.add(basketButton);
+        topButtonsPanel.add(staffAreaButton);
+        // Set up the Staff Area button action
+        staffAreaButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.STAFF));
+        // Set up Basket button action
+        basketButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.BASKET));
+
+        topPanel.add(topButtonsPanel, BorderLayout.EAST);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -85,8 +95,5 @@ public class BrowseItemsView extends CustomerView {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         add(scrollPane, BorderLayout.CENTER);
-
-        // Set up the Staff Area button action
-        staffAreaButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.STAFF));
     }
 }
