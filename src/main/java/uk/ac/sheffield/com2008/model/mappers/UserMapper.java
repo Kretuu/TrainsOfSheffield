@@ -7,8 +7,8 @@ import uk.ac.sheffield.com2008.model.entities.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserMapper {
-    public static User mapResultSetToUser(ResultSet resultSet) throws SQLException {
+public class UserMapper implements RowMapper<User> {
+    public User mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         User user;
         long cardNumber = resultSet.getLong("Users.cardNumber");
         BankingCard bankingCard = null;

@@ -6,7 +6,7 @@ import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
-import uk.ac.sheffield.com2008.util.ui.MainLayout;
+import uk.ac.sheffield.com2008.view.components.MainLayout;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.auth.AuthView;
 

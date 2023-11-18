@@ -1,4 +1,4 @@
-package uk.ac.sheffield.com2008.util.ui;
+package uk.ac.sheffield.com2008.view.components;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.navigation.Navigation;

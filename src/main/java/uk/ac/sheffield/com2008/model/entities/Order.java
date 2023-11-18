@@ -1,26 +1,53 @@
 package uk.ac.sheffield.com2008.model.entities;
 
-import java.util.Date;
-import java.util.HashMap;
+import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
+
+import java.util.*;
 
 public class Order {
 
-    private int orderNumber;
+    private final int orderNumber;
     private Date dateOrdered;
     private float totalPrice;
-    public enum Status {PENDING, CONFIRMED, FULFILLED};
+    public enum Status {PENDING, CONFIRMED, FULFILLED}
     private Status status;
     // Product -> Quantity
-    private HashMap<Product, Integer> orderLines;
-    private String userUUID;
+//    private Map<Product, Integer> orderLines = new HashMap<>();
+    private List<OrderLine> orderLines = new ArrayList<>();
+    private final String userUUID;
 
     public Order(int orderNumber, Date dateOrdered, float totalPrice, Status status, String userUUID){
         this.orderNumber = orderNumber;
         this.dateOrdered = dateOrdered;
         this.totalPrice = totalPrice;
         this.status = status;
-        orderLines = new HashMap<>();
+//        orderLines = new HashMap<>();
         this.userUUID = userUUID;
+    }
+
+
+    /**
+     * Get list of OrderLines
+     * @return list of OrderLines
+     */
+    public List<OrderLine> getOrderLines() {
+        return orderLines;
+    }
+
+    /**
+     * add single OrderLine object to list
+     * @param orderLine OrderLine
+     */
+    public void addOrderLine(OrderLine orderLine) {
+        orderLines.add(orderLine);
+    }
+
+    /**
+     * Set orderLines list. Used only in DAO class.
+     * @param orderLines list of OrderLine objects
+     */
+    public void setOrderLines(List<OrderLine> orderLines) {
+        this.orderLines = orderLines;
     }
 
     /**
@@ -33,7 +60,8 @@ public class Order {
         if(hasProduct(product)){
             throw new RuntimeException("Tried to add a product to an Order that already has this product. Modify the quantity instead.");
         }
-        orderLines.put(product, quantity);
+        orderLines.add(new OrderLine(quantity, product));
+//        orderLines.put(product, quantity);
         calculateTotalPrice();
     }
 
@@ -43,25 +71,31 @@ public class Order {
      * @return
      */
     public boolean hasProduct(Product product){
-        return orderLines.containsKey(product);
+        return orderLines.stream().anyMatch(orderLine -> orderLine.hasProduct(product));
     }
 
     /**
      * Changes the quantity in an orderline. +Recalculates total price for order.
      */
     public void modifyQuantity(Product product, int addedQuantity){
-        if(!hasProduct(product)){
+        OrderLine modifiedOrderLine = getOrderLineFromProduct(product);
+        if(modifiedOrderLine == null) {
             throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
         }
-        orderLines.put(product, orderLines.get(product) + addedQuantity);
+        modifiedOrderLine.setQuantity(modifiedOrderLine.getQuantity() + addedQuantity);
+//        if(!hasProduct(product)){
+//            throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
+//        }
+//        orderLines.put(product, orderLines.get(product) + addedQuantity);
         calculateTotalPrice();
     }
 
     public void calculateTotalPrice(){
         totalPrice = 0;
-        orderLines.forEach((product, quantity) -> {
-            totalPrice += product.getPrice() * quantity;
-        });
+        orderLines.forEach(orderLine -> totalPrice += orderLine.getPrice());
+//        orderLines.forEach((product, quantity) -> {
+//            totalPrice += product.getPrice() * quantity;
+//        });
     }
 
     public void setAsConfirmed(){
@@ -79,12 +113,19 @@ public class Order {
      * @return product * quantity of that product in the order
      */
     public float getOrderLinePrice(Product product){
-        if(!hasProduct(product)){
+        OrderLine orderLine = getOrderLineFromProduct(product);
+        if(orderLine == null)
             throw new RuntimeException("Order Object does not contain this product");
-        }
-        else{
-            return product.getPrice() * orderLines.get(product);
-        }
+
+        return orderLine.getPrice();
+
+//        if(!hasProduct(product)){
+//            throw new RuntimeException("Order Object does not contain this product");
+//        }
+//        else{
+//
+//            return orderLine.getPrice();
+//        }
     }
 
     /**
@@ -92,12 +133,23 @@ public class Order {
      * @return quantity of given product in this order
      */
     public int getProductQuantity(Product product){
-        if(!hasProduct(product)){
-            throw new RuntimeException("Order Object does not contain this product");
-        }
-        else{
-            return orderLines.get(product);
-        }
+        OrderLine orderLine = getOrderLineFromProduct(product);
+        if(orderLine == null) throw new RuntimeException("Order Object does not contain this product");
+
+        return orderLine.getQuantity();
+
+//        if(!hasProduct(product)){
+//            throw new RuntimeException("Order Object does not contain this product");
+//        }
+//        else{
+//            return orderLine.getQuantity();
+//        }
+    }
+
+    private OrderLine getOrderLineFromProduct(Product product) {
+        List<OrderLine> orderLines = this.orderLines.stream().filter(orderLine -> orderLine.hasProduct(product)).toList();
+        if(orderLines.isEmpty()) return null;
+        return orderLines.get(0);
     }
 
     public String getUserUUID(){
@@ -113,9 +165,14 @@ public class Order {
     }
 
     public void PrintFullOrder(){
-        System.out.println(this.toString() + "CONTAINS: ");
-        orderLines.forEach((product, quantity) -> {
-            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + quantity);
+        System.out.println(this + "CONTAINS: ");
+        orderLines.forEach(orderLine -> {
+            Product product = orderLine.getProduct();
+            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + orderLine.getQuantity());
         });
+
+//        orderLines.forEach((product, quantity) -> {
+//            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + quantity);
+//        });
     }
 }
