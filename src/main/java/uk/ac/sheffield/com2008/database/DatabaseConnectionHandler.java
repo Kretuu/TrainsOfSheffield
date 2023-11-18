@@ -2,11 +2,14 @@ package uk.ac.sheffield.com2008.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import uk.ac.sheffield.com2008.model.mappers.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseConnectionHandler {
     private static final HikariConfig config = new HikariConfig("mysql.properties");
@@ -22,36 +25,62 @@ public class DatabaseConnectionHandler {
         ds = new HikariDataSource(config);
     }
 
-    public static ResultSet select(String query, Object... params) throws SQLException {
-        Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement(query);
+//    public static ResultSet select(String query, Object... params) throws SQLException {
+//        try(
+//            Connection connection = getConnection();
+//            PreparedStatement statement = connection.prepareStatement(query);
+//        ) {
+//            for(int i = 0; i < params.length; i++) {
+//                statement.setObject(i + 1, params[i]);
+//            }
+//
+//            return statement.executeQuery();
+//        }
+//    }
 
-        for(int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i]);
+
+
+    public static <T> List<T> select(RowMapper<T> mapper, String query, Object... params) throws SQLException {
+        try(
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)
+        ) {
+            for(int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+            ResultSet resultSet = statement.executeQuery();
+            List<T> resultList = new ArrayList<>();
+
+            while(resultSet.next()) {
+                resultList.add(mapper.mapResultSetToEntity(resultSet));
+            }
+            return resultList;
         }
-
-        return statement.executeQuery();
     }
 
-    public static Boolean insert(String query, Object... params) throws SQLException {
-        Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement(query);
+    public static boolean insert(String query, Object... params) throws SQLException {
+        try(
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(query)
+        ) {
+            for(int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
 
-        for(int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i]);
+            return statement.execute();
         }
-
-        return statement.execute();
     }
 
     public static boolean update(String query, Object... params) throws SQLException {
-        Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement(query);
+        try(
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(query)
+        ) {
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
 
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i]);
+            return statement.executeUpdate() > 0;
         }
-
-        return statement.executeUpdate() > 0;
     }
 }

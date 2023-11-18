@@ -1,7 +1,7 @@
 package uk.ac.sheffield.com2008.model.entities;
 
 public class Product {
-    public enum Gauge {OO, TT, N};
+    public enum Gauge {OO, TT, N}
     private String productCode;
     private String name;
     private float price;
@@ -83,5 +83,21 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    /**
+     * @param obj object to compare
+     * @return rue if the given object represents a Product equivalent to this product, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Product)) return false;
+        Product object = (Product) obj;
+        return this.name.equals(object.getName())
+                && this.isSet == object.isSet()
+                && this.brand.equals(object.getBrand())
+                && this.gauge.equals(object.getGauge())
+                && this.price == object.getPrice()
+                && this.productCode.equals(object.getProductCode());
     }
 }

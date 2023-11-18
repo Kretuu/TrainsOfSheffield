@@ -1,14 +1,16 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
+import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.model.mappers.OrderMapper;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class OrderDAO {
 
@@ -18,61 +20,53 @@ public class OrderDAO {
      * @return
      */
     public static Order getUsersBasket(User user){
-        String query = "SELECT * FROM Orders WHERE userUUID = ? " + " AND status = ?";
-        Order order = null;
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("userUUID", user.getUuid());
+        parameters.put("status", "PENDING");
 
-        //Get basket itself
-        try {
-            ResultSet resultSet = DatabaseConnectionHandler.select(query, user.getUuid(), "PENDING");
-            if(resultSet.next()){
-                order = OrderMapper.mapResultSetToOrder(resultSet);
-            }
-            resultSet.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        if(order == null){
-            return null;
-        }
-
-        //get orderlines of basket
-        String orderlinesQuery = "SELECT * FROM OrderLines WHERE orderNumber = ?";
-        try {
-            ResultSet resultSet = DatabaseConnectionHandler.select(orderlinesQuery, order.getOrderNumber());
-            while(resultSet.next()){
-
-                //get product associated with orderline
-                Product product = ProductDAO.getProductByCode(resultSet.getString("productCode"));
-                order.addProduct(
-                        product,
-                        resultSet.getInt("quantity")
-                );
-            }
-            resultSet.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        order.PrintFullOrder();
-
-        return order;
+        return getOrderByFields(parameters);
     }
 
 
-    private static Order getOrderByField(String fieldName, Object value) {
-        String query = "SELECT * FROM Orders WHERE " + fieldName + " = ?";
-        Order order = null;
+    /**
+     * Get order matching given parameters.
+     * @param fieldsMap parameters where key is column name in database and value is corresponding value
+     * @return Order if there was found matching order, null otherwise
+     */
+    private static Order getOrderByFields(LinkedHashMap<String, String> fieldsMap) {
+        //Building query with all parameters provided in map. Using StringBuilder to improve performance.
+        StringBuilder orderQueryBuilder = new StringBuilder();
+        orderQueryBuilder.append("SELECT * FROM Orders ")
+                .append("LEFT OUTER JOIN OrderLines OL on Orders.orderNumber = OL.orderNumber ")
+                .append("LEFT OUTER JOIN Products ON OL.productCode = Products.productCode ")
+                .append("WHERE ");
+        fieldsMap.forEach((key, value) -> orderQueryBuilder.append(key).append(" = ? AND "));
+        orderQueryBuilder.setLength(orderQueryBuilder.length() - 5);
 
+        String query = orderQueryBuilder.toString();
+        String[] parameters = fieldsMap.values().toArray(new String[0]);
+
+
+        List<Order> orders;
         try {
-            ResultSet resultSet = DatabaseConnectionHandler.select(query, value);
-            if(resultSet.next()){
-                order = OrderMapper.mapResultSetToOrder(resultSet);
-            }
-            resultSet.close();
+            OrderMapper mapper = new OrderMapper();
+            orders = DatabaseConnectionHandler.select(mapper, query, (Object[]) parameters);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return order;
+
+        //Return null if no order matching given parameters was found.
+        if(orders.isEmpty()) return null;
+
+        //Otherwise, get first order and merge all other Order objects which differ only by OrderLines
+        Order firstOrder = orders.get(0);
+        if(orders.size() == 1) return firstOrder;
+
+        List<OrderLine> allOrderLines = new ArrayList<>();
+        orders.forEach(order -> allOrderLines.addAll(order.getOrderLines()));
+        firstOrder.setOrderLines(allOrderLines);
+
+        return firstOrder;
     }
 
     /**

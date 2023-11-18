@@ -2,7 +2,7 @@ package uk.ac.sheffield.com2008.controller.auth;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.exceptions.EmailAlreadyInUseException;
-import uk.ac.sheffield.com2008.model.domain.AuthenticationManager;
+import uk.ac.sheffield.com2008.model.domain.managers.AuthenticationManager;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.auth.SignupView;

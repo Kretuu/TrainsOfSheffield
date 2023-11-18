@@ -4,17 +4,15 @@ import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.navigation.NavigationManager;
-import uk.ac.sheffield.com2008.view.View;
 
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class ManageStockView extends View {
+public class ManageStockView extends StaffView {
 
     StaffController staffController;
 
@@ -86,7 +84,7 @@ public class ManageStockView extends View {
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 
         // Get products from the DAO
-        ArrayList<Product> products = ProductDAO.getAllProducts();
+        List<Product> products = ProductDAO.getAllProducts();
 
         // Add each product to the tableModel
         for (Product product : products) {
