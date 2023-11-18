@@ -2,14 +2,9 @@ package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.model.mappers.ProductMapper;
-import uk.ac.sheffield.com2008.model.mappers.UserMapper;
 
-import java.sql.Array;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
@@ -17,20 +12,35 @@ public class ProductDAO {
         return getProductByField("productCode", code);
     }
 
-    public static ArrayList<Product> getAllProducts(){
+    public static List<Product> getAllProducts(){
         String query = "SELECT * FROM Products";
-        ArrayList<Product> products = new ArrayList<>();
+        List<Product> products;
 
         try {
-            ResultSet resultSet = DatabaseConnectionHandler.select(query);
-            while(resultSet.next()){
-                products.add(ProductMapper.mapResultSetToProduct(resultSet));
-            }
-            resultSet.close();
+            ProductMapper mapper = new ProductMapper();
+            products = DatabaseConnectionHandler.select(mapper, query);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return products;
+    }
+
+    public static List<Product> getProductsByCodes(String... productCodes) {
+        StringBuilder stringBuilder = new StringBuilder("SELECT * FROM Products WHERE productCode IN (");
+        for(int i = 0; i < productCodes.length; i++) {
+            stringBuilder.append("?, ");
+        }
+        stringBuilder.setLength(stringBuilder.length() - 2);
+        stringBuilder.append(")");
+        String query = stringBuilder.toString();
+
+        try {
+            ProductMapper mapper = new ProductMapper();
+            return DatabaseConnectionHandler.select(mapper, query, (Object[]) productCodes);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -41,17 +51,16 @@ public class ProductDAO {
      */
     private static Product getProductByField(String fieldName, Object value) {
         String query = "SELECT * FROM Products WHERE " + fieldName + " = ?";
-        Product product = null;
 
+        List<Product> productList;
         try {
-            ResultSet resultSet = DatabaseConnectionHandler.select(query, value);
-            if(resultSet.next()){
-                product = ProductMapper.mapResultSetToProduct(resultSet);
-            }
-            resultSet.close();
+            ProductMapper mapper = new ProductMapper();
+            productList = DatabaseConnectionHandler.select(mapper, query, value);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return product;
+        if(productList.isEmpty()) return null;
+
+        return productList.get(0);
     }
 }

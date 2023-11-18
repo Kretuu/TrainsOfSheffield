@@ -3,7 +3,7 @@ package uk.ac.sheffield.com2008.model.entities;
 import java.util.Objects;
 
 public class Product {
-    public enum Gauge {OO, TT, N};
+    public enum Gauge {OO, TT, N}
     private String productCode;
     private String name;
     private float price;
@@ -88,15 +88,14 @@ public class Product {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(productCode);
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Product product = (Product) obj;
-        return Objects.equals(productCode, product.productCode);
+        if(!(obj instanceof Product)) return false;
+        Product object = (Product) obj;
+        return this.name.equals(object.getName())
+                && this.isSet == object.isSet()
+                && this.brand.equals(object.getBrand())
+                && this.gauge.equals(object.getGauge())
+                && this.price == object.getPrice()
+                && this.productCode.equals(object.getProductCode());
     }
 }

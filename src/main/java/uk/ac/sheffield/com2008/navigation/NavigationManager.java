@@ -5,8 +5,9 @@ import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.controller.customer.BasketController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
-import uk.ac.sheffield.com2008.util.ui.MainLayout;
+import uk.ac.sheffield.com2008.view.components.MainLayout;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.auth.AuthView;
 
@@ -23,7 +24,7 @@ public class NavigationManager {
 
     public NavigationManager() {
         frame = new JFrame("Trains of Sheffield");
-        layout = new MainLayout();
+        layout = new MainLayout(this);
         // Set the frame to fullscreen windowed mode
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -42,6 +43,7 @@ public class NavigationManager {
         new BrowseItemsController(this, Navigation.CUSTOMER);
         new StaffController(this, Navigation.STAFF);
         new BasketController(this, Navigation.BASKET);
+        new ProductRecordController(this,Navigation.PRODUCTRECORD);
     }
 
     public void registerController(Navigation id, ViewController controller) {

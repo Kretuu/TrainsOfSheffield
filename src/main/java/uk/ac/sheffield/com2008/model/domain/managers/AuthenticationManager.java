@@ -1,4 +1,4 @@
-package uk.ac.sheffield.com2008.model.domain;
+package uk.ac.sheffield.com2008.model.domain.managers;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.exceptions.EmailAlreadyInUseException;
@@ -27,6 +27,7 @@ public class AuthenticationManager {
 
         //GET THEIR BASKET AND ASSIGN IT TO THE USER
         Order usersBasket = OrderDAO.getUsersBasket(user);
+        if(usersBasket == null) usersBasket = OrderManager.createNewOrder(user);
         user.setBasket(usersBasket);
     }
 

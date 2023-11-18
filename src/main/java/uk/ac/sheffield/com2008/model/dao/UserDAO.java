@@ -6,8 +6,8 @@ import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.model.mappers.UserMapper;
 import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 //Mediator pattern - connection between User entity and database. Fetching, updating, deleting etc. all information
 //related to User entity.
@@ -23,18 +23,18 @@ public class UserDAO {
     private User getUserByField(String fieldName, Object value) {
         String query = "SELECT * FROM Users LEFT OUTER JOIN BankingDetails " +
                 "ON Users.cardNumber=BankingDetails.cardNumber WHERE " + fieldName + " = ?";
-        User user = null;
 
+        List<User> users;
         try {
-            ResultSet resultSet = DatabaseConnectionHandler.select(query, value);
-            if(resultSet.next()) {
-                user = UserMapper.mapResultSetToUser(resultSet);
-            }
-            resultSet.close();
+            UserMapper mapper = new UserMapper();
+            users = DatabaseConnectionHandler.select(mapper, query, value);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return user;
+
+        if(users.isEmpty()) return null;
+
+        return users.get(0);
     }
 
     public User verifyPassword(String userEmail, char[] password) {

@@ -5,7 +5,7 @@ import uk.ac.sheffield.com2008.view.View;
 import javax.swing.*;
 import java.awt.*;
 
-public class AuthView extends View {
+public abstract class AuthView extends View {
     protected JPanel panel;
     public AuthView() {
         setLayout(new GridBagLayout());

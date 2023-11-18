@@ -1,4 +1,4 @@
-package uk.ac.sheffield.com2008.model.domain;
+package uk.ac.sheffield.com2008.model.domain.managers;
 
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
@@ -20,8 +20,7 @@ public class OrderManager {
      */
     public static Order createNewOrder(User user){
         OrderDAO.createOrder(user);
-        Order order = OrderDAO.getUsersBasket(user);
-        return order;
+        return OrderDAO.getUsersBasket(user);
     }
 
     //TODO: Function that returns a list of orderlines for given order
