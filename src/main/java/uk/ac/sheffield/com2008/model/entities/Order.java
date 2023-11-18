@@ -11,8 +11,6 @@ public class Order {
     private float totalPrice;
     public enum Status {PENDING, CONFIRMED, FULFILLED}
     private Status status;
-    // Product -> Quantity
-//    private Map<Product, Integer> orderLines = new HashMap<>();
     private List<OrderLine> orderLines = new ArrayList<>();
     private final String userUUID;
 
@@ -21,7 +19,6 @@ public class Order {
         this.dateOrdered = dateOrdered;
         this.totalPrice = totalPrice;
         this.status = status;
-//        orderLines = new HashMap<>();
         this.userUUID = userUUID;
     }
 
@@ -61,7 +58,6 @@ public class Order {
             throw new RuntimeException("Tried to add a product to an Order that already has this product. Modify the quantity instead.");
         }
         orderLines.add(new OrderLine(quantity, product));
-//        orderLines.put(product, quantity);
         calculateTotalPrice();
     }
 
@@ -83,19 +79,12 @@ public class Order {
             throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
         }
         modifiedOrderLine.setQuantity(modifiedOrderLine.getQuantity() + addedQuantity);
-//        if(!hasProduct(product)){
-//            throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
-//        }
-//        orderLines.put(product, orderLines.get(product) + addedQuantity);
         calculateTotalPrice();
     }
 
     public void calculateTotalPrice(){
         totalPrice = 0;
         orderLines.forEach(orderLine -> totalPrice += orderLine.getPrice());
-//        orderLines.forEach((product, quantity) -> {
-//            totalPrice += product.getPrice() * quantity;
-//        });
     }
 
     public void setAsConfirmed(){
@@ -118,14 +107,6 @@ public class Order {
             throw new RuntimeException("Order Object does not contain this product");
 
         return orderLine.getPrice();
-
-//        if(!hasProduct(product)){
-//            throw new RuntimeException("Order Object does not contain this product");
-//        }
-//        else{
-//
-//            return orderLine.getPrice();
-//        }
     }
 
     /**
@@ -137,13 +118,6 @@ public class Order {
         if(orderLine == null) throw new RuntimeException("Order Object does not contain this product");
 
         return orderLine.getQuantity();
-
-//        if(!hasProduct(product)){
-//            throw new RuntimeException("Order Object does not contain this product");
-//        }
-//        else{
-//            return orderLine.getQuantity();
-//        }
     }
 
     private OrderLine getOrderLineFromProduct(Product product) {
@@ -170,9 +144,5 @@ public class Order {
             Product product = orderLine.getProduct();
             System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + orderLine.getQuantity());
         });
-
-//        orderLines.forEach((product, quantity) -> {
-//            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + quantity);
-//        });
     }
 }

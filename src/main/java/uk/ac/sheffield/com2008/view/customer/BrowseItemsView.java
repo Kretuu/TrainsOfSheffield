@@ -25,17 +25,6 @@ public class BrowseItemsView extends CustomerView {
     public void InitializeUI(){
         setLayout(new BorderLayout());
 
-        // Create a JPanel for the top section
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel welcomeLabel = new JLabel("Welcome");
-        topPanel.add(welcomeLabel, BorderLayout.WEST);
-
-        JButton staffAreaButton = new JButton("Staff Area");
-        topPanel.add(staffAreaButton, BorderLayout.EAST);
-
-        add(topPanel, BorderLayout.NORTH);
 
         // Create a JPanel for the scroll panel with product labels
         JPanel productPanel = new JPanel();
@@ -85,8 +74,5 @@ public class BrowseItemsView extends CustomerView {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         add(scrollPane, BorderLayout.CENTER);
-
-        // Set up the Staff Area button action
-        staffAreaButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.STAFF));
     }
 }
