@@ -84,6 +84,7 @@ public class Order {
 
     public void calculateTotalPrice(){
         totalPrice = 0;
+        orderLines.forEach(OrderLine::calculatePrice);
         orderLines.forEach(orderLine -> totalPrice += orderLine.getPrice());
     }
 
