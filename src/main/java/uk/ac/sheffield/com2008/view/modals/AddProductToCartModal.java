@@ -21,7 +21,6 @@ public class AddProductToCartModal extends JDialog {
     private JLabel totalPriceLabel;
     private JLabel noStockLabel;
     private int selectedQuantity = 1;
-    private JLabel noStockLabel;
 
     public AddProductToCartModal(BrowseItemsController browseItemsController, JFrame parentFrame, Product product) {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
