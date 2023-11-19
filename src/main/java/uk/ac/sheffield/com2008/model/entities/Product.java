@@ -1,5 +1,7 @@
 package uk.ac.sheffield.com2008.model.entities;
 
+import java.util.Objects;
+
 public class Product {
     public enum Gauge {OO, TT, N}
     private String productCode;
@@ -85,10 +87,6 @@ public class Product {
         this.stock = stock;
     }
 
-    /**
-     * @param obj object to compare
-     * @return rue if the given object represents a Product equivalent to this product, false otherwise
-     */
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof Product)) return false;

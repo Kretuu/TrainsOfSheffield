@@ -19,6 +19,7 @@ public class AddProductToCartModal extends JDialog {
     private JLabel productName;
     private JSpinner quantitySpinner;
     private JLabel totalPriceLabel;
+    private JLabel noStockLabel;
     private int selectedQuantity = 1;
     private JLabel noStockLabel;
 

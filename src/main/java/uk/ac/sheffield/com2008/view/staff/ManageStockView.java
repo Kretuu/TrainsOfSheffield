@@ -5,7 +5,6 @@ import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -25,28 +24,18 @@ public class ManageStockView extends StaffView {
     public void initializeUI() {
         setLayout(new BorderLayout());
 
-        // Create a JPanel for the top section
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // top panel
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
 
-        // Create a Jpanel for the filter section
-        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Using FlowLayout to align components horizontally
-        filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        //Create a label for products in stock
+        JLabel viewLabel = new JLabel("Products In Stock");
+        row1.add(viewLabel);
+        topPanel.add(row1);
 
-        // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-
-
-        // Create a label for products in stock
-        JLabel welcomeLabel = new JLabel("Products in Stock");
-        topPanel.add(welcomeLabel, BorderLayout.WEST);
-
-        // Create a Logout button
-        JButton logoutButton = new JButton("Logout");
-        topPanel.add(logoutButton, BorderLayout.EAST);
-
-        // Create a Product Record button
         JButton productRecordButton = new JButton("Product Record");
         bottomPanel.add(productRecordButton);
 
@@ -54,23 +43,32 @@ public class ManageStockView extends StaffView {
         JButton manageOrderButton = new JButton("Manage Order");
         bottomPanel.add(manageOrderButton);
 
+
         // Add indentation between buttons using EmptyBorder
         int buttonIndentation = 10;
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));
 
+
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] filterOptions = {"Locomotive", "Carriage", "Wagon", "Controller", "Starter Oval TrackPack", "Extension TrackPack"};
-        JComboBox<String> filterComboBox = new JComboBox<>(filterOptions);
+        String[] categories = {"All", "Locomotive", "Carriage", "Wagon", "Starter Oval TrackPack", "Extension TrackPack"};
+        JComboBox<String> filterComboBox = new JComboBox<>(categories);
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
+
+
         // Add the filter panel to the frame
         filterPanel.add(filterLabel);
         filterPanel.add(filterComboBox);
-        topPanel.add(filterPanel, BorderLayout.SOUTH);
-        // Add the top panel to the top of the frame
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+        topPanel.add(filterPanel);
         add(topPanel, BorderLayout.NORTH);
+        //topPanel.add(filterPanel, BorderLayout.SOUTH);
+
+
         // Add the bottom panel to the bottom of the frame
         add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
 
 
         // Create a JPanel for the scroll panel with product labels
@@ -78,7 +76,7 @@ public class ManageStockView extends StaffView {
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
         productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columnNames = {"Product Code","Products in Stock", "Category", "Quantity", "Action"};
+        String[] columnNames = {"Product Code","Product Name", "Category", "Quantity", "Action"};
 
         // Create a DefaultTableModel with column names and no data initially
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
@@ -88,7 +86,9 @@ public class ManageStockView extends StaffView {
 
         // Add each product to the tableModel
         for (Product product : products) {
-            Object[] rowData = {product.getProductCode(),product.getName(),"Category", product.getStock(), "Edit"};
+            // Customize the category based on the productCode
+            String customCategory = determineCustomCategory(product.getProductCode());
+            Object[] rowData = {product.getProductCode(),product.getName(),customCategory, product.getStock(), "Edit"};
             tableModel.addRow(rowData);
         }
 
@@ -105,38 +105,78 @@ public class ManageStockView extends StaffView {
         JScrollPane scrollPane = new JScrollPane(table);
         productPanel.add(scrollPane);
         this.add(productPanel);
+        productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
         productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCTRECORD));
 
+        // Add an ActionListener to the filter combo box
+        filterComboBox.addActionListener(e -> {
+            String selectedCategory = (String) filterComboBox.getSelectedItem();
+            // Get the initial letter based on the selected category
+            String initialLetter = getInitialLetter(selectedCategory);
+            // Call the filter method based on the selected starting letter
+            filterTableByCategory(tableModel, initialLetter);
+        });
+    }
 
-        // Set up the Product Record button action
+    // Method to get the initial letter based on the selected category
+    private String getInitialLetter(String selectedCategory) {
+        if ("Locomotive".equals(selectedCategory)) {
+            return "L";
+        } else if ("Carriage".equals(selectedCategory)) {
+            return "C";
+        } else if ("Wagon".equals(selectedCategory)) {
+            return "W";
+        }else if ("Starter Oval TrackPack".equals(selectedCategory)) {
+            return "S";
+        }else if ("Extension TrackPack".equals(selectedCategory)) {
+            return "E";
+        } else {
+            return "";
+        }
+    }
 
+    private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
+        // Clear the existing rows in the table
+        tableModel.setRowCount(0);
 
+        // Get products based on the selected category from the DAO
+        List<Product> filteredProducts;
+        if ("All".equals(initialLetter)) {
+            // If "All" is selected, get all products
+            filteredProducts = ProductDAO.getAllProducts();
+        } else {
+            // Otherwise, get products for the selected category
+            filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+        }
 
-        // Table for products in stock
-        /*
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0; */
+        // Add each filtered product to the tableModel
+        for (Product product : filteredProducts) {
+            // Customize the category based on the productCode
+            String customCategory = determineCustomCategory(product.getProductCode());
 
-        /*String[] columnNames = {"Products in Stock", "Category", "Quantity", "Action"};
-        Object[][] data = {
-                {"Flying Scotsman", "Locomotive", 65, "Edit"},
-                {"Product 2", "Carriage", 100, "Edit"},
-                {"Product 3", "Wagon", 86, "Edit"},
-                {"Product 4", "Controller", 15, "Edit"},
-                // This is for example only
-        };
-        */
+            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            tableModel.addRow(rowData);
+            //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
+        }
 
-        //JTable table = new JTable(data, columnNames);
-        //JScrollPane scrollPane = new JScrollPane(table);
-        //scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        //add(scrollPane, BorderLayout.CENTER);
+    }
+    private String determineCustomCategory(String productCode) {
+        // Check if the productCode starts with the letter 'L'
+        if (productCode.startsWith("L")) {
+            return "Locomotive";
+        } else if (productCode.startsWith("C")) {
+            return "Carriage";
+        } else if (productCode.startsWith("W")) {
+            return "Wagon";
+        } else if (productCode.startsWith("S")) {
+            return "Starter Oval TrackPack";
+        } else if (productCode.startsWith("E")) {
+            return "Extension TrackPack";
+        } else {
+                // Add more custom category conditions as needed
+            return "Other Category";
+        }
 
     }
 }
