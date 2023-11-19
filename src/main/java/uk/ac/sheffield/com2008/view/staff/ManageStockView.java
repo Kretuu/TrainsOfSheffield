@@ -5,11 +5,8 @@ import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -27,28 +24,18 @@ public class ManageStockView extends StaffView {
     public void initializeUI() {
         setLayout(new BorderLayout());
 
-        // Create a JPanel for the top section
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // top panel
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
 
-        // Create a Jpanel for the filter section
-        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Using FlowLayout to align components horizontally
-        filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        //Create a label for products in stock
+        JLabel viewLabel = new JLabel("Products In Stock");
+        row1.add(viewLabel);
+        topPanel.add(row1);
 
-        // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-
-
-        // Create a label for products in stock
-        JLabel welcomeLabel = new JLabel("Products in Stock");
-        topPanel.add(welcomeLabel, BorderLayout.WEST);
-
-        // Create a Logout button
-        JButton logoutButton = new JButton("Logout");
-        topPanel.add(logoutButton, BorderLayout.EAST);
-
-        // Create a Product Record button
         JButton productRecordButton = new JButton("Product Record");
         bottomPanel.add(productRecordButton);
 
@@ -56,23 +43,32 @@ public class ManageStockView extends StaffView {
         JButton manageOrderButton = new JButton("Manage Order");
         bottomPanel.add(manageOrderButton);
 
+
         // Add indentation between buttons using EmptyBorder
         int buttonIndentation = 10;
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));
 
+
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Carriage", "Wagon", "Starter Oval TrackPack", "Extension TrackPack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
+
+
         // Add the filter panel to the frame
         filterPanel.add(filterLabel);
         filterPanel.add(filterComboBox);
-        topPanel.add(filterPanel, BorderLayout.SOUTH);
-        // Add the top panel to the top of the frame
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+        topPanel.add(filterPanel);
         add(topPanel, BorderLayout.NORTH);
+        //topPanel.add(filterPanel, BorderLayout.SOUTH);
+
+
         // Add the bottom panel to the bottom of the frame
         add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
 
 
         // Create a JPanel for the scroll panel with product labels
@@ -109,8 +105,8 @@ public class ManageStockView extends StaffView {
         JScrollPane scrollPane = new JScrollPane(table);
         productPanel.add(scrollPane);
         this.add(productPanel);
+        productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        // Set up the Product Record button action
         productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCTRECORD));
 
         // Add an ActionListener to the filter combo box
@@ -184,4 +180,3 @@ public class ManageStockView extends StaffView {
 
     }
 }
-
