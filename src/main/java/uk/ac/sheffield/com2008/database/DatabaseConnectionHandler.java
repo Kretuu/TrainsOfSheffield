@@ -83,4 +83,17 @@ public class DatabaseConnectionHandler {
             return statement.executeUpdate() > 0;
         }
     }
+
+    public static boolean delete(String query, Object... params) throws SQLException {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)
+        ) {
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+
+            return statement.executeUpdate() > 0;
+        }
+    }
 }
