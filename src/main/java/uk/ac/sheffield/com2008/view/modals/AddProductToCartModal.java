@@ -26,23 +26,29 @@ public class AddProductToCartModal extends JDialog {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
         // Create a panel to hold the content
         JPanel panel = new JPanel(new BorderLayout());
+
         // Give the panel some padding
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         panel.setBorder(emptyBorder);
+
         // Create a panel for the top section
         JPanel topPanel = new JPanel(new BorderLayout());
+
         // Create "Add To Cart" label at the top
         JLabel titleLabel = new JLabel("Add To Cart:");
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 16));
         topPanel.add(titleLabel, BorderLayout.NORTH);
+
         // Create a label that can be customized
         productName = new JLabel(product.printName());
         topPanel.add(productName, BorderLayout.CENTER);
         panel.add(topPanel, BorderLayout.NORTH);
+
         // Create a panel for quantity and add to cart button
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
         // Create "Quantity:" label
         JLabel quantityLabel = new JLabel("Quantity:");
         buttonPanel.add(quantityLabel);
@@ -71,6 +77,7 @@ public class AddProductToCartModal extends JDialog {
             updateTotalPrice(newPrice);
         });
         buttonPanel.add(quantitySpinner);
+
         // Create "Add To Cart" button
         JButton addToCartButton = new JButton("Add To Cart");
         addToCartButton.addActionListener(e -> {
@@ -79,11 +86,30 @@ public class AddProductToCartModal extends JDialog {
             dispose();
         });
         buttonPanel.add(addToCartButton);
-        JPanel totalPricePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+
+        JPanel summaryInfoPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+
         totalPriceLabel = new JLabel("Total Price: " + product.getPrice());
-        totalPricePanel.add(totalPriceLabel);
-        panel.add(totalPricePanel, BorderLayout.SOUTH);
-        bottomPanel.add(totalPricePanel);
+        JLabel stockInBasketLabel = new JLabel("already in basket: " + quantityInBasket);
+        stockInBasketLabel.setForeground(new Color(117, 117, 117));
+        //totalPriceLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        //stockInBasketLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        if(quantityInBasket > 0){
+            summaryInfoPanel.add(stockInBasketLabel, gbc);
+        }
+        if(product.getStock() - quantityInBasket > 0){
+            gbc.gridy++;
+            summaryInfoPanel.add(totalPriceLabel, gbc);
+        }
+
+        summaryInfoPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        bottomPanel.add(summaryInfoPanel);
         bottomPanel.add(buttonPanel);
 
         if(stockAvailableToAdd == 0){
@@ -101,13 +127,10 @@ public class AddProductToCartModal extends JDialog {
 
         // Set panel to the content pane of the dialog
         setContentPane(panel);
-        // Set the minimum size to ensure it doesn't become too small
         setMinimumSize(new Dimension(300, 200));
-        // Set the maximum size to ensure it doesn't expand too much vertically
-        // Adjust the maximum height according to your requirements
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
         setResizable(false);
-        setLocationRelativeTo(parentFrame); // Center the dialog relative to the parent frame
+        setLocationRelativeTo(parentFrame);
     }
 
     private void updateTotalPrice(float newPrice){

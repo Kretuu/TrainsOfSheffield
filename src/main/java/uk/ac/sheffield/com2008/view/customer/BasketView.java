@@ -44,6 +44,9 @@ public class BasketView extends CustomerView{
             orderLines  = (ArrayList<OrderLine>) userBasket.getOrderLines();
         }
 
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
         // Create a JPanel for the scroll panel with orderline rows
         JPanel basketPanel = new JPanel();
         basketPanel.setLayout(new GridBagLayout());
@@ -57,12 +60,20 @@ public class BasketView extends CustomerView{
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         basketPanel.setBorder(emptyBorder);
 
+        JLabel basketTitle = new JLabel("Your Basket");
+        basketTitle.setFont(basketTitle.getFont().deriveFont(Font.BOLD, 24));
+        basketTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        Border titleBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+        basketTitle.setBorder(titleBorder);
+
+        topPanel.add(basketTitle, BorderLayout.NORTH);
+
         //create orderlines
         for(OrderLine orderLine : orderLines){
 
             Product lineProduct = orderLine.getProduct();
             JLabel orderLineText = new JLabel(lineProduct.getName());
-            JLabel orderLineUnitPrice = new JLabel(lineProduct.getPrice() + " x ");
+            JLabel orderLineUnitPrice = new JLabel(Symbols.getChar("£") + lineProduct.getPrice() + " x ");
             orderLineUnitPrice.setForeground(new Color(117, 117, 117));
 
             JLabel orderLineTotalPrice = new JLabel(Symbols.getChar("£") + roundToDecimalPlaces(
@@ -120,11 +131,13 @@ public class BasketView extends CustomerView{
             JScrollPane scrollPane = new JScrollPane(basketPanel);
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-            add(scrollPane, BorderLayout.NORTH);
+            topPanel.add(scrollPane, BorderLayout.CENTER);
         }
         else{
 
         }
+
+        add(topPanel, BorderLayout.NORTH);
 
         //total cost and confirm order button
         JPanel bottomSection = new JPanel();
