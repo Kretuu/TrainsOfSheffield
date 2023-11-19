@@ -1,5 +1,6 @@
 package uk.ac.sheffield.com2008.view.customer;
 
+import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
@@ -17,6 +18,7 @@ import static uk.ac.sheffield.com2008.util.math.Rounding.roundToDecimalPlaces;
 
 public class BasketView extends CustomerView{
     BasketViewController basketViewController;
+    JLabel totalTextLabel;
     public BasketView(BasketViewController basketViewController){
         super();
         this.basketViewController = basketViewController;
@@ -26,6 +28,11 @@ public class BasketView extends CustomerView{
     public void onRefresh(){
         removeAll();
         InitializeUI();
+        revalidate();
+        repaint();
+
+        String orderTotal = "Total: " + Symbols.getChar("£") + roundToDecimalPlaces(basketViewController.getBasket().getTotalPrice(), 2);
+        totalTextLabel.setText(orderTotal);
     }
 
     public void InitializeUI(){
@@ -36,8 +43,6 @@ public class BasketView extends CustomerView{
         if(userBasket != null){
             orderLines  = (ArrayList<OrderLine>) userBasket.getOrderLines();
         }
-
-        orderLines.forEach(orderLine -> System.out.println(orderLine.getProduct().getName()));
 
         // Create a JPanel for the scroll panel with orderline rows
         JPanel basketPanel = new JPanel();
@@ -60,8 +65,8 @@ public class BasketView extends CustomerView{
             JLabel orderLineUnitPrice = new JLabel(lineProduct.getPrice() + " x ");
             orderLineUnitPrice.setForeground(new Color(117, 117, 117));
 
-            JLabel orderLineTotalPrice = new JLabel(String.valueOf(roundToDecimalPlaces(
-                    lineProduct.getPrice() * orderLine.getQuantity(), 2)));
+            JLabel orderLineTotalPrice = new JLabel(Symbols.getChar("£") + roundToDecimalPlaces(
+                    lineProduct.getPrice() * orderLine.getQuantity(), 2));
             orderLineTotalPrice.setFont(orderLineTotalPrice.getFont().deriveFont(Font.BOLD, 12));
 
             //Quantity Spinner
@@ -75,18 +80,7 @@ public class BasketView extends CustomerView{
                     1);
             JSpinner quantitySpinner = new JSpinner(spinnerModel);
             quantitySpinner.addChangeListener(e -> {
-                //should also change the orderLineTotalPrice
-
-                // TODO: OrderLine setQuantity, recalculate price
-                // TODO: Order reculculate price, save both
-
-                String orderLineTotal = String.valueOf(roundToDecimalPlaces(
-                        (int) spinnerModel.getValue() * lineProduct.getPrice(), 2));
-                orderLineTotalPrice.setText(orderLineTotal);
-                //which in turns changes to overall total cost of the order
-
-                //changing the quantity here should change the database quantity as well as
-                //quantity in the order object.
+                changeQuantityOfOrderline(orderLine, (int) spinnerModel.getValue(), orderLineTotalPrice);
             });
 
             gbc.anchor = GridBagConstraints.WEST;
@@ -109,7 +103,7 @@ public class BasketView extends CustomerView{
             // Add the delete button at the end of the row
             JButton deleteButton = new JButton("X");
             deleteButton.addActionListener(e -> {
-
+                deleteOrderline(orderLine);
             });
             gbc.gridx = GridBagConstraints.RELATIVE; // Move to the next cell
             gbc.anchor = GridBagConstraints.CENTER;
@@ -122,9 +116,54 @@ public class BasketView extends CustomerView{
         }
 
         // Create a JScrollPane and set the basket panel as its view
-        JScrollPane scrollPane = new JScrollPane(basketPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        if(!orderLines.isEmpty()){
+            JScrollPane scrollPane = new JScrollPane(basketPanel);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        add(scrollPane, BorderLayout.NORTH);
+            add(scrollPane, BorderLayout.NORTH);
+        }
+        else{
+
+        }
+
+        //total cost and confirm order button
+        JPanel bottomSection = new JPanel();
+        // Create empty border for inner padding
+        Border emptyBorder2 = BorderFactory.createEmptyBorder(5, 0, 70, 30);
+        bottomSection.setBorder(emptyBorder2);
+        bottomSection.setLayout(new BoxLayout(bottomSection, BoxLayout.Y_AXIS));
+        totalTextLabel = new JLabel("Total: ");
+        totalTextLabel.setFont(totalTextLabel.getFont().deriveFont(Font.BOLD, 24));
+
+        JButton confirmButton = new JButton("Confirm & Pay");
+        confirmButton.setFont(confirmButton.getFont().deriveFont(Font.BOLD, 24));
+        confirmButton.addActionListener(e -> {
+            confirmOrderButton();
+        });
+
+        // Set alignments to right
+        totalTextLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        confirmButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        bottomSection.add(totalTextLabel);
+        bottomSection.add(Box.createVerticalStrut(10));
+        bottomSection.add(confirmButton);
+        add(bottomSection, BorderLayout.SOUTH);
+    }
+
+    private void changeQuantityOfOrderline(OrderLine orderLine, int qty, JLabel orderLineTotalLabel){
+        basketViewController.changeOrderlineQuantity(orderLine, qty);
+        String orderLineTotal = Symbols.getChar("£") + roundToDecimalPlaces(orderLine.getPrice(), 2);
+        orderLineTotalLabel.setText(orderLineTotal);
+        String orderTotal = "Total: " + Symbols.getChar("£") + roundToDecimalPlaces(basketViewController.getBasket().getTotalPrice(), 2);
+        totalTextLabel.setText(orderTotal);
+    }
+
+    private void deleteOrderline(OrderLine orderLine){
+        basketViewController.deleteOrderline(orderLine);
+    }
+
+    private void confirmOrderButton(){
+        basketViewController.confirmOrder();
     }
 }

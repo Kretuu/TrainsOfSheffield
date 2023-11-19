@@ -20,6 +20,8 @@ public class BrowseItemsView extends CustomerView {
     public void onRefresh(){
         removeAll();
         InitializeUI();
+        revalidate();
+        repaint();
     }
 
     public void InitializeUI(){

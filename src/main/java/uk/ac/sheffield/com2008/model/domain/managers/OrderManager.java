@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.model.domain.managers;
 
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
+import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
@@ -23,8 +24,6 @@ public class OrderManager {
         return OrderDAO.getUsersBasket(user);
     }
 
-    //TODO: Function that returns a list of orderlines for given order
-
     /**
      * Add an orderline to a given order
      * @param order order to add to
@@ -44,9 +43,35 @@ public class OrderManager {
      * @param newQuantity new quantity of product
      */
     public static void modifyProductQuantity(Order order, Product product, int newQuantity){
-        order.modifyQuantity(product, newQuantity);
-        OrderDAO.updateOrderLineQuantity(order, product);
+        OrderLine modifiedOrderLine = order.getOrderLineFromProduct(product);
+        if(modifiedOrderLine == null) {
+            throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
+        }
+        order.modifyQuantity(modifiedOrderLine, newQuantity);
+        OrderDAO.updateOrderLineEntirely(order, modifiedOrderLine);
         OrderDAO.updateOrderTotalPrice(order);
+    }
+
+    /**
+     *  removes from given order the given orderline in the object then from
+     *  the database
+     * @param order order in question
+     * @param orderLine orderline to remove
+     */
+    public static void deleteOrderline(Order order, OrderLine orderLine){
+        order.removeOrderline(orderLine);
+        OrderDAO.deleteOrderline(order, orderLine);
+        OrderDAO.updateOrderTotalPrice(order);
+    }
+
+    /**
+     * Takes the entire order and updates it in the database.
+     * Takes each associated orderline and does the same.
+     */
+    public static void saveFullOrderState(Order order){
+        order.calculateTotalPrice();
+        OrderDAO.updateAllOrderlinesEntirely(order);
+        OrderDAO.updateOrderEntirely(order);
     }
 
     /**
