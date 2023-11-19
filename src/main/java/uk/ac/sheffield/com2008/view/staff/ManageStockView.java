@@ -76,7 +76,7 @@ public class ManageStockView extends StaffView {
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
         productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columnNames = {"Product Code","Products in Stock", "Category", "Quantity", "Action"};
+        String[] columnNames = {"Product Code","Product Name", "Category", "Quantity", "Action"};
 
         // Create a DefaultTableModel with column names and no data initially
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
