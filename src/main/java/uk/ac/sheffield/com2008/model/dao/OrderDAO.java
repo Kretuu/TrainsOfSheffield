@@ -112,15 +112,15 @@ public class OrderDAO {
      * Given an Order and Product, updates the orderLine in the dabatase
      * to match the quantity and totalprice of the Product in the Order
      */
-    public static void updateOrderLineQuantity(Order order, Product product){
+    public static void updateOrderLineEntirely(Order order, OrderLine orderline){
         String updateQuery = "UPDATE OrderLines SET quantity = ?, orderPrice = ? WHERE orderNumber = ? AND productCode = ?";
         try {
             DatabaseConnectionHandler.update(
                     updateQuery,
-                    order.getProductQuantity(product),
-                    order.getOrderLinePrice(product),
+                    orderline.getQuantity(),
+                    orderline.getPrice(),
                     order.getOrderNumber(),
-                    product.getProductCode()
+                    orderline.getProduct().getProductCode()
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -135,6 +135,51 @@ public class OrderDAO {
                     updateQuery,
                     order.getTotalPrice(),
                     order.getOrderNumber()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * update the entire order by specifying each column
+     */
+    public static void updateOrderEntirely(Order order){
+        String updateQuery = "UPDATE Orders SET dateOrdered = ?, status = ?, totalPrice = ? WHERE orderNumber = ?";
+        try {
+            DatabaseConnectionHandler.update(
+                    updateQuery,
+                    order.getDateOrdered(),
+                    order.getStatus().toString(),
+                    order.getTotalPrice(),
+                    order.getOrderNumber()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * update every single orderlines price and quantity in db for this order
+     */
+    public static void updateAllOrderlinesEntirely(Order order){
+        for(OrderLine orderLine : order.getOrderLines()){
+            updateOrderLineEntirely(order, orderLine);
+        }
+    }
+
+    /**
+     * Removes given orderline from the database
+     * @param order
+     * @param orderline
+     */
+    public static void deleteOrderline(Order order, OrderLine orderline){
+        String deleteQuery = "DELETE FROM OrderLines WHERE orderNumber = ? AND productCode = ?";
+        try {
+            DatabaseConnectionHandler.update(
+                    deleteQuery,
+                    order.getOrderNumber(),
+                    orderline.getProduct().getProductCode()
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
