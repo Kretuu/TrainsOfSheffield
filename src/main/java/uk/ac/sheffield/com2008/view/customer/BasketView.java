@@ -8,8 +8,12 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
+
+import static uk.ac.sheffield.com2008.util.math.Rounding.roundToDecimalPlaces;
 
 public class BasketView extends CustomerView{
     BasketViewController basketViewController;
@@ -52,16 +56,55 @@ public class BasketView extends CustomerView{
         for(OrderLine orderLine : orderLines){
 
             Product lineProduct = orderLine.getProduct();
-            JLabel orderLineName = new JLabel(lineProduct.getName());
-            JLabel orderLineQty = new JLabel(String.valueOf(orderLine.getQuantity()));
+            JLabel orderLineText = new JLabel(lineProduct.getName());
+            JLabel orderLineUnitPrice = new JLabel(lineProduct.getPrice() + " x ");
+            orderLineUnitPrice.setForeground(new Color(117, 117, 117));
+
+            JLabel orderLineTotalPrice = new JLabel(String.valueOf(roundToDecimalPlaces(
+                    lineProduct.getPrice() * orderLine.getQuantity(), 2)));
+            orderLineTotalPrice.setFont(orderLineTotalPrice.getFont().deriveFont(Font.BOLD, 12));
+
+            //Quantity Spinner
+            int quantityInOrderline = orderLine.getQuantity();
+            int maxStock = lineProduct.getStock();
+
+            SpinnerModel spinnerModel = new SpinnerNumberModel(
+                    quantityInOrderline,
+                    1,
+                    maxStock,
+                    1);
+            JSpinner quantitySpinner = new JSpinner(spinnerModel);
+            quantitySpinner.addChangeListener(e -> {
+                //should also change the orderLineTotalPrice
+
+                // TODO: OrderLine setQuantity, recalculate price
+                // TODO: Order reculculate price, save both
+
+                String orderLineTotal = String.valueOf(roundToDecimalPlaces(
+                        (int) spinnerModel.getValue() * lineProduct.getPrice(), 2));
+                orderLineTotalPrice.setText(orderLineTotal);
+                //which in turns changes to overall total cost of the order
+
+                //changing the quantity here should change the database quantity as well as
+                //quantity in the order object.
+            });
 
             gbc.anchor = GridBagConstraints.WEST;
-            basketPanel.add(orderLineName, gbc);
+            basketPanel.add(orderLineText, gbc);
 
-            gbc.gridx = GridBagConstraints.RELATIVE;
+            gbc.gridx++;
             gbc.weightx = 1.0;
             gbc.anchor = GridBagConstraints.EAST;
-            basketPanel.add(orderLineQty, gbc);
+            basketPanel.add(orderLineUnitPrice, gbc);
+
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.EAST;
+            gbc.weightx = 0.0;
+            basketPanel.add(quantitySpinner, gbc);
+
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.EAST;
+            basketPanel.add(orderLineTotalPrice, gbc);
 
             // Add the delete button at the end of the row
             JButton deleteButton = new JButton("X");
@@ -69,7 +112,6 @@ public class BasketView extends CustomerView{
 
             });
             gbc.gridx = GridBagConstraints.RELATIVE; // Move to the next cell
-            gbc.weightx = 0.0; // Reset the weight
             gbc.anchor = GridBagConstraints.CENTER;
             basketPanel.add(deleteButton, gbc);
 

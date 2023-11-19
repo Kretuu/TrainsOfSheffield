@@ -64,25 +64,19 @@ public class AddProductToCartModal extends JDialog {
                 stockAvailableToAdd,
                 1);
         quantitySpinner = new JSpinner(spinnerModel);
-        quantitySpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                // Method called when the spinner value changes
-                selectedQuantity = (int) quantitySpinner.getValue();
-                float newPrice = product.getPrice() * selectedQuantity;
-                updateTotalPrice(newPrice);
-            }
+        quantitySpinner.addChangeListener(e -> {
+            // Method called when the spinner value changes
+            selectedQuantity = (int) quantitySpinner.getValue();
+            float newPrice = product.getPrice() * selectedQuantity;
+            updateTotalPrice(newPrice);
         });
         buttonPanel.add(quantitySpinner);
         // Create "Add To Cart" button
         JButton addToCartButton = new JButton("Add To Cart");
-        addToCartButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                browseItemsController.addProductToBasket(product, selectedQuantity);
-                // Close the modal dialog
-                dispose();
-            }
+        addToCartButton.addActionListener(e -> {
+            browseItemsController.addProductToBasket(product, selectedQuantity);
+            // Close the modal dialog
+            dispose();
         });
         buttonPanel.add(addToCartButton);
         JPanel totalPricePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
