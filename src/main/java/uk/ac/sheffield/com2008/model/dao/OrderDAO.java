@@ -1,7 +1,6 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
-import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
@@ -24,7 +23,14 @@ public class OrderDAO {
         parameters.put("userUUID", user.getUuid());
         parameters.put("status", "PENDING");
 
-        return getOrderByFields(parameters);
+        return getFirstOrderByFields(parameters);
+    }
+
+    public static List<Order> getUserOrdersHistory(User user) {
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("userUUID", user.getUuid());
+
+        return getOrderListByFields(parameters);
     }
 
 
@@ -33,7 +39,13 @@ public class OrderDAO {
      * @param fieldsMap parameters where key is column name in database and value is corresponding value
      * @return Order if there was found matching order, null otherwise
      */
-    private static Order getOrderByFields(LinkedHashMap<String, String> fieldsMap) {
+    private static Order getFirstOrderByFields(LinkedHashMap<String, String> fieldsMap) {
+        List<Order> orders = getOrderListByFields(fieldsMap);
+        if(orders.isEmpty()) return null;
+        return orders.get(0);
+    }
+
+    private static List<Order> getOrderListByFields(LinkedHashMap<String, String> fieldsMap) {
         //Building query with all parameters provided in map. Using StringBuilder to improve performance.
         StringBuilder orderQueryBuilder = new StringBuilder();
         orderQueryBuilder.append("SELECT * FROM Orders ")
@@ -54,19 +66,26 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("orders");
+        System.out.println(orders);
 
         //Return null if no order matching given parameters was found.
-        if(orders.isEmpty()) return null;
+        if(orders.isEmpty()) return orders;
 
-        //Otherwise, get first order and merge all other Order objects which differ only by OrderLines
-        Order firstOrder = orders.get(0);
-        if(orders.size() == 1) return firstOrder;
+        Order currentOrder = null;
+        int currentOrderId = 0;
+        List<Order> parsedOrders = new ArrayList<>();
+        for(Order order : orders) {
+            if(currentOrder != null && order.getOrderNumber() == currentOrderId) {
+                currentOrder.getOrderLines().addAll(order.getOrderLines());
+                continue;
+            }
+            currentOrder = order;
+            currentOrderId = order.getOrderNumber();
+            parsedOrders.add(currentOrder);
+        }
 
-        List<OrderLine> allOrderLines = new ArrayList<>();
-        orders.forEach(order -> allOrderLines.addAll(order.getOrderLines()));
-        firstOrder.setOrderLines(allOrderLines);
-
-        return firstOrder;
+        return parsedOrders;
     }
 
     /**

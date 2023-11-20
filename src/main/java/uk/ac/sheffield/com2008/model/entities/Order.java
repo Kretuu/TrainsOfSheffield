@@ -34,6 +34,22 @@ public class Order {
         return orderLines;
     }
 
+    public Date getDateOrdered() {
+        return dateOrdered;
+    }
+
+    public void setDateOrdered(Date dateOrdered) {
+        this.dateOrdered = dateOrdered;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     /**
      * add single OrderLine object to list
      * @param orderLine OrderLine
@@ -174,5 +190,13 @@ public class Order {
 //        orderLines.forEach((product, quantity) -> {
 //            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + quantity);
 //        });
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Order o)) return false;
+        return new HashSet<>(o.getOrderLines()).equals(new HashSet<>(this.orderLines))
+                && o.getOrderNumber() == this.orderNumber && o.getTotalPrice() == this.totalPrice
+                && o.getDateOrdered() == this.dateOrdered && o.getStatus().equals(this.status);
     }
 }

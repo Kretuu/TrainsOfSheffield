@@ -14,6 +14,7 @@ import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.auth.AuthView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,5 +76,9 @@ public class NavigationManager {
 
     public ViewController getCurrentController() {
         return controllers.get(currentView);
+    }
+
+    public Dimension getViewPortDimension() {
+        return frame.getSize();
     }
 }

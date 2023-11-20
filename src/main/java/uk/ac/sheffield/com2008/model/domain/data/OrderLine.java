@@ -39,4 +39,10 @@ public class OrderLine {
         this.quantity = quantity;
         this.price = product.getPrice() * quantity;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof OrderLine ol)) return false;
+        return ol.getPrice() == this.price && ol.getQuantity() == this.quantity && ol.getProduct().equals(this.product);
+    }
 }

@@ -21,6 +21,7 @@ public class SignupController extends ViewController {
     public void signup(String email, char[] password, String firstname, String surname) {
         try {
             authenticationManager.registerUser(email, password, firstname, surname);
+            signupView.updateErrorMessage(" ");
             navigation.navigate(Navigation.CUSTOMER);
         } catch (EmailAlreadyInUseException e) {
             signupView.updateErrorMessage(e.getMessage());
