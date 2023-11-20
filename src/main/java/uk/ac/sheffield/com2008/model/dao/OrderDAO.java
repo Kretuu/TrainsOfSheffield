@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
+import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;

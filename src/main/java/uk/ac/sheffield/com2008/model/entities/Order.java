@@ -161,8 +161,6 @@ public class Order {
     public int getOrderNumber(){
         return orderNumber;
     }
-    public Date getDateOrdered(){return dateOrdered;}
-    public Status getStatus(){return status;}
 
     @Override
     public String toString(){
