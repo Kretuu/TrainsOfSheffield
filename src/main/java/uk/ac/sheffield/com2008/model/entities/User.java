@@ -2,14 +2,19 @@ package uk.ac.sheffield.com2008.model.entities;
 
 public class User {
     private final String uuid;
-    private final String salt;
     private String email;
-    private String passwordHash;
     private Order basket;
     private PersonalDetails personalDetails;
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public User(String uuid, String email, Order basket, PersonalDetails personalDetails) {
+        this.uuid = uuid;
+        this.email = email;
+        this.basket = basket;
+        this.personalDetails = personalDetails;
+    }
+
+    public User(String uuid, String email, PersonalDetails personalDetails) {
+        this(uuid, email, null, personalDetails);
     }
 
     public String getEmail() {
@@ -20,29 +25,10 @@ public class User {
         return uuid;
     }
 
-    public User(
-            String uuid, String email,
-            String passwordHash, String salt, Order basket,
-            PersonalDetails personalDetails) {
-        this.uuid = uuid;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.salt = salt;
-        this.basket = basket;
-        this.personalDetails = personalDetails;
-    }
-
-    public User(String uuid, String email, String password, String salt,  PersonalDetails personalDetails) {
-        this(uuid, email, password, salt, null, personalDetails);
-    }
-
     public Order getBasket() {
         return basket;
     }
 
-    public String getSalt() {
-        return salt;
-    }
 
     public void setBasket(Order basket) {
         this.basket = basket;
@@ -54,5 +40,9 @@ public class User {
 
     public void setPersonalDetails(PersonalDetails personalDetails) {
         this.personalDetails = personalDetails;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

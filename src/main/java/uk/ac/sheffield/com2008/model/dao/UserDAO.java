@@ -1,8 +1,10 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
+import uk.ac.sheffield.com2008.model.domain.data.AuthUser;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.model.mappers.AuthUserMapper;
 import uk.ac.sheffield.com2008.model.mappers.UserMapper;
 import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
 
@@ -21,8 +23,11 @@ public class UserDAO {
     }
 
     private User getUserByField(String fieldName, Object value) {
-        String query = "SELECT * FROM Users LEFT OUTER JOIN BankingDetails " +
-                "ON Users.cardNumber=BankingDetails.cardNumber WHERE " + fieldName + " = ?";
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT uuid, email, forename, surname, Users.cardNumber, houseNumber, postcode, ")
+                .append("holderName, expiryDate, cvv FROM Users LEFT OUTER JOIN BankingDetails ON ")
+                .append("Users.cardNumber=BankingDetails.cardNumber WHERE ").append(fieldName).append(" = ?");
+        String query = queryBuilder.toString();
 
         List<User> users;
         try {
@@ -38,19 +43,27 @@ public class UserDAO {
     }
 
     public User verifyPassword(String userEmail, char[] password) {
-        User user = getUserByEmail(userEmail);
-        if(user == null) {
-            return null;
-        }
-        String passwordHash = HashedPasswordGenerator.hashPassword(password, user.getSalt());
+        String query = "SELECT password, salt FROM Users WHERE email = ?";
 
-        if(user.getPasswordHash().equals(passwordHash)) {
-            return user;
+        List<AuthUser> authUsers;
+        try {
+            AuthUserMapper mapper = new AuthUserMapper();
+            authUsers = DatabaseConnectionHandler.select(mapper, query, userEmail);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if(authUsers.isEmpty()) return null;
+
+        AuthUser authUser = authUsers.get(0);
+        String passwordHash = HashedPasswordGenerator.hashPassword(password, authUser.salt());
+
+        if(authUser.passwordHash().equals(passwordHash)) {
+            return getUserByEmail(userEmail);
         }
         return null;
     }
 
-    public void createUser(User user) {
+    public void createUser(User user, AuthUser authUser) {
         String query = "INSERT INTO Users (uuid, email, password, salt, forename, surname) VALUES (?, ?, ?, ?, ?, ?)";
         PersonalDetails details = user.getPersonalDetails();
 
@@ -59,8 +72,8 @@ public class UserDAO {
                     query,
                     user.getUuid(),
                     user.getEmail(),
-                    user.getPasswordHash(),
-                    user.getSalt(),
+                    authUser.passwordHash(),
+                    authUser.salt(),
                     details.getForename(),
                     details.getSurname()
             );
