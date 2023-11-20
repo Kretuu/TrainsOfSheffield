@@ -27,4 +27,8 @@ public abstract class ViewController {
     public void onNavigateTo(){
 
     }
+
+    public void onNavigateLeave() {
+
+    }
 }
