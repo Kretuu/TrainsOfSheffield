@@ -55,4 +55,8 @@ public class BasketViewController extends ViewController {
         OrderManager.saveFullOrderState(userBasket);
     }
 
+    public void onNavigateLeave(){
+        OrderManager.saveFullOrderState(userBasket);
+    }
+
 }
