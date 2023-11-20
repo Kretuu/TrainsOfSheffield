@@ -21,9 +21,15 @@ public class CustomTable<Type> extends JPanel {
     private Font defaultFont;
     private Border defaultBorder;
 
+    /**
+     * Create Custom Table. Type of object used to populate the table needs to be given
+     * and corresponding mapper
+     * @param columns LinkedList of CustomColumn which includes weight and colum name. Weight
+     *                determines how column widths should be weighted.
+     */
     public CustomTable(LinkedList<CustomColumn> columns) {
-        this.weights = columns.stream().map(CustomColumn::getWeight).collect(Collectors.toCollection(LinkedList::new));
-        this.headers = columns.stream().map(CustomColumn::getColumnName)
+        this.weights = columns.stream().map(CustomColumn::weight).collect(Collectors.toCollection(LinkedList::new));
+        this.headers = columns.stream().map(CustomColumn::columnName)
                 .collect(Collectors.toCollection(LinkedList::new));
         this.columns = columns.size();
         initialiseVariables();
@@ -43,17 +49,13 @@ public class CustomTable<Type> extends JPanel {
         );
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(constructHeader(), BorderLayout.NORTH);
         panel.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
         mainPanel.setBackground(Colors.TABLE_CONTENT);
 
-        add(panel);
+        add(new JScrollPane(mainPanel));
     }
 
-    private JPanel constructHeader() {
-        JPanel headerPanel = new JPanel(new GridBagLayout());
-        headerPanel.setBackground(Colors.TABLE_HEADER);
-
+    private void constructHeader() {
         int columnIndex = 0;
         GridBagConstraints c = new GridBagConstraints();
         for(String header : headers) {
@@ -62,23 +64,31 @@ public class CustomTable<Type> extends JPanel {
             c.weightx = weights.get(columnIndex);
             c.weighty = 0;
             c.fill = GridBagConstraints.HORIZONTAL;
-            c.anchor = GridBagConstraints.PAGE_START;
 
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setBackground(Colors.TABLE_HEADER);
             JLabel jLabel = new JLabel(header);
             jLabel.setFont(defaultFont);
             jLabel.setBorder(defaultBorder);
-            headerPanel.add(jLabel, c);
+            panel.add(jLabel);
+            mainPanel.add(panel, c);
             columnIndex++;
         }
-        return headerPanel;
     }
 
+    /**
+     * Function used to populate table with list of objects. Take in mind that this function
+     * purges the table and generates it from the very beginning.
+     * @param objects List of objects of type defined when initialising the Custom Table
+     * @param mapper Mapper associated with this object Type
+     */
     public void populateTable(List<Type> objects, TableMapper<Type> mapper){
         List<LinkedList<Object>> orderColumns = objects.stream().map(mapper::constructColumns).toList();
         mainPanel.removeAll();
+        constructHeader();
 
         GridBagConstraints c = new GridBagConstraints();
-        int rowIndex = 0;
+        int rowIndex = 1;
         for(LinkedList<Object> row : orderColumns) {
             if(row.size() != columns) throw new RuntimeException("Size of list is not compatible with this table");
             int columnIndex = 0;
@@ -111,7 +121,7 @@ public class CustomTable<Type> extends JPanel {
             rowIndex++;
         }
         Dimension preferredDimension = mainPanel.getPreferredSize();
-        preferredDimension.width = 1500;
+        preferredDimension.width = 1300;
         mainPanel.setPreferredSize(preferredDimension);
     }
 }

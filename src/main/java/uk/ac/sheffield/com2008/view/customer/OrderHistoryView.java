@@ -12,11 +12,13 @@ import java.util.List;
 
 public class OrderHistoryView extends CustomerView {
     private final OrderHistoryController controller;
+    private final OrderTableMapper mapper;
     private CustomTable<Order> customTable;
 
     public OrderHistoryView(OrderHistoryController controller) {
         super();
         this.controller = controller;
+        mapper = new OrderTableMapper();
 
         initialiseUI();
     }
@@ -29,7 +31,7 @@ public class OrderHistoryView extends CustomerView {
            add(new CustomColumn(0.2, "Date"));
            add(new CustomColumn(0.2, "Status"));
            add(new CustomColumn(0.2, "Total price"));
-           add(new CustomColumn(0.1, " "));
+           add(new CustomColumn(0.1, null));
         }};
         customTable = new CustomTable<>(columns);
         add(customTable);
@@ -37,7 +39,6 @@ public class OrderHistoryView extends CustomerView {
 
 
     public void populateList(List<Order> orders) {
-        OrderTableMapper mapper = new OrderTableMapper();
         customTable.populateTable(orders, mapper);
     }
 }
