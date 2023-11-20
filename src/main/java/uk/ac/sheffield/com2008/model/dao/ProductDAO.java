@@ -12,7 +12,7 @@ public class ProductDAO {
         return getProductByField("productCode", code);
     }
 
-    public static List<Product> getAllProducts(){
+    public static List<Product> getAllProducts() {
         String query = "SELECT * FROM Products";
         List<Product> products;
 
@@ -28,7 +28,7 @@ public class ProductDAO {
 
     public static List<Product> getProductsByCodes(String... productCodes) {
         StringBuilder stringBuilder = new StringBuilder("SELECT * FROM Products WHERE productCode IN (");
-        for(int i = 0; i < productCodes.length; i++) {
+        for (int i = 0; i < productCodes.length; i++) {
             stringBuilder.append("?, ");
         }
         stringBuilder.setLength(stringBuilder.length() - 2);
@@ -45,6 +45,7 @@ public class ProductDAO {
 
     /**
      * Gets first product that satisfies query
+     *
      * @param fieldName
      * @param value
      * @return
@@ -59,8 +60,25 @@ public class ProductDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if(productList.isEmpty()) return null;
+        if (productList.isEmpty()) return null;
 
         return productList.get(0);
     }
+
+    public static List<Product> getProductsByCategory(String initialLetter){
+        String query = "SELECT * FROM Products WHERE productCode LIKE ?";
+        List<Product> productList;
+        try {
+            ProductMapper mapper = new ProductMapper();
+            String categoryWildcard = initialLetter + "%";
+            productList = DatabaseConnectionHandler.select(mapper, query, categoryWildcard);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        //System.out.println("Query: " + query + " | Category: " + initialLetter);
+        //System.out.println("Result: " + productList);
+        return productList;
+    }
 }
+
+

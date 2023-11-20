@@ -14,7 +14,6 @@ public class StaffController extends ViewController {
         super(navigationManager, id);
         view = new ManageStockView(this);
         manageStockView = (ManageStockView) view;
-//        setFrameContent(manageStockView);
     }
 
 

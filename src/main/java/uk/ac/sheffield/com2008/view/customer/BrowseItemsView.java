@@ -20,6 +20,8 @@ public class BrowseItemsView extends CustomerView {
     public void onRefresh(){
         removeAll();
         InitializeUI();
+        revalidate();
+        repaint();
     }
 
     public void InitializeUI(){
@@ -44,8 +46,6 @@ public class BrowseItemsView extends CustomerView {
         basketButton.addActionListener(e -> browseItemsController.getNavigation().navigate(Navigation.BASKET));
 
         topPanel.add(topButtonsPanel, BorderLayout.EAST);
-
-        add(topPanel, BorderLayout.NORTH);
 
         // Create a JPanel for the scroll panel with product labels
         JPanel productPanel = new JPanel();
