@@ -40,7 +40,7 @@ public class AddProductToCartModal extends JDialog {
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Create a label that can be customized
-        productName = new JLabel(product.printName());
+        productName = new JLabel("<html><div style='width: 100%;'>" + product.printName() + "</div></html>");
         topPanel.add(productName, BorderLayout.CENTER);
         panel.add(topPanel, BorderLayout.NORTH);
 
