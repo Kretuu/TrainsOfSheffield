@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.model.entities.products;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Locomotive extends Product {
@@ -75,8 +76,13 @@ public class Locomotive extends Product {
      * @return list of objects that match the field needed for this class in the constructor
      */
     public static List<Object> parseName(String name){
-        List<Object> output = null;
+        String[] nameAttributes = name.split(",");
+        List<Object> output = new ArrayList<>();
 
+        output.add(nameAttributes[0]);
+        output.add(nameAttributes[1].equals("NULL") ? null : nameAttributes[1]);
+        output.add(Integer.parseInt(nameAttributes[2]));
+        output.add(Locomotive.DCCType.valueOf(nameAttributes[3]));
         return output;
     }
 

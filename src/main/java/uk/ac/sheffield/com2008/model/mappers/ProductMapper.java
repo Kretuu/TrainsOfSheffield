@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ProductMapper implements RowMapper<Product> {
     public Product mapResultSetToEntity(ResultSet resultSet) throws SQLException {
@@ -18,19 +19,18 @@ public class ProductMapper implements RowMapper<Product> {
         int stock = resultSet.getInt("stock");
 
         char productType = productCode.charAt(0);
-        String[] nameAttributes = name.split(",");
 
         //could refactor this so that each subclass has a function that takes the name
         //string and returns a list of objects?
 
         switch(productType){
             case 'L':
-                String brClass = nameAttributes[0];
-                String individualName = nameAttributes[1].equals("NULL") ? null : nameAttributes[1];
-                int era = Integer.parseInt(nameAttributes[2]);
-                Locomotive.DCCType dccType = Locomotive.DCCType.valueOf(nameAttributes[3]);
+                List<Object> parsedParams = Locomotive.parseName(name);
                 return new Locomotive(productCode, name, price, gauge, brand, isSet, stock,
-                        brClass, individualName, era, dccType);
+                        (String) parsedParams.get(0),
+                        (String) parsedParams.get(1),
+                        (int) parsedParams.get(2),
+                        (Locomotive.DCCType) parsedParams.get(3));
             default:
                 return new Product(productCode, name, price, gauge, brand, isSet, stock);
 
