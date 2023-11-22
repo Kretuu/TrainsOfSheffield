@@ -1,13 +1,11 @@
 package uk.ac.sheffield.com2008.model.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.products.Controller;
-import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
-import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
-import uk.ac.sheffield.com2008.model.entities.products.Track;
+import uk.ac.sheffield.com2008.model.entities.products.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +52,27 @@ public class ProductMapper implements RowMapper<Product> {
                 return new Controller(productCode, name, price, gauge, brand, isSet, stock,
                         (String) parsedParams.get(0),
                         (Controller.PowerType) parsedParams.get(1));
+            }
+            case 'M':{
+                List<Object> parsedParams = TrainSet.parseName(name);
+                return new TrainSet(productCode, name, price, gauge, brand, isSet, stock,
+                        (String) parsedParams.get(0),
+                        new ArrayList<>());
+            }
+            case 'P':{
+                List<Object> parsedParams = TrackPack.parseName(name);
+                TrackPack.TrackPackType type = TrackPack.TrackPackType.valueOf((String) parsedParams.get(1));
+                if(type == TrackPack.TrackPackType.STARTER){
+                    return new StarterOvalTrackPack(productCode, name, price, gauge, brand, isSet, stock,
+                            (String) parsedParams.get(0),
+                            type,
+                            new ArrayList<>());
+                }else{
+                    return new ExtensionTrackPack(productCode, name, price, gauge, brand, isSet, stock,
+                            (String) parsedParams.get(0),
+                            type,
+                            new ArrayList<>());
+                }
             }
             default:
                 return new Product(productCode, name, price, gauge, brand, isSet, stock);
