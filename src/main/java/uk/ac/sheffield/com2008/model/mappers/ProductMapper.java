@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.model.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.Controller;
 import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
 import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
 import uk.ac.sheffield.com2008.model.entities.products.Track;
@@ -47,6 +48,12 @@ public class ProductMapper implements RowMapper<Product> {
                 return new Track(productCode, name, price, gauge, brand, isSet, stock,
                         (String) parsedParams.get(0),
                         (Track.TrackType) parsedParams.get(1));
+            }
+            case 'C':{
+                List<Object> parsedParams = Controller.parseName(name);
+                return new Controller(productCode, name, price, gauge, brand, isSet, stock,
+                        (String) parsedParams.get(0),
+                        (Controller.PowerType) parsedParams.get(1));
             }
             default:
                 return new Product(productCode, name, price, gauge, brand, isSet, stock);

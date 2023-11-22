@@ -5,27 +5,28 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Track extends Product {
+public class Controller extends Product {
+    private String descriptor;
+    public enum PowerType{ANALOGUE,DIGITAL};
+    private PowerType powerType;
 
-    private String descriptor; //eg Single, Double, Left-Hand Crossover, etc..
-    public enum TrackType {STRAIGHT, CURVE};
-    private TrackType trackType;
-    public Track(String productCode,
-                 String name,
-                 float price,
-                 Gauge gauge,
-                 String brand,
-                 boolean isSet,
-                 int stock,
-                 String descriptor,
-                 TrackType trackType) {
+    public Controller(
+            String productCode,
+            String name,
+            float price,
+            Gauge gauge,
+            String brand,
+            boolean isSet,
+            int stock,
+            String descriptor,
+            PowerType powerType) {
         super(productCode, name, price, gauge, brand, isSet, stock);
         this.descriptor = descriptor;
-        this.trackType = trackType;
+        this.powerType = powerType;
     }
 
     /**
-     * returns the presentable way of displaying a Locomotive
+     * returns the presentable way of displaying a Controller
      * Used for PRINTING the name out in the GUI
      * @return
      */
@@ -38,12 +39,12 @@ public class Track extends Product {
      * @return
      */
     public String deriveName(){
-        return descriptor + trackType;
+        return descriptor + powerType;
     }
 
     /**
      * Takes the database name
-     * @param name name in database format (e.g "3rd Radius Single Curve,CURVE")
+     * @param name name in database format (e.g "DCC Controller,DIGITAL")
      * @return list of objects that match the field needed for this class in the constructor
      */
     public static List<Object> parseName(String name){
@@ -51,7 +52,7 @@ public class Track extends Product {
         List<Object> output = new ArrayList<>();
 
         output.add(nameAttributes[0]);
-        output.add(TrackType.valueOf(nameAttributes[1]));
+        output.add(PowerType.valueOf(nameAttributes[1]));
         return output;
     }
 }
