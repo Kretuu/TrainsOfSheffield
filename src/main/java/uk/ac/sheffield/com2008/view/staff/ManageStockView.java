@@ -51,7 +51,7 @@ public class ManageStockView extends StaffView {
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Locomotive", "Carriage", "Wagon", "Starter Oval TrackPack", "Extension TrackPack"};
+        String[] categories = {"All", "Track", "Locomotive", "Controller", "Rolling Stocks", "Train Sets", "Train Packs"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
@@ -107,7 +107,9 @@ public class ManageStockView extends StaffView {
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
+
+        manageOrderButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.MANAGE_ORDER));
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
@@ -117,20 +119,25 @@ public class ManageStockView extends StaffView {
             // Call the filter method based on the selected starting letter
             filterTableByCategory(tableModel, initialLetter);
         });
+
+        // Disable column dragging
+        table.getTableHeader().setReorderingAllowed(false);
     }
 
     // Method to get the initial letter based on the selected category
     private String getInitialLetter(String selectedCategory) {
         if ("Locomotive".equals(selectedCategory)) {
             return "L";
-        } else if ("Carriage".equals(selectedCategory)) {
+        } else if ("Controller".equals(selectedCategory)) {
             return "C";
-        } else if ("Wagon".equals(selectedCategory)) {
-            return "W";
-        }else if ("Starter Oval TrackPack".equals(selectedCategory)) {
+        } else if ("Track".equals(selectedCategory)) {
+            return "R";
+        }else if ("Rolling Stocks".equals(selectedCategory)) {
             return "S";
-        }else if ("Extension TrackPack".equals(selectedCategory)) {
-            return "E";
+        }else if ("Train Sets".equals(selectedCategory)) {
+            return "M";
+        }else if ("Train Packs".equals(selectedCategory)) {
+            return "P";
         } else {
             return "";
         }
@@ -166,15 +173,16 @@ public class ManageStockView extends StaffView {
         if (productCode.startsWith("L")) {
             return "Locomotive";
         } else if (productCode.startsWith("C")) {
-            return "Carriage";
-        } else if (productCode.startsWith("W")) {
-            return "Wagon";
+            return "Controller";
+        } else if (productCode.startsWith("R")) {
+            return "Track";
         } else if (productCode.startsWith("S")) {
-            return "Starter Oval TrackPack";
-        } else if (productCode.startsWith("E")) {
-            return "Extension TrackPack";
+            return "Rolling Stocks";
+        } else if (productCode.startsWith("M")) {
+            return "Train Sets";
+        } else if (productCode.startsWith("P")) {
+            return "Train Packs";
         } else {
-                // Add more custom category conditions as needed
             return "Other Category";
         }
 
