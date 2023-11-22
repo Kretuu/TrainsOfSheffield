@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.model.mappers;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
 import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
+import uk.ac.sheffield.com2008.model.entities.products.Track;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,13 +35,19 @@ public class ProductMapper implements RowMapper<Product> {
                         (String) parsedParams.get(1),
                         (int) parsedParams.get(2),
                         (Locomotive.DCCType) parsedParams.get(3));}
-            case 'R':{
+            case 'S':{
                 List<Object> parsedParams = RollingStock.parseName(name);
                 return new RollingStock(productCode, name, price, gauge, brand, isSet, stock,
                         (String) parsedParams.get(0),
                         (String) parsedParams.get(1),
                         (RollingStock.Class_) parsedParams.get(2),
                         (int) parsedParams.get(3));}
+            case 'R':{
+                List<Object> parsedParams = Track.parseName(name);
+                return new Track(productCode, name, price, gauge, brand, isSet, stock,
+                        (String) parsedParams.get(0),
+                        (Track.TrackType) parsedParams.get(1));
+            }
             default:
                 return new Product(productCode, name, price, gauge, brand, isSet, stock);
 
