@@ -1,7 +1,10 @@
 package uk.ac.sheffield.com2008.navigation;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
-import uk.ac.sheffield.com2008.controller.*;
+import uk.ac.sheffield.com2008.controller.ViewController;
+import uk.ac.sheffield.com2008.controller.auth.*;
+import uk.ac.sheffield.com2008.controller.customer.*;
+import uk.ac.sheffield.com2008.controller.staff.*;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.listeners.NavigationFrameWindowListener;
 import uk.ac.sheffield.com2008.view.components.MainLayout;

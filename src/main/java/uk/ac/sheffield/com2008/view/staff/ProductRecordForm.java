@@ -9,7 +9,7 @@ import java.awt.*;
 
 
 
-public class ProductRecordForm extends View {
+public class ProductRecordForm extends StaffView {
 
     private final FormController formController;
     private JPanel cardPanel;
