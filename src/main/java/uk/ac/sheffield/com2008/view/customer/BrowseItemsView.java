@@ -55,10 +55,9 @@ public class BrowseItemsView extends CustomerView {
 
         //create product rows
         for (Product product : browseItemsController.getAllProducts()) {
-            if(product instanceof ProductSet){
-                ProductSet productSet = (ProductSet) product;
+            /*if(product instanceof ProductSet productSet){
                 productSet.PrintFullSet();
-            }
+            }*/
 
             // Create a panel to hold each row (label and button)
             JPanel rowPanel = new JPanel(new BorderLayout());

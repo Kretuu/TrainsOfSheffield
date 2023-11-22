@@ -4,9 +4,8 @@ import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 
 import java.util.ArrayList;
 
-public class ExtensionTrackPack extends TrackPack{
-
-    public ExtensionTrackPack(
+public class StarterOvalTrackPack extends TrackPack{
+    public StarterOvalTrackPack(
             String productCode,
             String name,
             float price,
@@ -16,8 +15,7 @@ public class ExtensionTrackPack extends TrackPack{
             int stock,
             String setName,
             TrackPackType type,
-            ArrayList<ProductSetItem> setItems
-    ){
-        super(productCode,name,price,gauge,brand,isSet,stock, setName, type, setItems);
+            ArrayList<ProductSetItem> setItems) {
+        super(productCode, name, price, gauge, brand, isSet, stock, setName, type, setItems);
     }
 }

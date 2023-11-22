@@ -51,7 +51,7 @@ public abstract class ProductSet extends Product {
 
     /**
      * Takes the database name
-     * @param name name in database format (e.g "A3,'The Flying Scotsman',6,DCCFITTED")
+     * @param name name in database format (e.g "The Mega Track Pack,EXTENSION")
      * @return list of objects that match the field needed for this class in the constructor
      */
     public static List<Object> parseName(String name){
@@ -75,10 +75,22 @@ public abstract class ProductSet extends Product {
     }
 
     public ArrayList<ProductSetItem> fetchContainedItems(){
-        return ProductManager.fetchProductSetItems(this);
+        ArrayList<ProductSetItem> setItems = ProductManager.fetchProductSetItems(this);
+        if(this.setItems.isEmpty()){
+            setSetItems(setItems);
+        }
+        return setItems;
     }
 
     public void setSetItems(ArrayList<ProductSetItem> setItems){
         this.setItems = setItems;
+    }
+
+    public ArrayList<ProductSetItem> getSetItems(){
+        if(this.setItems.isEmpty()){
+            return fetchContainedItems();
+        }
+        PrintFullSet();
+        return this.setItems;
     }
 }

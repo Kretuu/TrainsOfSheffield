@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is for where once we have our trackpacks configured as an Extension or StarterOval
@@ -14,6 +15,8 @@ import java.util.HashMap;
  */
 public class TrackPack extends ProductSet {
 
+    public enum TrackPackType {STARTER,EXTENSION};
+    protected TrackPackType trackPackType;
     public TrackPack(
             String productCode,
             String name,
@@ -23,7 +26,24 @@ public class TrackPack extends ProductSet {
             boolean isSet,
             int stock,
             String setName,
+            TrackPackType type,
             ArrayList<ProductSetItem> setItems) {
         super(productCode, name, price, gauge, brand, isSet, stock, setName, setItems);
+        this.trackPackType = type;
     }
+
+    /**
+     * Takes the database name
+     * @param name name in database format (e.g "Mega Cool Track Pack,EXTENSION")
+     * @return list of objects that match the field needed for this class in the constructor
+     */
+    public static List<Object> parseName(String name){
+        String[] nameAttributes = name.split(",");
+        List<Object> output = new ArrayList<>();
+
+        output.add(nameAttributes[0]);
+        output.add(nameAttributes[1]);
+        return output;
+    }
+
 }
