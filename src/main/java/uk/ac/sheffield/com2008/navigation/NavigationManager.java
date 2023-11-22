@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.controller.customer.OrderHistoryController;
 import uk.ac.sheffield.com2008.controller.staff.*;
 import uk.ac.sheffield.com2008.util.listeners.NavigationFrameWindowListener;
@@ -52,6 +53,8 @@ public class NavigationManager {
         new ManageOrderController(this,Navigation.MANAGE_ORDER);
         new SalesController(this,Navigation.SALES);
         new OrderListController(this,Navigation.ORDER_LIST);
+        new FormController(this, Navigation.PRODUCTFORM);
+
     }
 
     public void registerController(Navigation id, ViewController controller) {
