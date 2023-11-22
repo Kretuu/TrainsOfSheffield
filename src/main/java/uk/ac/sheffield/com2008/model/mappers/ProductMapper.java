@@ -1,13 +1,11 @@
 package uk.ac.sheffield.com2008.model.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.products.Controller;
-import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
-import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
-import uk.ac.sheffield.com2008.model.entities.products.Track;
+import uk.ac.sheffield.com2008.model.entities.products.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +52,12 @@ public class ProductMapper implements RowMapper<Product> {
                 return new Controller(productCode, name, price, gauge, brand, isSet, stock,
                         (String) parsedParams.get(0),
                         (Controller.PowerType) parsedParams.get(1));
+            }
+            case 'P':{
+                List<Object> parsedParams = TrackPack.parseName(name);
+                return new TrackPack(productCode, name, price, gauge, brand, isSet, stock,
+                        (String) parsedParams.get(0),
+                        new ArrayList<>());
             }
             default:
                 return new Product(productCode, name, price, gauge, brand, isSet, stock);

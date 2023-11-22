@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.customer;
 
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.modals.AddProductToCartModal;
 
@@ -54,6 +55,11 @@ public class BrowseItemsView extends CustomerView {
 
         //create product rows
         for (Product product : browseItemsController.getAllProducts()) {
+            if(product instanceof ProductSet){
+                ProductSet productSet = (ProductSet) product;
+                productSet.PrintFullSet();
+            }
+
             // Create a panel to hold each row (label and button)
             JPanel rowPanel = new JPanel(new BorderLayout());
 
