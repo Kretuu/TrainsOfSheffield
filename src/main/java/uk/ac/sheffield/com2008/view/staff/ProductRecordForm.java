@@ -147,7 +147,7 @@ public class ProductRecordForm extends View {
         submitButton.setEnabled(false);
         add(submitButton, gbc);
 
-        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
 
         // Add cardPanel to the layout
         gbc.gridx = 0;
