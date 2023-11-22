@@ -65,7 +65,7 @@ public class BrowseItemsView extends CustomerView {
             rowPanel.setBorder(compoundBorder);
 
             // Create a label for the product
-            JLabel productLabel = new JLabel(product.toString());
+            JLabel productLabel = new JLabel(product.printName());
             productLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Inner padding
             rowPanel.add(productLabel, BorderLayout.CENTER); // Add label to the center of the panel
 

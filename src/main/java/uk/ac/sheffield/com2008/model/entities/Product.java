@@ -27,9 +27,13 @@ public class Product {
         return productCode + " '" + name + "' " + gauge.toString() + " Gauge - " + brand + " " + price + " QTY: " + stock;
     }
 
-    public String printName(){
+    /**
+     * Returns the products presentable name, not how the name is in the database
+     * @return
+     */
+    public String printName() {
         return productCode + " '" + name + "' " + gauge.toString() + " Gauge - " + brand;
-     }
+    }
 
     public String getProductCode() {
         return productCode;
@@ -97,5 +101,9 @@ public class Product {
                 && this.gauge.equals(object.getGauge())
                 && this.price == object.getPrice()
                 && this.productCode.equals(object.getProductCode());
+    }
+
+    public String deriveName(){
+        return name;
     }
 }
