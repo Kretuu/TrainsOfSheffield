@@ -38,7 +38,7 @@ public class Locomotive extends Product {
      * @return
      */
     public String printName(){
-        String printOut = getProductCode() + " " + getBrand() + ", Class " + brClass + ", ";
+        String printOut = getProductCode() + ", Class " + brClass + ", ";
         if(individualName != null){
             printOut += individualName + " ";
         }

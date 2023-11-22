@@ -2,12 +2,15 @@ package uk.ac.sheffield.com2008.model.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
+import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 public class ProductMapper implements RowMapper<Product> {
+
     public Product mapResultSetToEntity(ResultSet resultSet) throws SQLException {
 
         String productCode = resultSet.getString("Products.productCode");
@@ -24,13 +27,20 @@ public class ProductMapper implements RowMapper<Product> {
         //string and returns a list of objects?
 
         switch(productType){
-            case 'L':
+            case 'L':{
                 List<Object> parsedParams = Locomotive.parseName(name);
                 return new Locomotive(productCode, name, price, gauge, brand, isSet, stock,
                         (String) parsedParams.get(0),
                         (String) parsedParams.get(1),
                         (int) parsedParams.get(2),
-                        (Locomotive.DCCType) parsedParams.get(3));
+                        (Locomotive.DCCType) parsedParams.get(3));}
+            case 'R':{
+                List<Object> parsedParams = RollingStock.parseName(name);
+                return new RollingStock(productCode, name, price, gauge, brand, isSet, stock,
+                        (String) parsedParams.get(0),
+                        (String) parsedParams.get(1),
+                        (RollingStock.Class_) parsedParams.get(2),
+                        (int) parsedParams.get(3));}
             default:
                 return new Product(productCode, name, price, gauge, brand, isSet, stock);
 
