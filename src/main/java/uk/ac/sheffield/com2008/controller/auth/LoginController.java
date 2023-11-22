@@ -23,6 +23,7 @@ public class LoginController extends ViewController {
     public void login(String email, char[] password){
         try {
             authenticationManager.loginUser(email, password);
+            loginView.updateErrorMessage(" ");
             navigation.navigate(Navigation.CUSTOMER);
         } catch (IncorrectLoginCredentialsException e) {
             loginView.updateErrorMessage(e.getMessage());

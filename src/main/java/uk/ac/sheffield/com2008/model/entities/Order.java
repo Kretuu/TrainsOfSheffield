@@ -6,13 +6,13 @@ import java.util.*;
 
 public class Order {
 
+    //TODO: Refactor: Order.getOrderLine() (then do whatever). remove the ".getOrderLinePrice" bullshit
+
     private final int orderNumber;
     private Date dateOrdered;
     private float totalPrice;
     public enum Status {PENDING, CONFIRMED, FULFILLED}
     private Status status;
-    // Product -> Quantity
-//    private Map<Product, Integer> orderLines = new HashMap<>();
     private List<OrderLine> orderLines = new ArrayList<>();
     private final String userUUID;
 
@@ -21,7 +21,6 @@ public class Order {
         this.dateOrdered = dateOrdered;
         this.totalPrice = totalPrice;
         this.status = status;
-//        orderLines = new HashMap<>();
         this.userUUID = userUUID;
     }
 
@@ -32,6 +31,22 @@ public class Order {
      */
     public List<OrderLine> getOrderLines() {
         return orderLines;
+    }
+
+    public Date getDateOrdered() {
+        return dateOrdered;
+    }
+
+    public void setDateOrdered(Date dateOrdered) {
+        this.dateOrdered = dateOrdered;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     /**
@@ -61,7 +76,6 @@ public class Order {
             throw new RuntimeException("Tried to add a product to an Order that already has this product. Modify the quantity instead.");
         }
         orderLines.add(new OrderLine(quantity, product));
-//        orderLines.put(product, quantity);
         calculateTotalPrice();
     }
 
@@ -77,25 +91,29 @@ public class Order {
     /**
      * Changes the quantity in an orderline. +Recalculates total price for order.
      */
-    public void modifyQuantity(Product product, int addedQuantity){
-        OrderLine modifiedOrderLine = getOrderLineFromProduct(product);
-        if(modifiedOrderLine == null) {
-            throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
-        }
-        modifiedOrderLine.setQuantity(modifiedOrderLine.getQuantity() + addedQuantity);
-//        if(!hasProduct(product)){
-//            throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
-//        }
-//        orderLines.put(product, orderLines.get(product) + addedQuantity);
+    public void modifyQuantity(OrderLine orderline, int addedQuantity){
+        orderline.setQuantity(orderline.getQuantity() + addedQuantity);
         calculateTotalPrice();
+    }
+
+    /**
+     * Removes given orderline from this object's orderlines list
+     * @param orderLine orderline to remove
+     */
+    public void removeOrderline(OrderLine orderLine){
+        if(hasProduct(orderLine.getProduct())){
+            orderLines.remove(orderLine);
+            calculateTotalPrice();
+        }
+        else{
+            throw new RuntimeException("Tried to remove a product that doesnt exist in order.");
+        }
     }
 
     public void calculateTotalPrice(){
         totalPrice = 0;
+        orderLines.forEach(OrderLine::calculatePrice);
         orderLines.forEach(orderLine -> totalPrice += orderLine.getPrice());
-//        orderLines.forEach((product, quantity) -> {
-//            totalPrice += product.getPrice() * quantity;
-//        });
     }
 
     public void setAsConfirmed(){
@@ -118,14 +136,6 @@ public class Order {
             throw new RuntimeException("Order Object does not contain this product");
 
         return orderLine.getPrice();
-
-//        if(!hasProduct(product)){
-//            throw new RuntimeException("Order Object does not contain this product");
-//        }
-//        else{
-//
-//            return orderLine.getPrice();
-//        }
     }
 
     /**
@@ -137,16 +147,9 @@ public class Order {
         if(orderLine == null) throw new RuntimeException("Order Object does not contain this product");
 
         return orderLine.getQuantity();
-
-//        if(!hasProduct(product)){
-//            throw new RuntimeException("Order Object does not contain this product");
-//        }
-//        else{
-//            return orderLine.getQuantity();
-//        }
     }
 
-    private OrderLine getOrderLineFromProduct(Product product) {
+    public OrderLine getOrderLineFromProduct(Product product) {
         List<OrderLine> orderLines = this.orderLines.stream().filter(orderLine -> orderLine.hasProduct(product)).toList();
         if(orderLines.isEmpty()) return null;
         return orderLines.get(0);
@@ -170,9 +173,13 @@ public class Order {
             Product product = orderLine.getProduct();
             System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + orderLine.getQuantity());
         });
+    }
 
-//        orderLines.forEach((product, quantity) -> {
-//            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + quantity);
-//        });
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Order o)) return false;
+        return new HashSet<>(o.getOrderLines()).equals(new HashSet<>(this.orderLines))
+                && o.getOrderNumber() == this.orderNumber && o.getTotalPrice() == this.totalPrice
+                && o.getDateOrdered() == this.dateOrdered && o.getStatus().equals(this.status);
     }
 }

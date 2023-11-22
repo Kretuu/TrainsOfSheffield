@@ -37,6 +37,16 @@ public class OrderLine {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+        calculatePrice();
+    }
+
+    public void calculatePrice(){
         this.price = product.getPrice() * quantity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof OrderLine ol)) return false;
+        return ol.getPrice() == this.price && ol.getQuantity() == this.quantity && ol.getProduct().equals(this.product);
     }
 }

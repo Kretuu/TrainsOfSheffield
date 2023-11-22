@@ -11,8 +11,10 @@ public abstract class CustomerView extends View {
     public CustomerView(){
         Map<Navigation, JButton> navigationMap = new LinkedHashMap<>();
 
-        JButton staffAreaButton = new JButton("Staff Area");
-        navigationMap.put(Navigation.STAFF, staffAreaButton);
+        navigationMap.put(Navigation.STAFF, new JButton("Staff Area"));
+        navigationMap.put(Navigation.ORDER_HISTORY, new JButton("Order History"));
+        navigationMap.put(Navigation.CUSTOMER, new JButton("Browse Items"));
+        navigationMap.put(Navigation.BASKET, new JButton("Basket"));
 
         setNavigation(navigationMap);
     }

@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.exceptions.EmailAlreadyInUseException;
 import uk.ac.sheffield.com2008.exceptions.IncorrectLoginCredentialsException;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
+import uk.ac.sheffield.com2008.model.domain.data.AuthUser;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
@@ -41,8 +42,9 @@ public class AuthenticationManager {
         String uuid = UUIDGenerator.generate();
         String salt = HashedPasswordGenerator.generateSalt();
         String hashedPassword = HashedPasswordGenerator.hashPassword(password, salt);
-        user = new User(uuid, userEmail, hashedPassword, salt, personalDetails);
-        userDAO.createUser(user);
+        user = new User(uuid, userEmail, personalDetails);
+        AuthUser authUser = new AuthUser(hashedPassword, salt);
+        userDAO.createUser(user, authUser);
 
         //GENERATE A NEW BLANK ORDER (BASKET) FOR THEM
         Order newOrder = OrderManager.createNewOrder(user);

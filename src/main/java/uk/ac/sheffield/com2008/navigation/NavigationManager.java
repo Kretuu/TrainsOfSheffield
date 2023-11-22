@@ -3,16 +3,19 @@ package uk.ac.sheffield.com2008.navigation;
 import uk.ac.sheffield.com2008.controller.*;
 import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
-import uk.ac.sheffield.com2008.controller.customer.BasketController;
+import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
+import uk.ac.sheffield.com2008.controller.customer.OrderHistoryController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
+import uk.ac.sheffield.com2008.util.listeners.NavigationFrameWindowListener;
 import uk.ac.sheffield.com2008.view.components.MainLayout;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.auth.AuthView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +25,7 @@ public class NavigationManager {
     private final JFrame frame;
     private final MainLayout layout;
     private final Map<Navigation, ViewController> controllers;
+    private Navigation currentView = Navigation.LOGIN;
 
     public NavigationManager() {
         frame = new JFrame("Trains of Sheffield");
@@ -29,12 +33,13 @@ public class NavigationManager {
         // Set the frame to fullscreen windowed mode
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.addWindowListener(new NavigationFrameWindowListener(this));
         frame.setVisible(true);
 
         controllers = new HashMap<>();
         registerControllers();
         //First screen after the app starts
-        navigate(Navigation.LOGIN);
+        navigate(currentView);
     }
 
     private void registerControllers() {
@@ -46,7 +51,7 @@ public class NavigationManager {
         new BasketController(this, Navigation.BASKET);
         new ProductRecordController(this, Navigation.PRODUCTRECORD);
         new FormController(this, Navigation.PRODUCTFORM);
-
+        new OrderHistoryController(this, Navigation.ORDER_HISTORY);
     }
 
     public void registerController(Navigation id, ViewController controller) {
@@ -54,6 +59,7 @@ public class NavigationManager {
     }
 
     public void navigate(Navigation id) {
+        controllers.get(currentView).onNavigateLeave();
         ViewController controller = controllers.get(id);
         View view = controller.getView();
         controller.onNavigateTo();
@@ -64,8 +70,17 @@ public class NavigationManager {
             if(!frame.getContentPane().equals(layout)) frame.setContentPane(layout);
             layout.setContent(view);
         }
+        currentView = id;
         frame.revalidate();
         frame.repaint();
 
+    }
+
+    public ViewController getCurrentController() {
+        return controllers.get(currentView);
+    }
+
+    public Dimension getViewPortDimension() {
+        return frame.getSize();
     }
 }

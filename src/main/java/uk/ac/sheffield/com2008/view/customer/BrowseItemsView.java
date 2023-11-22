@@ -20,6 +20,8 @@ public class BrowseItemsView extends CustomerView {
     public void onRefresh(){
         removeAll();
         InitializeUI();
+        revalidate();
+        repaint();
     }
 
     public void InitializeUI(){
@@ -45,8 +47,6 @@ public class BrowseItemsView extends CustomerView {
 
         topPanel.add(topButtonsPanel, BorderLayout.EAST);
 
-        add(topPanel, BorderLayout.NORTH);
-
         // Create a JPanel for the scroll panel with product labels
         JPanel productPanel = new JPanel();
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
@@ -65,7 +65,7 @@ public class BrowseItemsView extends CustomerView {
             rowPanel.setBorder(compoundBorder);
 
             // Create a label for the product
-            JLabel productLabel = new JLabel(product.toString());
+            JLabel productLabel = new JLabel(product.printName());
             productLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Inner padding
             rowPanel.add(productLabel, BorderLayout.CENTER); // Add label to the center of the panel
 

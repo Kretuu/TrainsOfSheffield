@@ -24,7 +24,14 @@ public class OrderDAO {
         parameters.put("userUUID", user.getUuid());
         parameters.put("status", "PENDING");
 
-        return getOrderByFields(parameters);
+        return getFirstOrderByFields(parameters);
+    }
+
+    public static List<Order> getUserOrdersHistory(User user) {
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("userUUID", user.getUuid());
+
+        return getOrderListByFields(parameters);
     }
 
 
@@ -33,7 +40,13 @@ public class OrderDAO {
      * @param fieldsMap parameters where key is column name in database and value is corresponding value
      * @return Order if there was found matching order, null otherwise
      */
-    private static Order getOrderByFields(LinkedHashMap<String, String> fieldsMap) {
+    private static Order getFirstOrderByFields(LinkedHashMap<String, String> fieldsMap) {
+        List<Order> orders = getOrderListByFields(fieldsMap);
+        if(orders.isEmpty()) return null;
+        return orders.get(0);
+    }
+
+    private static List<Order> getOrderListByFields(LinkedHashMap<String, String> fieldsMap) {
         //Building query with all parameters provided in map. Using StringBuilder to improve performance.
         StringBuilder orderQueryBuilder = new StringBuilder();
         orderQueryBuilder.append("SELECT * FROM Orders ")
@@ -54,19 +67,26 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("orders");
+        System.out.println(orders);
 
         //Return null if no order matching given parameters was found.
-        if(orders.isEmpty()) return null;
+        if(orders.isEmpty()) return orders;
 
-        //Otherwise, get first order and merge all other Order objects which differ only by OrderLines
-        Order firstOrder = orders.get(0);
-        if(orders.size() == 1) return firstOrder;
+        Order currentOrder = null;
+        int currentOrderId = 0;
+        List<Order> parsedOrders = new ArrayList<>();
+        for(Order order : orders) {
+            if(currentOrder != null && order.getOrderNumber() == currentOrderId) {
+                currentOrder.getOrderLines().addAll(order.getOrderLines());
+                continue;
+            }
+            currentOrder = order;
+            currentOrderId = order.getOrderNumber();
+            parsedOrders.add(currentOrder);
+        }
 
-        List<OrderLine> allOrderLines = new ArrayList<>();
-        orders.forEach(order -> allOrderLines.addAll(order.getOrderLines()));
-        firstOrder.setOrderLines(allOrderLines);
-
-        return firstOrder;
+        return parsedOrders;
     }
 
     /**
@@ -112,15 +132,15 @@ public class OrderDAO {
      * Given an Order and Product, updates the orderLine in the dabatase
      * to match the quantity and totalprice of the Product in the Order
      */
-    public static void updateOrderLineQuantity(Order order, Product product){
+    public static void updateOrderLineEntirely(Order order, OrderLine orderline){
         String updateQuery = "UPDATE OrderLines SET quantity = ?, orderPrice = ? WHERE orderNumber = ? AND productCode = ?";
         try {
             DatabaseConnectionHandler.update(
                     updateQuery,
-                    order.getProductQuantity(product),
-                    order.getOrderLinePrice(product),
+                    orderline.getQuantity(),
+                    orderline.getPrice(),
                     order.getOrderNumber(),
-                    product.getProductCode()
+                    orderline.getProduct().getProductCode()
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -135,6 +155,51 @@ public class OrderDAO {
                     updateQuery,
                     order.getTotalPrice(),
                     order.getOrderNumber()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * update the entire order by specifying each column
+     */
+    public static void updateOrderEntirely(Order order){
+        String updateQuery = "UPDATE Orders SET dateOrdered = ?, status = ?, totalPrice = ? WHERE orderNumber = ?";
+        try {
+            DatabaseConnectionHandler.update(
+                    updateQuery,
+                    order.getDateOrdered(),
+                    order.getStatus().toString(),
+                    order.getTotalPrice(),
+                    order.getOrderNumber()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * update every single orderlines price and quantity in db for this order
+     */
+    public static void updateAllOrderlinesEntirely(Order order){
+        for(OrderLine orderLine : order.getOrderLines()){
+            updateOrderLineEntirely(order, orderLine);
+        }
+    }
+
+    /**
+     * Removes given orderline from the database
+     * @param order
+     * @param orderline
+     */
+    public static void deleteOrderline(Order order, OrderLine orderline){
+        String deleteQuery = "DELETE FROM OrderLines WHERE orderNumber = ? AND productCode = ?";
+        try {
+            DatabaseConnectionHandler.update(
+                    deleteQuery,
+                    order.getOrderNumber(),
+                    orderline.getProduct().getProductCode()
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
