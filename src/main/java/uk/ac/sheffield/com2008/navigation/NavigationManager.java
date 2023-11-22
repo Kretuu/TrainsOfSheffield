@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.controller.customer.BasketController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.view.components.MainLayout;
@@ -43,7 +44,9 @@ public class NavigationManager {
         new BrowseItemsController(this, Navigation.CUSTOMER);
         new StaffController(this, Navigation.STAFF);
         new BasketController(this, Navigation.BASKET);
-        new ProductRecordController(this,Navigation.PRODUCTRECORD);
+        new ProductRecordController(this, Navigation.PRODUCTRECORD);
+        new FormController(this, Navigation.PRODUCTFORM);
+
     }
 
     public void registerController(Navigation id, ViewController controller) {
