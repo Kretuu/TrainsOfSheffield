@@ -1,10 +1,15 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
+import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.model.mappers.ProductMapper;
+import uk.ac.sheffield.com2008.model.mappers.ProductSetItemMapper;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ProductDAO {
@@ -78,6 +83,30 @@ public class ProductDAO {
         //System.out.println("Query: " + query + " | Category: " + initialLetter);
         //System.out.println("Result: " + productList);
         return productList;
+    }
+
+
+    //TODO: Creating a new product that is "isSet" means also creating a new ProductSet db row
+
+    public static List<ProductSetItem> getProductSetItems(ProductSet productSet){
+        StringBuilder setItemsQueryBuilder = new StringBuilder();
+        String productCode = productSet.getProductCode();
+        setItemsQueryBuilder.append("SELECT * FROM ProductSets ")
+                .append("LEFT OUTER JOIN ProductSetItems PSI on ProductSets.setId = PSI.setId ")
+                .append("LEFT OUTER JOIN Products ON PSI.productCode = Products.productCode ")
+                .append("WHERE ProductSets.productCode = ?");
+
+        ArrayList<ProductSetItem> productSetItems = new ArrayList<>();
+        String query = setItemsQueryBuilder.toString();
+
+        try {
+            ProductSetItemMapper mapper = new ProductSetItemMapper();
+            productSetItems = (ArrayList<ProductSetItem>) DatabaseConnectionHandler.select(mapper, query, productSet.getProductCode());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return productSetItems;
     }
 }
 

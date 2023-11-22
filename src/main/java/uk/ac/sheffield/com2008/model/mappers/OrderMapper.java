@@ -22,7 +22,7 @@ public class OrderMapper implements RowMapper<Order> {
                 Order.Status.valueOf(resultSet.getString("status")),
                 resultSet.getString("userUUID"));
         //If order is empty, just return what we have
-        if(resultSet.getString("OL.productCode") == null) return order;
+        if(resultSet.getMetaData().getColumnCount() < 6 || resultSet.getString("OL.productCode") == null) return order;
 
         Product product = new ProductMapper().mapResultSetToEntity(resultSet);
         OrderLine orderLine = new OrderLine(

@@ -204,4 +204,18 @@ public class OrderDAO {
         }
     }
 
+    public static List<Order> getAllOrders() {
+        String query = "SELECT * FROM Orders";
+        List<Order> orders;
+
+        try {
+            OrderMapper mapper = new OrderMapper();
+            orders = DatabaseConnectionHandler.select(mapper, query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return orders;
+    }
+
 }
