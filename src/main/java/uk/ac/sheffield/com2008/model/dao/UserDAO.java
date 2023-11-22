@@ -14,17 +14,13 @@ import java.util.List;
 //Mediator pattern - connection between User entity and database. Fetching, updating, deleting etc. all information
 //related to User entity.
 public class UserDAO {
-    public User getUserById(int id) {
-        return getUserByField("userId", id);
+    public static User getUserByEmail(String email) {
+        return getUserByField("email", email);
     }
 
-    public User getUserByEmail(String email) {
-        return new UserDAO().getUserByField("email", email);
-    }
-
-    private User getUserByField(String fieldName, Object value) {
+    private static User getUserByField(String fieldName, Object value) {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT uuid, email, forename, surname, Users.cardNumber, houseNumber, postcode, ")
+        queryBuilder.append("SELECT uuid, email, forename, surname, roles, Users.cardNumber, houseNumber, postcode, ")
                 .append("holderName, expiryDate, cvv FROM Users LEFT OUTER JOIN BankingDetails ON ")
                 .append("Users.cardNumber=BankingDetails.cardNumber WHERE ").append(fieldName).append(" = ?");
         String query = queryBuilder.toString();
@@ -42,7 +38,7 @@ public class UserDAO {
         return users.get(0);
     }
 
-    public User verifyPassword(String userEmail, char[] password) {
+    public static User verifyPassword(String userEmail, char[] password) {
         String query = "SELECT password, salt FROM Users WHERE email = ?";
 
         List<AuthUser> authUsers;
@@ -63,7 +59,7 @@ public class UserDAO {
         return null;
     }
 
-    public void createUser(User user, AuthUser authUser) {
+    public static void createUser(User user, AuthUser authUser) {
         String query = "INSERT INTO Users (uuid, email, password, salt, forename, surname) VALUES (?, ?, ?, ?, ?, ?)";
         PersonalDetails details = user.getPersonalDetails();
 

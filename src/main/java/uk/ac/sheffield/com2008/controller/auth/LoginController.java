@@ -12,18 +12,21 @@ import uk.ac.sheffield.com2008.view.auth.LoginView;
  */
 public class LoginController extends ViewController {
     private final LoginView loginView;
-    private final AuthenticationManager authenticationManager;
     public LoginController(NavigationManager navigationManager, Navigation id){
         super(navigationManager, id);
         view = new LoginView(this);
         loginView = (LoginView) view;
-        authenticationManager = new AuthenticationManager();
     }
-  
+
+    @Override
+    public void onNavigateLeave() {
+        loginView.purgeTextFields();
+    }
+
     public void login(String email, char[] password){
         try {
-            authenticationManager.loginUser(email, password);
-            loginView.updateErrorMessage(" ");
+            AuthenticationManager.loginUser(email, password);
+            loginView.updateErrorMessage(null);
             navigation.navigate(Navigation.CUSTOMER);
         } catch (IncorrectLoginCredentialsException e) {
             loginView.updateErrorMessage(e.getMessage());

@@ -13,14 +13,8 @@ import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
 import uk.ac.sheffield.com2008.util.UUIDGenerator;
 
 public class AuthenticationManager {
-    private final UserDAO userDAO;
-
-    public AuthenticationManager(){
-        userDAO = new UserDAO();
-    }
-
-    public void loginUser(String userEmail, char[] password) throws IncorrectLoginCredentialsException {
-        User user = userDAO.verifyPassword(userEmail, password);
+    public static void loginUser(String userEmail, char[] password) throws IncorrectLoginCredentialsException {
+        User user = UserDAO.verifyPassword(userEmail, password);
         if(user == null) {
             throw new IncorrectLoginCredentialsException();
         }
@@ -32,8 +26,8 @@ public class AuthenticationManager {
         user.setBasket(usersBasket);
     }
 
-    public void registerUser(String userEmail, char[] password, String forename, String surname) throws EmailAlreadyInUseException {
-        User user = userDAO.getUserByEmail(userEmail);
+    public static void registerUser(String userEmail, char[] password, String forename, String surname) throws EmailAlreadyInUseException {
+        User user = UserDAO.getUserByEmail(userEmail);
         if(user != null) {
             throw new EmailAlreadyInUseException(userEmail);
         }
@@ -42,9 +36,9 @@ public class AuthenticationManager {
         String uuid = UUIDGenerator.generate();
         String salt = HashedPasswordGenerator.generateSalt();
         String hashedPassword = HashedPasswordGenerator.hashPassword(password, salt);
-        user = new User(uuid, userEmail, personalDetails);
+        user = new User(uuid, userEmail, personalDetails, null);
         AuthUser authUser = new AuthUser(hashedPassword, salt);
-        userDAO.createUser(user, authUser);
+        UserDAO.createUser(user, authUser);
 
         //GENERATE A NEW BLANK ORDER (BASKET) FOR THEM
         Order newOrder = OrderManager.createNewOrder(user);

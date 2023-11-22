@@ -28,6 +28,11 @@ public class MainLayout extends JPanel {
         this.view = v;
     }
 
+    public void purgeContent() {
+        panel.remove(view);
+        this.view = new JPanel();
+    }
+
     private void createLayout() {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -63,6 +68,5 @@ public class MainLayout extends JPanel {
             navigation.add(Box.createRigidArea(new Dimension(20, 0)));
         });
         navigation.add(logoutButton);
-        System.out.println("Navigation bar set");
     }
 }
