@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends View {
 
-    ProductRecordController productRecordController;
+    private final ProductRecordController productRecordController;
 
     public ProductRecordView(ProductRecordController productRecordController) {
         this.productRecordController = productRecordController;
@@ -41,6 +41,7 @@ public class ProductRecordView extends View {
         String[] categories = {"All", "Locomotive", "Carriage", "Wagon", "Starter Oval TrackPack", "Extension TrackPack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
+        addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
 
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
@@ -161,5 +162,6 @@ public class ProductRecordView extends View {
             return "Other Category";
         }
     }
+
 
 }
