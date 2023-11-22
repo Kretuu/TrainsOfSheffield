@@ -28,7 +28,8 @@ public class UserMapper implements RowMapper<User> {
         user = new User(
                 resultSet.getString("uuid"),
                 resultSet.getString("email"),
-                details
+                details,
+                resultSet.getString("roles")
         );
 
         return user;

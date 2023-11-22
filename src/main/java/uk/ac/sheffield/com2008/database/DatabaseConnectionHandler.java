@@ -25,20 +25,6 @@ public class DatabaseConnectionHandler {
         ds = new HikariDataSource(config);
     }
 
-//    public static ResultSet select(String query, Object... params) throws SQLException {
-//        try(
-//            Connection connection = getConnection();
-//            PreparedStatement statement = connection.prepareStatement(query);
-//        ) {
-//            for(int i = 0; i < params.length; i++) {
-//                statement.setObject(i + 1, params[i]);
-//            }
-//
-//            return statement.executeQuery();
-//        }
-//    }
-
-
 
     public static <T> List<T> select(RowMapper<T> mapper, String query, Object... params) throws SQLException {
         try(

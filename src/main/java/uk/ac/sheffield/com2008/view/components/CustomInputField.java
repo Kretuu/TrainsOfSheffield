@@ -20,6 +20,7 @@ public class CustomInputField implements DocumentListener {
     private final Runnable updateButtonState;
     private Callable<String> validationFunction = null;
     private boolean isValid = false;
+    private final boolean emptyAllowed;
 
     public JTextField getjTextField() {
         return jTextField;
@@ -34,17 +35,28 @@ public class CustomInputField implements DocumentListener {
     }
 
     public CustomInputField(String label, Runnable updateButtonState) {
-        this(label, updateButtonState, false);
+        this(label, updateButtonState, true);
     }
 
-    public CustomInputField(String label, Runnable updateButtonState, boolean isPassword) {
+    public CustomInputField(String label, Runnable updateButtonState, boolean emptyAllowed) {
+        this(label, updateButtonState, emptyAllowed, false);
+    }
+
+    public CustomInputField(String label, Runnable updateButtonState, boolean emptyAllowed, boolean isPassword) {
         this.updateButtonState = updateButtonState;
+        this.emptyAllowed = emptyAllowed;
         createComponents(label, isPassword);
         addListeners();
     }
 
     public void setValidationFunction(Callable<String> validationFunction) {
         this.validationFunction = validationFunction;
+    }
+
+    public void purgeField() {
+        jTextField.setText("");
+        errorMessage.setText(" ");
+        jTextField.setBorder(new LineBorder(Colors.TEXT_FIELD_UNFOCUSED));
     }
 
     private void createComponents(String label, boolean isPassword) {
@@ -105,7 +117,7 @@ public class CustomInputField implements DocumentListener {
             jTextField.setBorder(new LineBorder(Colors.TEXT_FIELD_ERROR));
             newValidState = false;
         }
-        if(text.isEmpty()) {
+        if(text.isEmpty() && !emptyAllowed) {
             errorMessage.setText(label.getText() + " cannot be empty");
             jTextField.setBorder(new LineBorder(Colors.TEXT_FIELD_ERROR));
             newValidState = false;

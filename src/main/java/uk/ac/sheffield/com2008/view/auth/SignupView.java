@@ -54,18 +54,20 @@ public class SignupView extends AuthView {
     }
 
     private void createTextFields() {
-        CustomInputField email = new CustomInputField("Email", this::updateButtonState);
+        CustomInputField email = new CustomInputField("Email", this::updateButtonState, false);
         email.setValidationFunction(() -> ValidationManager.validateEmail(email.getjTextField().getText()));
         email.addToPanel(panel);
         inputFields.put("email", email);
 
-        CustomInputField password = new CustomInputField("Password", this::updateButtonState, true);
+        CustomInputField password = new CustomInputField(
+                "Password", this::updateButtonState, false, true
+        );
         password.setValidationFunction(() -> ValidationManager.validatePassword(password.getjTextField().getText()));
         password.addToPanel(panel);
         inputFields.put("password", password);
 
         CustomInputField confirmPassword = new CustomInputField(
-                "Confirm Password", this::updateButtonState, true
+                "Confirm Password", this::updateButtonState, false, true
         );
         confirmPassword.setValidationFunction(() -> ValidationManager.validateConfirmPassword(
                 password.getjTextField().getText(), confirmPassword.getjTextField().getText()
@@ -73,11 +75,13 @@ public class SignupView extends AuthView {
         confirmPassword.addToPanel(panel);
         inputFields.put("confirmPassword", confirmPassword);
 
-        CustomInputField firstname = new CustomInputField("First Name", this::updateButtonState);
+        CustomInputField firstname = new CustomInputField(
+                "First Name", this::updateButtonState, false
+        );
         firstname.addToPanel(panel);
         inputFields.put("firstname", firstname);
 
-        CustomInputField surname = new CustomInputField("Last Name", this::updateButtonState);
+        CustomInputField surname = new CustomInputField("Last Name", this::updateButtonState, false);
         surname.addToPanel(panel);
         inputFields.put("surname", surname);
     }
@@ -86,6 +90,9 @@ public class SignupView extends AuthView {
         errorMessage.setText("Error: " + message);
     }
 
+    public void purgeTextFields() {
+        inputFields.values().forEach(CustomInputField::purgeField);
+    }
 
     private void updateButtonState() {
         submitButton.setEnabled(inputFields.values().stream().allMatch(CustomInputField::isValid));

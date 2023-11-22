@@ -13,7 +13,6 @@ import java.awt.*;
 public class BrowseItemsView extends CustomerView {
     BrowseItemsController browseItemsController;
     public BrowseItemsView(BrowseItemsController loginController){
-        super();
         browseItemsController = loginController;
         InitializeUI();
     }

@@ -16,5 +16,4 @@ public class StaffController extends ViewController {
         manageStockView = (ManageStockView) view;
     }
 
-
 }

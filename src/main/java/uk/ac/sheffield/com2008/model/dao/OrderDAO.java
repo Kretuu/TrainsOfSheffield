@@ -67,8 +67,6 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("orders");
-        System.out.println(orders);
 
         //Return null if no order matching given parameters was found.
         if(orders.isEmpty()) return orders;

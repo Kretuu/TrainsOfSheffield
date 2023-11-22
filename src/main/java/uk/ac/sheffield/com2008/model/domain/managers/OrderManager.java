@@ -11,10 +11,6 @@ import uk.ac.sheffield.com2008.model.entities.User;
  */
 public class OrderManager {
 
-    public OrderManager(){
-
-    }
-
     /**
      * Creates a new blank, pending order
      * @return fresh order

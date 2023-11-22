@@ -5,7 +5,6 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.View;
 
 import javax.swing.*;
 import java.awt.*;
