@@ -184,7 +184,7 @@ public class ProductRecordForm extends StaffView {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton cancelButton = new JButton("Cancel");
         buttonsPanel.add(cancelButton);
-        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
 
         JButton submitButton = new JButton("Save");
         buttonsPanel.add(submitButton);

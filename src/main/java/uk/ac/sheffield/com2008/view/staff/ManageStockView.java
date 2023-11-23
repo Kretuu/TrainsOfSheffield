@@ -51,7 +51,7 @@ public class ManageStockView extends StaffView {
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Locomotive", "Carriage", "Rolling Stock", "Track", "Train Set", "Track Pack"};
+        String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
@@ -144,6 +144,7 @@ public class ManageStockView extends StaffView {
         }
     }
 
+
     private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
         // Clear the existing rows in the table
         tableModel.setRowCount(0);
@@ -174,7 +175,7 @@ public class ManageStockView extends StaffView {
         if (productCode.startsWith("L")) {
             return "Locomotive";
         } else if (productCode.startsWith("C")) {
-            return "Carriage";
+            return "Controller";
         } else if (productCode.startsWith("S")) {
             return "Rolling Stock";
         }  else if (productCode.startsWith("R")) {
@@ -187,5 +188,6 @@ public class ManageStockView extends StaffView {
             // Add more custom category conditions as needed
             return "Other Category";
         }
+
     }
 }

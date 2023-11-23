@@ -38,7 +38,7 @@ public class ProductRecordView extends StaffView {
 
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Locomotive", "Carriage", "Rolling Stock", "Track", "Train Set", "Track Pack"};
+        String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
         addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
@@ -160,7 +160,7 @@ public class ProductRecordView extends StaffView {
         if (productCode.startsWith("L")) {
             return "Locomotive";
         } else if (productCode.startsWith("C")) {
-            return "Carriage";
+            return "Controller";
         } else if (productCode.startsWith("S")) {
             return "Rolling Stock";
         }  else if (productCode.startsWith("R")) {
