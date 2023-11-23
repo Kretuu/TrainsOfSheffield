@@ -108,7 +108,9 @@ public class ManageStockView extends StaffView {
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
+
+        manageOrderButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.MANAGE_ORDER));
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
@@ -118,13 +120,16 @@ public class ManageStockView extends StaffView {
             // Call the filter method based on the selected starting letter
             filterTableByCategory(tableModel, initialLetter);
         });
+
+        // Disable column dragging
+        table.getTableHeader().setReorderingAllowed(false);
     }
 
     // Method to get the initial letter based on the selected category
     private String getInitialLetter(String selectedCategory) {
         if ("Locomotive".equals(selectedCategory)) {
             return "L";
-        } else if ("Carriage".equals(selectedCategory)) {
+        } else if ("Controller".equals(selectedCategory)) {
             return "C";
         } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";

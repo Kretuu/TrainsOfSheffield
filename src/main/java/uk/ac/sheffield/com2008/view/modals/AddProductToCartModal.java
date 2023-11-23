@@ -2,8 +2,10 @@ package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.util.math.Rounding;
 
 import javax.swing.*;
@@ -43,6 +45,19 @@ public class AddProductToCartModal extends JDialog {
         productName = new JLabel("<html><div style='width: 100%;'>" + product.printName() + "</div></html>");
         topPanel.add(productName, BorderLayout.CENTER);
         panel.add(topPanel, BorderLayout.NORTH);
+
+        //create a list of the set items if this product is a set
+        if(product instanceof ProductSet productSet){
+            StringBuilder htmlList = new StringBuilder("<html><ul>");
+            for(ProductSetItem psi : ((ProductSet) product).getSetItems()){
+                htmlList.append("<li style='width: 100%;'> ")
+                        .append(psi.getProduct().printName())
+                        .append("</li>");
+            }
+            htmlList.append("</ul></html>");
+            JLabel productSetItemsLabel = new JLabel(htmlList.toString());
+            topPanel.add(productSetItemsLabel, BorderLayout.SOUTH);
+        }
 
         // Create a panel for quantity and add to cart button
         JPanel bottomPanel = new JPanel();

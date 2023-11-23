@@ -67,8 +67,6 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("orders");
-        System.out.println(orders);
 
         //Return null if no order matching given parameters was found.
         if(orders.isEmpty()) return orders;
@@ -204,6 +202,20 @@ public class OrderDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<Order> getAllOrders() {
+        String query = "SELECT * FROM Orders";
+        List<Order> orders;
+
+        try {
+            OrderMapper mapper = new OrderMapper();
+            orders = DatabaseConnectionHandler.select(mapper, query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return orders;
     }
 
 }

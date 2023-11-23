@@ -16,4 +16,9 @@ public abstract class AuthView extends View {
         add(centerPane);
         this.panel = centerPane;
     }
+
+    @Override
+    public void updateNavigation() {
+
+    }
 }

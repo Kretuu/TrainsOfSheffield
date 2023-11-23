@@ -16,7 +16,6 @@ public class OrderHistoryView extends CustomerView {
     private CustomTable<Order> customTable;
 
     public OrderHistoryView(OrderHistoryController controller) {
-        super();
         this.controller = controller;
         mapper = new OrderTableMapper();
 

@@ -5,7 +5,6 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.View;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +13,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class ProductRecordView extends View {
+public class ProductRecordView extends StaffView {
 
     private final ProductRecordController productRecordController;
 
@@ -32,7 +31,7 @@ public class ProductRecordView extends View {
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
 
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //Create a label for products in stock
+        //Create a label for Product Record
         JLabel viewLabel = new JLabel("Product Record");
         row1.add(viewLabel);
         topPanel.add(row1);
@@ -65,7 +64,6 @@ public class ProductRecordView extends View {
 
         // Get products from the DAO
         ArrayList<Product> products = (ArrayList<Product>) ProductDAO.getAllProducts();
-
 
         // Add each product to the tableModel
         for (Product product : products) {
@@ -108,13 +106,16 @@ public class ProductRecordView extends View {
             filterTableByCategory(tableModel, initialLetter);
         });
 
+        // Disable column dragging
+        table.getTableHeader().setReorderingAllowed(false);
+
     }
 
     // Method to get the initial letter based on the selected category
     private String getInitialLetter(String selectedCategory) {
         if ("Locomotive".equals(selectedCategory)) {
             return "L";
-        } else if ("Carriage".equals(selectedCategory)) {
+        } else if ("Controller".equals(selectedCategory)) {
             return "C";
         } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
@@ -172,6 +173,7 @@ public class ProductRecordView extends View {
             // Add more custom category conditions as needed
             return "Other Category";
         }
+
     }
 
 

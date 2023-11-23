@@ -24,11 +24,7 @@ public abstract class ViewController {
     /**
      * This function is called whenever a controller is navigated to
      */
-    public void onNavigateTo(){
+    public void onNavigateTo() {}
 
-    }
-
-    public void onNavigateLeave() {
-
-    }
+    public void onNavigateLeave() {}
 }

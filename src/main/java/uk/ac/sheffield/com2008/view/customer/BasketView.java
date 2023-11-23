@@ -2,15 +2,12 @@ package uk.ac.sheffield.com2008.view.customer;
 
 import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
-import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -20,7 +17,6 @@ public class BasketView extends CustomerView{
     BasketViewController basketViewController;
     JLabel totalTextLabel;
     public BasketView(BasketViewController basketViewController){
-        super();
         this.basketViewController = basketViewController;
         InitializeUI();
     }

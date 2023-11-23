@@ -15,4 +15,6 @@ public abstract class View extends JPanel {
     public Map<Navigation,JButton> getNavigation() {
         return navigation;
     }
+
+    abstract public void updateNavigation();
 }
