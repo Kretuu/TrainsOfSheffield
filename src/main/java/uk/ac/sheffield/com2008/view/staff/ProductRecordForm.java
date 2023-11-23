@@ -281,17 +281,20 @@ public class ProductRecordForm extends View {
         JCheckBox starterOval = new JCheckBox("Starter Oval Track Pack");
         JCheckBox extension = new JCheckBox("Extension Track Pack");
 
-
+        JLabel trackLabel =new JLabel("Track");
         JSpinner extensionSpinner = createSpinner();
         extensionSpinner.setEnabled(false);
         extension.addItemListener(e -> {
             if (extension.isSelected()) {
-                panel.add(new JLabel("Track"));
-                panel.add(extensionSpinner);  // Add the spinner if the checkbox is selected
-                extensionSpinner.setEnabled(true);  // Enable the spinner
+
+                panel.add(trackLabel);
+                panel.add(extensionSpinner);
+                extensionSpinner.setEnabled(true);
+
             } else {
-                panel.remove(extensionSpinner);  // Remove the spinner if the checkbox is not selected
-                extensionSpinner.setEnabled(false);  // Disable the spinner
+                panel.remove(extensionSpinner);
+                extensionSpinner.setEnabled(false);
+                panel.remove(trackLabel);
             }
 
             panel.revalidate();

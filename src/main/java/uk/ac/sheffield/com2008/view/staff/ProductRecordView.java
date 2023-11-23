@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends View {
@@ -82,6 +83,12 @@ public class ProductRecordView extends View {
         productPanel.add(scrollPane);
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
+
+        // Center the content in "Quantity" and "Action" column
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
         JPanel bottomPanel = new JPanel();
