@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends StaffView {
@@ -37,7 +38,7 @@ public class ProductRecordView extends StaffView {
 
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Track", "Locomotive", "Controller", "Rolling Stocks", "Train Sets", "Train Packs"};
+        String[] categories = {"All", "Locomotive", "Carriage", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
         addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
@@ -81,6 +82,12 @@ public class ProductRecordView extends StaffView {
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
 
+        // Center the content in "Quantity" and "Action" column
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+
         // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
@@ -110,13 +117,13 @@ public class ProductRecordView extends StaffView {
             return "L";
         } else if ("Controller".equals(selectedCategory)) {
             return "C";
-        } else if ("Track".equals(selectedCategory)) {
-            return "R";
-        }else if ("Rolling Stock".equals(selectedCategory)) {
+        } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
-        }else if ("Train Sets".equals(selectedCategory)) {
+        }else if ("Track".equals(selectedCategory)) {
+            return "R";
+        }else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        }else if ("Train Packs".equals(selectedCategory)) {
+        }else if ("Track Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";
@@ -153,16 +160,17 @@ public class ProductRecordView extends StaffView {
         if (productCode.startsWith("L")) {
             return "Locomotive";
         } else if (productCode.startsWith("C")) {
-            return "Controller";
-        } else if (productCode.startsWith("R")) {
-            return "Track";
+            return "Carriage";
         } else if (productCode.startsWith("S")) {
-            return "Rolling Stocks";
-        } else if (productCode.startsWith("M")) {
-            return "Train Sets";
-        } else if (productCode.startsWith("P")) {
-            return "Train Packs";
-        } else {
+            return "Rolling Stock";
+        }  else if (productCode.startsWith("R")) {
+            return "Track";
+        }  else if (productCode.startsWith("M")) {
+            return "Train Set";
+        }  else if (productCode.startsWith("P")) {
+            return "Track Pack";
+        }else {
+            // Add more custom category conditions as needed
             return "Other Category";
         }
 

@@ -51,7 +51,7 @@ public class ManageStockView extends StaffView {
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Track", "Locomotive", "Controller", "Rolling Stocks", "Train Sets", "Train Packs"};
+        String[] categories = {"All", "Locomotive", "Carriage", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
@@ -94,6 +94,7 @@ public class ManageStockView extends StaffView {
 
         // Create the JTable using the DefaultTableModel
         JTable table = new JTable(tableModel);
+        table.setEnabled(false);
 
         // Center the content in "Quantity" and "Action" column
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -130,13 +131,13 @@ public class ManageStockView extends StaffView {
             return "L";
         } else if ("Controller".equals(selectedCategory)) {
             return "C";
-        } else if ("Track".equals(selectedCategory)) {
-            return "R";
-        }else if ("Rolling Stocks".equals(selectedCategory)) {
+        } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
-        }else if ("Train Sets".equals(selectedCategory)) {
+        }else if ("Track".equals(selectedCategory)) {
+            return "R";
+        }else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        }else if ("Train Packs".equals(selectedCategory)) {
+        }else if ("Track Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";
@@ -173,18 +174,18 @@ public class ManageStockView extends StaffView {
         if (productCode.startsWith("L")) {
             return "Locomotive";
         } else if (productCode.startsWith("C")) {
-            return "Controller";
-        } else if (productCode.startsWith("R")) {
-            return "Track";
+            return "Carriage";
         } else if (productCode.startsWith("S")) {
-            return "Rolling Stocks";
-        } else if (productCode.startsWith("M")) {
-            return "Train Sets";
-        } else if (productCode.startsWith("P")) {
-            return "Train Packs";
-        } else {
+            return "Rolling Stock";
+        }  else if (productCode.startsWith("R")) {
+            return "Track";
+        }  else if (productCode.startsWith("M")) {
+            return "Train Set";
+        }  else if (productCode.startsWith("P")) {
+            return "Track Pack";
+        }else {
+            // Add more custom category conditions as needed
             return "Other Category";
         }
-
     }
 }

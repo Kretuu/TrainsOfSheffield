@@ -134,27 +134,19 @@ public class ProductRecordForm extends StaffView {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(QuantityField, gbc);
 
-        //TODO: CHANGE THE BUTTON LAYOUT
-        gbc.gridx = 1;
-        gbc.gridy = 8;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        JButton cancelButton = new JButton("Cancel");
-        add(cancelButton, gbc);
-
-        gbc.gridx = 2;
-        JButton submitButton = new JButton("Save");
-        submitButton.setEnabled(false);
-        add(submitButton, gbc);
-
-        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
-
         // Add cardPanel to the layout
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
         add(cardPanel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 8;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(buttonPanel(), gbc);
+
     }
 
 
@@ -172,6 +164,7 @@ public class ProductRecordForm extends StaffView {
         } else if ("Track Pack".equals(category)){
             return trackPackPanel();
         }else{
+            buttonPanel();
             return new JPanel();
         }
     }
@@ -187,6 +180,17 @@ public class ProductRecordForm extends StaffView {
         return null;
     }
 
+    private JPanel buttonPanel() {
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton cancelButton = new JButton("Cancel");
+        buttonsPanel.add(cancelButton);
+        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+
+        JButton submitButton = new JButton("Save");
+        buttonsPanel.add(submitButton);
+
+        return buttonsPanel;
+    }
     private JPanel locomotivePanel() {
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -281,17 +285,20 @@ public class ProductRecordForm extends StaffView {
         JCheckBox starterOval = new JCheckBox("Starter Oval Track Pack");
         JCheckBox extension = new JCheckBox("Extension Track Pack");
 
-
+        JLabel trackLabel =new JLabel("Track");
         JSpinner extensionSpinner = createSpinner();
         extensionSpinner.setEnabled(false);
         extension.addItemListener(e -> {
             if (extension.isSelected()) {
-                panel.add(new JLabel("Track"));
-                panel.add(extensionSpinner);  // Add the spinner if the checkbox is selected
-                extensionSpinner.setEnabled(true);  // Enable the spinner
+
+                panel.add(trackLabel);
+                panel.add(extensionSpinner);
+                extensionSpinner.setEnabled(true);
+
             } else {
-                panel.remove(extensionSpinner);  // Remove the spinner if the checkbox is not selected
-                extensionSpinner.setEnabled(false);  // Disable the spinner
+                panel.remove(extensionSpinner);
+                extensionSpinner.setEnabled(false);
+                panel.remove(trackLabel);
             }
 
             panel.revalidate();
