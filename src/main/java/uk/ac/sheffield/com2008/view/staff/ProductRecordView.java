@@ -39,7 +39,7 @@ public class ProductRecordView extends View {
 
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Locomotive", "Carriage", "Wagon", "Starter Oval TrackPack", "Extension TrackPack"};
+        String[] categories = {"All", "Locomotive", "Carriage", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
         addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
@@ -116,12 +116,14 @@ public class ProductRecordView extends View {
             return "L";
         } else if ("Carriage".equals(selectedCategory)) {
             return "C";
-        } else if ("Wagon".equals(selectedCategory)) {
-            return "W";
-        }else if ("Starter Oval TrackPack".equals(selectedCategory)) {
+        } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
-        }else if ("Extension TrackPack".equals(selectedCategory)) {
-            return "E";
+        }else if ("Track".equals(selectedCategory)) {
+            return "R";
+        }else if ("Train Set".equals(selectedCategory)) {
+            return "M";
+        }else if ("Track Pack".equals(selectedCategory)) {
+            return "P";
         } else {
             return "";
         }
@@ -158,13 +160,15 @@ public class ProductRecordView extends View {
             return "Locomotive";
         } else if (productCode.startsWith("C")) {
             return "Carriage";
-        } else if (productCode.startsWith("W")) {
-            return "Wagon";
         } else if (productCode.startsWith("S")) {
-            return "Starter Oval TrackPack";
-        } else if (productCode.startsWith("E")) {
-            return "Extension TrackPack";
-        } else {
+            return "Rolling Stock";
+        }  else if (productCode.startsWith("R")) {
+            return "Track";
+        }  else if (productCode.startsWith("M")) {
+            return "Train Set";
+        }  else if (productCode.startsWith("P")) {
+            return "Track Pack";
+        }else {
             // Add more custom category conditions as needed
             return "Other Category";
         }

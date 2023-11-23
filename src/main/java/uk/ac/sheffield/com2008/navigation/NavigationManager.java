@@ -48,7 +48,7 @@ public class NavigationManager {
         new SignupController(this, Navigation.SIGNUP);
         new BrowseItemsController(this, Navigation.CUSTOMER);
         new StaffController(this, Navigation.STAFF);
-        new BasketController(this, Navigation.BASKET);
+        new BasketViewController(this, Navigation.BASKET);
         new ProductRecordController(this, Navigation.PRODUCTRECORD);
         new FormController(this, Navigation.PRODUCTFORM);
         new OrderHistoryController(this, Navigation.ORDER_HISTORY);
