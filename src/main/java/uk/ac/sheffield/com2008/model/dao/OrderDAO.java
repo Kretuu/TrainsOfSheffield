@@ -218,4 +218,19 @@ public class OrderDAO {
         return orders;
     }
 
+    public static List<Order> getOrderLinesByOrderNumber(int orderNumber) {
+        String query = "SELECT OL.*, P.* FROM OrderLines OL " +
+                "LEFT OUTER JOIN Products P ON OL.productCode = P.productCode " +
+                "WHERE OL.orderNumber = ?";
+
+        List<Order> orders;
+        try {
+            OrderMapper mapper = new OrderMapper();
+            orders = DatabaseConnectionHandler.select(mapper, query, orderNumber);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return orders;
+    }
+
 }

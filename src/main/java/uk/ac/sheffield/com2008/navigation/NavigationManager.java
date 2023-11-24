@@ -52,7 +52,6 @@ public class NavigationManager {
         new BasketViewController(this, Navigation.BASKET);
         new ManageOrderController(this,Navigation.MANAGE_ORDER);
         new SalesController(this,Navigation.SALES);
-        new OrderListController(this,Navigation.ORDER_LIST);
         new FormController(this, Navigation.PRODUCTFORM);
 
     }

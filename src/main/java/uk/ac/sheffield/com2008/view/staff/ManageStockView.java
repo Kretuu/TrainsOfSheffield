@@ -4,9 +4,12 @@ import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.modals.EditProductStockModal;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -14,14 +17,22 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class ManageStockView extends StaffView {
 
     StaffController staffController;
+    JTable table; // Declare table as a class-level variable
 
-    public ManageStockView(StaffController staffController ) {
+    public ManageStockView(StaffController staffController) {
         super();
         this.staffController = staffController;
-        initializeUI();
+        InitializeUI();
     }
 
-    public void initializeUI() {
+    public void onRefresh() {
+        removeAll();
+        InitializeUI(); //Reinitialize UI
+        revalidate();
+        repaint();
+    }
+
+    public void InitializeUI() {
         setLayout(new BorderLayout());
 
         // top panel
@@ -76,19 +87,25 @@ public class ManageStockView extends StaffView {
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
         productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columnNames = {"Product Code","Product Name", "Category", "Quantity", "Action"};
+        String[] columnNames = {"Product Code", "Product Name", "Category", "Quantity", "Action"};
 
         // Create a DefaultTableModel with column names and no data initially
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Set all cells to be non-editable
+                return false;
+            }
+        };
 
         // Get products from the DAO
         List<Product> products = ProductDAO.getAllProducts();
 
         // Add each product to the tableModel
-        for (Product product : products) {
+        for (Product product : staffController.getAllProducts()) {
             // Customize the category based on the productCode
             String customCategory = determineCustomCategory(product.getProductCode());
-            Object[] rowData = {product.getProductCode(),product.getName(),customCategory, product.getStock(), "Edit"};
+            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
             tableModel.addRow(rowData);
         }
 
@@ -122,6 +139,47 @@ public class ManageStockView extends StaffView {
 
         // Disable column dragging
         table.getTableHeader().setReorderingAllowed(false);
+
+
+        // Create a custom renderer for the view hyperlink column
+        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setOpaque(true);  // Ensure opaque is set to true
+                if (value instanceof Component) {
+                    return (Component) value;
+                }
+                if (value instanceof String) {
+                    JLabel label = new JLabel((String) value);
+                    label.setForeground(Color.BLUE.darker()); // Set the text color to blue
+                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    return label;
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        });
+
+        // Set the column alignment to center
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+
+        // Add a mouse listener to the "Edit" label
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int col = table.columnAtPoint(e.getPoint());
+
+                // Check if the click is in the "Edit" column
+                if (col == 4) {
+                    Product product = products.get(row); // Retrieve the order from the list
+                    // Create an instance of the OrderLineModal class
+                    EditProductStockModal modal = new EditProductStockModal(staffController, (JFrame) SwingUtilities.getWindowAncestor(productPanel), product, ManageStockView.this);
+                    // Show the dialog
+                    modal.setVisible(true);
+                }
+            }
+        });
     }
 
     // Method to get the initial letter based on the selected category
@@ -132,11 +190,11 @@ public class ManageStockView extends StaffView {
             return "C";
         } else if ("Track".equals(selectedCategory)) {
             return "R";
-        }else if ("Rolling Stocks".equals(selectedCategory)) {
+        } else if ("Rolling Stocks".equals(selectedCategory)) {
             return "S";
-        }else if ("Train Sets".equals(selectedCategory)) {
+        } else if ("Train Sets".equals(selectedCategory)) {
             return "M";
-        }else if ("Train Packs".equals(selectedCategory)) {
+        } else if ("Train Packs".equals(selectedCategory)) {
             return "P";
         } else {
             return "";
@@ -151,7 +209,7 @@ public class ManageStockView extends StaffView {
         List<Product> filteredProducts;
         if ("All".equals(initialLetter)) {
             // If "All" is selected, get all products
-            filteredProducts = ProductDAO.getAllProducts();
+            filteredProducts = staffController.getAllProducts();
         } else {
             // Otherwise, get products for the selected category
             filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
@@ -168,6 +226,7 @@ public class ManageStockView extends StaffView {
         }
 
     }
+
     private String determineCustomCategory(String productCode) {
         // Check if the productCode starts with the letter 'L'
         if (productCode.startsWith("L")) {
@@ -185,6 +244,20 @@ public class ManageStockView extends StaffView {
         } else {
             return "Other Category";
         }
+    }
 
+    public void repopulateTable() {
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+        tableModel.setRowCount(0); // Clear existing rows in the table
+
+        List<Product> updatedProducts = staffController.getAllProducts();
+
+        for (Product product : updatedProducts) {
+            // Customize the category based on the productCode
+            String customCategory = determineCustomCategory(product.getProductCode());
+            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            tableModel.addRow(rowData);
+        }
     }
 }
+

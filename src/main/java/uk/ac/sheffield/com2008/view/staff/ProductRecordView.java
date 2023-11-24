@@ -21,6 +21,13 @@ public class ProductRecordView extends StaffView {
         InitializeUI();
     }
 
+    public void onRefresh(){
+        removeAll();
+        InitializeUI();
+        revalidate();
+        repaint();
+    }
+
     public void InitializeUI() {
 
         setLayout(new BorderLayout());
@@ -65,7 +72,7 @@ public class ProductRecordView extends StaffView {
         ArrayList<Product> products = (ArrayList<Product>) ProductDAO.getAllProducts();
 
         // Add each product to the tableModel
-        for (Product product : products) {
+        for (Product product : productRecordController.getAllProducts()) {
             // Customize the category based on the productCode
             String customCategory = determineCustomCategory(product.getProductCode());
             Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
