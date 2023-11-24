@@ -5,9 +5,11 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.util.listeners.CustomActionListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -41,7 +43,12 @@ public class ProductRecordView extends StaffView {
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
-        addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
+        addRecordButton.addActionListener(new CustomActionListener(this) {
+            @Override
+            public void action(ActionEvent e) {
+                productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM);
+            }
+        });
 
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");

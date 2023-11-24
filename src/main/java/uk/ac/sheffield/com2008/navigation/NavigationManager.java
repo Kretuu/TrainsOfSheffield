@@ -87,7 +87,7 @@ public class NavigationManager {
      * @param view View which user wants to navigate to
      * @return true if user can access the view or false otherwise
      */
-    private boolean permissionsValid(View view) {
+    public static boolean permissionsValid(View view) {
         List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
         if(view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
         if(view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;

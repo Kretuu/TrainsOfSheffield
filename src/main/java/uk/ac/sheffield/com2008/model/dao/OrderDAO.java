@@ -46,7 +46,7 @@ public class OrderDAO {
         return orders.get(0);
     }
 
-    private static List<Order> getOrderListByFields(LinkedHashMap<String, String> fieldsMap) {
+    public static List<Order> getOrderListByFields(LinkedHashMap<String, String> fieldsMap) {
         //Building query with all parameters provided in map. Using StringBuilder to improve performance.
         StringBuilder orderQueryBuilder = new StringBuilder();
         orderQueryBuilder.append("SELECT * FROM Orders ")
