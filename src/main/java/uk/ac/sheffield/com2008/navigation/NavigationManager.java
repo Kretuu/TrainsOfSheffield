@@ -46,15 +46,15 @@ public class NavigationManager {
         new LoginController(this, Navigation.LOGIN);
         new SignupController(this, Navigation.SIGNUP);
         new BrowseItemsController(this, Navigation.CUSTOMER);
-        new StaffController(this, Navigation.STAFF);
-        new ProductRecordController(this,Navigation.PRODUCT_RECORD);
-        new OrderHistoryController(this, Navigation.ORDER_HISTORY);
         new BasketViewController(this, Navigation.BASKET);
         new ManageOrderController(this,Navigation.MANAGE_ORDER);
-        new SalesController(this,Navigation.SALES);
         new OrderListController(this,Navigation.ORDER_LIST);
+        new OrderHistoryController(this, Navigation.ORDER_HISTORY);
+        new StaffController(this, Navigation.STAFF);
+        new ProductRecordController(this,Navigation.PRODUCT_RECORD);
+        new EditFormController(this, Navigation.EDIT_PRODUCT_RECORD);
         new FormController(this, Navigation.PRODUCTFORM);
-
+        new SalesController(this,Navigation.SALES);
     }
 
     public void registerController(Navigation id, ViewController controller) {

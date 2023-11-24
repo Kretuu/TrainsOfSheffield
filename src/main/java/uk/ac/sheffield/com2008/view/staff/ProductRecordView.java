@@ -8,13 +8,15 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends StaffView {
 
+    private JTable table;
     private final ProductRecordController productRecordController;
 
     public ProductRecordView(ProductRecordController productRecordController) {
@@ -62,20 +64,11 @@ public class ProductRecordView extends StaffView {
         // Create a DefaultTableModel with column names and no data initially
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 
-        // Get products from the DAO
-        ArrayList<Product> products = (ArrayList<Product>) ProductDAO.getAllProducts();
-
-        // Add each product to the tableModel
-        for (Product product : products) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
-            tableModel.addRow(rowData);
-        }
 
         // Create the JTable using the DefaultTableModel
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
         table.setEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
         productPanel.add(scrollPane);
@@ -86,7 +79,6 @@ public class ProductRecordView extends StaffView {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
         JPanel bottomPanel = new JPanel();
@@ -106,10 +98,65 @@ public class ProductRecordView extends StaffView {
             filterTableByCategory(tableModel, initialLetter);
         });
 
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
+        populateTable();
+
+
 
     }
+
+    private void populateTable() {
+
+        List<Product> products = ProductDAO.getAllProducts();
+
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        // Add each product to the tableModel
+        for (Product product : products) {
+            // Customize the category based on the productCode
+            String customCategory = determineCustomCategory(product.getProductCode());
+            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            tableModel.addRow(rowData);
+        }
+
+        //custom renderer to edit records
+        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setOpaque(true);  // Ensure opaque is set to true
+                if (value instanceof Component) {
+                    return (Component) value;
+                }
+                if (value instanceof String) {
+                    JLabel label = new JLabel((String) value);
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    label.setForeground(Color.BLUE.darker());
+                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    return label;
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        });
+
+        // Add a mouse listener to the "Edit" label
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //int row = table.rowAtPoint(e.getPoint());
+                int col = table.columnAtPoint(e.getPoint());
+
+                // Check if the click is in the "Edit" column
+                if (col == 4) {
+                    // Define the action to take when the link is clicked
+                    productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
+                }
+            }
+        });
+    }
+
+
+
+
 
     // Method to get the initial letter based on the selected category
     private String getInitialLetter(String selectedCategory) {

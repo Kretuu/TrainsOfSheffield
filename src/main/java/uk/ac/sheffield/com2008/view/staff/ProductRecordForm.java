@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.View;
 
 import javax.swing.*;
 import java.awt.*;
@@ -184,7 +183,7 @@ public class ProductRecordForm extends StaffView {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton cancelButton = new JButton("Cancel");
         buttonsPanel.add(cancelButton);
-        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCTRECORD));
+        cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
 
         JButton submitButton = new JButton("Save");
         buttonsPanel.add(submitButton);
