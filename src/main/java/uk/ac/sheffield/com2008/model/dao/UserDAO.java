@@ -5,8 +5,9 @@ import uk.ac.sheffield.com2008.model.domain.data.AuthUser;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.model.mappers.AuthUserMapper;
+import uk.ac.sheffield.com2008.model.mappers.RowMapper;
 import uk.ac.sheffield.com2008.model.mappers.UserMapper;
-import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
+import uk.ac.sheffield.com2008.util.EncryptionManager;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -51,7 +52,7 @@ public class UserDAO {
         if(authUsers.isEmpty()) return null;
 
         AuthUser authUser = authUsers.get(0);
-        String passwordHash = HashedPasswordGenerator.hashPassword(password, authUser.salt());
+        String passwordHash = EncryptionManager.hashPassword(password, authUser.salt());
 
         if(authUser.passwordHash().equals(passwordHash)) {
             return getUserByEmail(userEmail);
@@ -76,5 +77,20 @@ public class UserDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String fetchUserSalt(User user) {
+        String query = "SELECT salt FROM Users WHERE uuid = ?";
+
+        List<String> salts;
+        try {
+            RowMapper<String> mapper = resultSet -> resultSet.getString("salt");
+            salts = DatabaseConnectionHandler.select(mapper, query, user.getUuid());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(salts.isEmpty()) return null;
+        return salts.get(0);
     }
 }
