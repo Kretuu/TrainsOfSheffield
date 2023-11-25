@@ -4,8 +4,7 @@ import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.modals.AddProductToCartModal;
-//import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
+import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
 
 
 import javax.swing.*;
@@ -26,10 +25,16 @@ public class ManageOrdersView extends StaffView {
 
     public ManageOrdersView(ManageOrderController manageOrderController) {
         this.manageOrderController = manageOrderController;
-        InitializeUI();
     }
 
-    public void InitializeUI() {
+    public void onRefresh() {
+        removeAll();
+        initializeUI(); //Reinitialize UI
+        revalidate();
+        repaint();
+    }
+
+    public void initializeUI() {
 
         setLayout(new BorderLayout());
         int padding = 40;
@@ -99,7 +104,7 @@ public class ManageOrdersView extends StaffView {
 
     private void populateOrdersInTable(JPanel panelReference) {
         // Fetch all orders using OrderDAO
-        List<Order> orders = OrderDAO.getAllOrders(); // You need to implement this method in your OrderDAO
+        List<Order> orders = OrderDAO.getAllOrders();
 
         // Populate orders and order lines into the JTable
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
@@ -116,8 +121,6 @@ public class ManageOrdersView extends StaffView {
             tableModel.addRow(rowData);
         }
 
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
 
         // Create a custom renderer for the view hyperlink column
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
@@ -154,16 +157,21 @@ public class ManageOrdersView extends StaffView {
                 if (col == 4) {
                     // Define the action to take when the label is clicked
                     Order order = orders.get(row); // Retrieve the order from the list
-                        // Create an instance of the OrderLineModal class
-                    //OrderLineModal modal = new OrderLineModal(
-                                //manageOrderController,
-                                //(JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
-
-                   // modal.setVisible(true); // Show the modal dialog
+                    // Create an instance of the OrderLineModal class
+                    OrderLineModal modal = new OrderLineModal(manageOrderController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
+                    modal.setVisible(true); // Show the modal dialog
                 }
             }
         });
 
+        // Disable column dragging
+        table.getTableHeader().setReorderingAllowed(false);
+
+    }
+
+    // Getter method to access the table model
+    public DefaultTableModel getTableModel() {
+        return (DefaultTableModel) table.getModel();
     }
 
 }

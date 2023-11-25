@@ -17,22 +17,21 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class ManageStockView extends StaffView {
 
     StaffController staffController;
-    JTable table; // Declare table as a class-level variable
+    private JTable table;
 
     public ManageStockView(StaffController staffController) {
         super();
         this.staffController = staffController;
-        InitializeUI();
     }
 
     public void onRefresh() {
         removeAll();
-        InitializeUI(); //Reinitialize UI
+        initializeUI(); //Reinitialize UI
         revalidate();
         repaint();
     }
 
-    public void InitializeUI() {
+    public void initializeUI() {
         setLayout(new BorderLayout());
 
         // top panel
@@ -104,13 +103,11 @@ public class ManageStockView extends StaffView {
         // Add each product to the tableModel
         for (Product product : staffController.getAllProducts()) {
             // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
             tableModel.addRow(rowData);
         }
 
-        // Create the JTable using the DefaultTableModel
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
 
         // Center the content in "Quantity" and "Action" column
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -126,7 +123,11 @@ public class ManageStockView extends StaffView {
 
         productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
 
-        manageOrderButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.MANAGE_ORDER));
+        manageOrderButton.addActionListener(e -> {
+            staffController.getNavigation().navigate(Navigation.MANAGE_ORDER);
+            // Repopulate the table upon returning to the ManageStockView
+            staffController.repopulateTable();
+        });
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
@@ -217,47 +218,19 @@ public class ManageStockView extends StaffView {
 
         // Add each filtered product to the tableModel
         for (Product product : filteredProducts) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
 
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
             tableModel.addRow(rowData);
             //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
         }
 
     }
 
-    private String determineCustomCategory(String productCode) {
-        // Check if the productCode starts with the letter 'L'
-        if (productCode.startsWith("L")) {
-            return "Locomotive";
-        } else if (productCode.startsWith("C")) {
-            return "Controller";
-        } else if (productCode.startsWith("R")) {
-            return "Track";
-        } else if (productCode.startsWith("S")) {
-            return "Rolling Stocks";
-        } else if (productCode.startsWith("M")) {
-            return "Train Sets";
-        } else if (productCode.startsWith("P")) {
-            return "Train Packs";
-        } else {
-            return "Other Category";
-        }
+    // Getter method to access the table model
+    public DefaultTableModel getTableModel() {
+        return (DefaultTableModel) table.getModel();
     }
 
-    public void repopulateTable() {
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-        tableModel.setRowCount(0); // Clear existing rows in the table
 
-        List<Product> updatedProducts = staffController.getAllProducts();
-
-        for (Product product : updatedProducts) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
-            tableModel.addRow(rowData);
-        }
-    }
 }
 

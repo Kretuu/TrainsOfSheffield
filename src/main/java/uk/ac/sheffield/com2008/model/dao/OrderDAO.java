@@ -46,7 +46,7 @@ public class OrderDAO {
         return orders.get(0);
     }
 
-    private static List<Order> getOrderListByFields(LinkedHashMap<String, String> fieldsMap) {
+    public static List<Order> getOrderListByFields(LinkedHashMap<String, String> fieldsMap) {
         //Building query with all parameters provided in map. Using StringBuilder to improve performance.
         StringBuilder orderQueryBuilder = new StringBuilder();
         orderQueryBuilder.append("SELECT * FROM Orders ")
@@ -218,19 +218,31 @@ public class OrderDAO {
         return orders;
     }
 
-    public static List<Order> getOrderLinesByOrderNumber(int orderNumber) {
-        String query = "SELECT OL.*, P.* FROM OrderLines OL " +
-                "LEFT OUTER JOIN Products P ON OL.productCode = P.productCode " +
-                "WHERE OL.orderNumber = ?";
-
-        List<Order> orders;
+    public static void updateOrderStatus(Order order) {
+        String updateQuery = "UPDATE Orders SET status = ? WHERE orderNumber = ?";
         try {
-            OrderMapper mapper = new OrderMapper();
-            orders = DatabaseConnectionHandler.select(mapper, query, orderNumber);
+            DatabaseConnectionHandler.update(updateQuery, order.getStatus().toString(), order.getOrderNumber());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return orders;
+    }
+
+    public static void deleteOrder(Order order) {
+        // First, delete order lines associated with the order
+        String deleteOrderLinesQuery = "DELETE FROM OrderLines WHERE orderNumber = ?";
+        try {
+            DatabaseConnectionHandler.update(deleteOrderLinesQuery, order.getOrderNumber());
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting order lines for order: " + order.getOrderNumber(), e);
+        }
+
+        // Then, delete the order itself
+        String deleteOrderQuery = "DELETE FROM Orders WHERE orderNumber = ?";
+        try {
+            DatabaseConnectionHandler.update(deleteOrderQuery, order.getOrderNumber());
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting order: " + order.getOrderNumber(), e);
+        }
     }
 
 }

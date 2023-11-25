@@ -79,6 +79,10 @@ public class EditProductStockModal extends JDialog {
             JOptionPane.showMessageDialog(this, "Update successful", "Success", JOptionPane.INFORMATION_MESSAGE);
             // Close the modal dialog
             dispose();
+            // Repopulate the table with updated data
+            staffController.repopulateTable();
+            //Refresh the UI
+            staffController.onNavigateTo();
         });
         buttonPanel2.add(updateButton);
 
@@ -110,12 +114,6 @@ public class EditProductStockModal extends JDialog {
         totalStockLabel.setText("Total Stocks : " + newQuantity );
     }
 
-    // Method to refresh the view in ManageStockView
-    private void refreshManageStockView() {
-        if (manageStockView != null) {
-            manageStockView.onRefresh(); // Call onRefresh method of ManageStockView
-        }
-    }
 
 
 }

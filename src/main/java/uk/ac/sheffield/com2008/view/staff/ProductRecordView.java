@@ -14,21 +14,22 @@ import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends StaffView {
 
-    private final ProductRecordController productRecordController;
+    ProductRecordController productRecordController;
+
+    private JTable table;
 
     public ProductRecordView(ProductRecordController productRecordController) {
         this.productRecordController = productRecordController;
-        InitializeUI();
     }
 
     public void onRefresh(){
         removeAll();
-        InitializeUI();
+        initializeUI();
         revalidate();
         repaint();
     }
 
-    public void InitializeUI() {
+    public void initializeUI() {
 
         setLayout(new BorderLayout());
         int padding = 40;
@@ -73,14 +74,11 @@ public class ProductRecordView extends StaffView {
 
         // Add each product to the tableModel
         for (Product product : productRecordController.getAllProducts()) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
             tableModel.addRow(rowData);
         }
 
-        // Create the JTable using the DefaultTableModel
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel); // Assigning to the class-level variable
         table.setEnabled(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
@@ -146,34 +144,14 @@ public class ProductRecordView extends StaffView {
 
         // Add each filtered product to the tableModel
         for (Product product : filteredProducts) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
 
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
             tableModel.addRow(rowData);
             //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
         }
 
     }
-    private String determineCustomCategory(String productCode) {
-        // Check if the productCode starts with the letter 'L'
-        if (productCode.startsWith("L")) {
-            return "Locomotive";
-        } else if (productCode.startsWith("C")) {
-            return "Controller";
-        } else if (productCode.startsWith("R")) {
-            return "Track";
-        } else if (productCode.startsWith("S")) {
-            return "Rolling Stocks";
-        } else if (productCode.startsWith("M")) {
-            return "Train Sets";
-        } else if (productCode.startsWith("P")) {
-            return "Train Packs";
-        } else {
-            return "Other Category";
-        }
 
-    }
 
 
 }
