@@ -76,7 +76,7 @@ public class EditProductStockModal extends JDialog {
             System.out.println("Updated quantity: " + selectedQuantity);
 
             // Show a message indicating a successful update
-            JOptionPane.showMessageDialog(this, "Update successful", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Stocks has been updated", "Success", JOptionPane.INFORMATION_MESSAGE);
             // Close the modal dialog
             dispose();
             // Repopulate the table with updated data
