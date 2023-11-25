@@ -5,26 +5,33 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.util.listeners.CustomActionListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends StaffView {
 
+    ProductRecordController productRecordController;
+
     private JTable table;
-    private final ProductRecordController productRecordController;
 
     public ProductRecordView(ProductRecordController productRecordController) {
         this.productRecordController = productRecordController;
-        InitializeUI();
     }
 
-    public void InitializeUI() {
+    public void onRefresh(){
+        removeAll();
+        initializeUI();
+        revalidate();
+        repaint();
+    }
+
+    public void initializeUI() {
 
         setLayout(new BorderLayout());
         int padding = 40;
@@ -33,19 +40,22 @@ public class ProductRecordView extends StaffView {
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
 
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //Create a label for Product Record
         JLabel viewLabel = new JLabel("Product Record");
         row1.add(viewLabel);
         topPanel.add(row1);
 
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Locomotive", "Carriage", "Rolling Stock", "Track", "Train Set", "Track Pack"};
+        String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
-        addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
+        addRecordButton.addActionListener(new CustomActionListener(this) {
+            @Override
+            public void action(ActionEvent e) {
+                productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM);
+            }
+        });
 
-        // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
         row2.add(filterLabel);
         row2.add(filterComboBox);
@@ -64,9 +74,21 @@ public class ProductRecordView extends StaffView {
         // Create a DefaultTableModel with column names and no data initially
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 
+        // Fetch all products from ProductDAO
+        List<Product> products = ProductDAO.getAllProducts();
 
-        // Create the JTable using the DefaultTableModel
-        table = new JTable(tableModel);
+        // Add each product to the tableModel
+        for (Product product : products) {
+            Object[] rowData = {
+                    product.getProductCode(),
+                    product.getName(),
+                    productRecordController.determineCustomCategory(product.getProductCode()),
+                    product.getStock(),
+                    "Edit"};
+            tableModel.addRow(rowData);
+        }
+
+        table = new JTable(tableModel); // Assigning to the class-level variable
         table.setEnabled(false);
         table.getTableHeader().setReorderingAllowed(false);
 
@@ -79,6 +101,7 @@ public class ProductRecordView extends StaffView {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
         JPanel bottomPanel = new JPanel();
@@ -97,26 +120,6 @@ public class ProductRecordView extends StaffView {
             // Call the filter method based on the selected starting letter
             filterTableByCategory(tableModel, initialLetter);
         });
-
-        populateTable();
-
-
-
-    }
-
-    private void populateTable() {
-
-        List<Product> products = ProductDAO.getAllProducts();
-
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        // Add each product to the tableModel
-        for (Product product : products) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
-            tableModel.addRow(rowData);
-        }
 
         //custom renderer to edit records
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
@@ -138,25 +141,26 @@ public class ProductRecordView extends StaffView {
             }
         });
 
+
         // Add a mouse listener to the "Edit" label
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //int row = table.rowAtPoint(e.getPoint());
+                int row = table.rowAtPoint(e.getPoint());
                 int col = table.columnAtPoint(e.getPoint());
 
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
                     // Define the action to take when the link is clicked
+                    Product product = products.get(row);
                     productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
                 }
             }
         });
+
+
+
     }
-
-
-
-
 
     // Method to get the initial letter based on the selected category
     private String getInitialLetter(String selectedCategory) {
@@ -193,35 +197,11 @@ public class ProductRecordView extends StaffView {
 
         // Add each filtered product to the tableModel
         for (Product product : filteredProducts) {
-            // Customize the category based on the productCode
-            String customCategory = determineCustomCategory(product.getProductCode());
 
-            Object[] rowData = {product.getProductCode(), product.getName(), customCategory, product.getStock(), "Edit"};
+            Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
             tableModel.addRow(rowData);
-            //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
         }
 
     }
-    private String determineCustomCategory(String productCode) {
-        // Check if the productCode starts with the letter 'L'
-        if (productCode.startsWith("L")) {
-            return "Locomotive";
-        } else if (productCode.startsWith("C")) {
-            return "Carriage";
-        } else if (productCode.startsWith("S")) {
-            return "Rolling Stock";
-        }  else if (productCode.startsWith("R")) {
-            return "Track";
-        }  else if (productCode.startsWith("M")) {
-            return "Train Set";
-        }  else if (productCode.startsWith("P")) {
-            return "Track Pack";
-        }else {
-            // Add more custom category conditions as needed
-            return "Other Category";
-        }
-
-    }
-
 
 }

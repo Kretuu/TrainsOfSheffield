@@ -46,11 +46,11 @@ public class NavigationManager {
         new LoginController(this, Navigation.LOGIN);
         new SignupController(this, Navigation.SIGNUP);
         new BrowseItemsController(this, Navigation.CUSTOMER);
+        new StaffController(this, Navigation.STAFF);
         new BasketViewController(this, Navigation.BASKET);
         new ManageOrderController(this,Navigation.MANAGE_ORDER);
         new OrderListController(this,Navigation.ORDER_LIST);
         new OrderHistoryController(this, Navigation.ORDER_HISTORY);
-        new StaffController(this, Navigation.STAFF);
         new ProductRecordController(this,Navigation.PRODUCT_RECORD);
         new EditFormController(this, Navigation.EDIT_PRODUCT_RECORD);
         new FormController(this, Navigation.PRODUCTFORM);
@@ -87,7 +87,7 @@ public class NavigationManager {
      * @param view View which user wants to navigate to
      * @return true if user can access the view or false otherwise
      */
-    private boolean permissionsValid(View view) {
+    public static boolean permissionsValid(View view) {
         List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
         if(view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
         if(view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;
