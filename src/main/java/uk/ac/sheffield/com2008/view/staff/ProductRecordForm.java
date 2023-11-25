@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.View;
 
 import javax.swing.*;
 import java.awt.*;

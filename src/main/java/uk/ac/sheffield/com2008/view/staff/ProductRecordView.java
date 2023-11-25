@@ -9,8 +9,7 @@ import uk.ac.sheffield.com2008.util.listeners.CustomActionListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
+import java.awt.event.*;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -41,7 +40,6 @@ public class ProductRecordView extends StaffView {
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
 
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //Create a label for Product Record
         JLabel viewLabel = new JLabel("Product Record");
         row1.add(viewLabel);
         topPanel.add(row1);
@@ -58,7 +56,6 @@ public class ProductRecordView extends StaffView {
             }
         });
 
-        // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
         row2.add(filterLabel);
         row2.add(filterComboBox);
@@ -77,17 +74,23 @@ public class ProductRecordView extends StaffView {
         // Create a DefaultTableModel with column names and no data initially
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 
-        // Get products from the DAO
-        ArrayList<Product> products = (ArrayList<Product>) ProductDAO.getAllProducts();
+        // Fetch all products from ProductDAO
+        List<Product> products = ProductDAO.getAllProducts();
 
         // Add each product to the tableModel
-        for (Product product : productRecordController.getAllProducts()) {
-            Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
+        for (Product product : products) {
+            Object[] rowData = {
+                    product.getProductCode(),
+                    product.getName(),
+                    productRecordController.determineCustomCategory(product.getProductCode()),
+                    product.getStock(),
+                    "Edit"};
             tableModel.addRow(rowData);
         }
 
         table = new JTable(tableModel); // Assigning to the class-level variable
         table.setEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
         productPanel.add(scrollPane);
@@ -118,8 +121,44 @@ public class ProductRecordView extends StaffView {
             filterTableByCategory(tableModel, initialLetter);
         });
 
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
+        //custom renderer to edit records
+        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setOpaque(true);  // Ensure opaque is set to true
+                if (value instanceof Component) {
+                    return (Component) value;
+                }
+                if (value instanceof String) {
+                    JLabel label = new JLabel((String) value);
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    label.setForeground(Color.BLUE.darker());
+                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    return label;
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        });
+
+
+        // Add a mouse listener to the "Edit" label
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int col = table.columnAtPoint(e.getPoint());
+
+                // Check if the click is in the "Edit" column
+                if (col == 4) {
+                    // Define the action to take when the link is clicked
+                    Product product = products.get(row);
+                    productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
+                }
+            }
+        });
+
+
 
     }
 
@@ -161,7 +200,6 @@ public class ProductRecordView extends StaffView {
 
             Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
             tableModel.addRow(rowData);
-            //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
         }
 
     }
