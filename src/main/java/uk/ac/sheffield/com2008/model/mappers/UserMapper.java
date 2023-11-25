@@ -10,14 +10,14 @@ import java.sql.SQLException;
 public class UserMapper implements RowMapper<User> {
     public User mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         User user;
-        long cardNumber = resultSet.getLong("Users.cardNumber");
+        String cardNumber = resultSet.getString("Users.cardNumber");
         BankingCard bankingCard = null;
-        if (cardNumber != 0) {
+        if (cardNumber != null) {
             bankingCard = new BankingCard(
                     resultSet.getString("holderName"),
                     cardNumber,
                     resultSet.getDate("expiryDate"),
-                    resultSet.getInt("cvv")
+                    resultSet.getString("cvv")
             );
         }
         PersonalDetails details = new PersonalDetails(

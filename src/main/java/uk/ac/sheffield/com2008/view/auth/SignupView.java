@@ -4,7 +4,7 @@ import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
-import uk.ac.sheffield.com2008.util.ValidationManager;
+import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,21 +55,21 @@ public class SignupView extends AuthView {
 
     private void createTextFields() {
         CustomInputField email = new CustomInputField("Email", this::updateButtonState, false);
-        email.setValidationFunction(() -> ValidationManager.validateEmail(email.getjTextField().getText()));
+        email.setValidationFunction(() -> FieldsValidationManager.validateEmail(email.getjTextField().getText()));
         email.addToPanel(panel);
         inputFields.put("email", email);
 
         CustomInputField password = new CustomInputField(
                 "Password", this::updateButtonState, false, true
         );
-        password.setValidationFunction(() -> ValidationManager.validatePassword(password.getjTextField().getText()));
+        password.setValidationFunction(() -> FieldsValidationManager.validatePassword(password.getjTextField().getText()));
         password.addToPanel(panel);
         inputFields.put("password", password);
 
         CustomInputField confirmPassword = new CustomInputField(
                 "Confirm Password", this::updateButtonState, false, true
         );
-        confirmPassword.setValidationFunction(() -> ValidationManager.validateConfirmPassword(
+        confirmPassword.setValidationFunction(() -> FieldsValidationManager.validateConfirmPassword(
                 password.getjTextField().getText(), confirmPassword.getjTextField().getText()
         ));
         confirmPassword.addToPanel(panel);

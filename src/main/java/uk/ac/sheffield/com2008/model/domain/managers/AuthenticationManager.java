@@ -9,7 +9,7 @@ import uk.ac.sheffield.com2008.model.domain.data.AuthUser;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
-import uk.ac.sheffield.com2008.util.HashedPasswordGenerator;
+import uk.ac.sheffield.com2008.util.EncryptionManager;
 import uk.ac.sheffield.com2008.util.UUIDGenerator;
 
 public class AuthenticationManager {
@@ -34,8 +34,8 @@ public class AuthenticationManager {
 
         PersonalDetails personalDetails = new PersonalDetails(forename, surname);
         String uuid = UUIDGenerator.generate();
-        String salt = HashedPasswordGenerator.generateSalt();
-        String hashedPassword = HashedPasswordGenerator.hashPassword(password, salt);
+        String salt = EncryptionManager.generateSalt();
+        String hashedPassword = EncryptionManager.hashPassword(password, salt);
         user = new User(uuid, userEmail, personalDetails, null);
         AuthUser authUser = new AuthUser(hashedPassword, salt);
         UserDAO.createUser(user, authUser);
