@@ -45,31 +45,7 @@ public class ManageProfileView extends UserView {
         subNav.setLayout(new BoxLayout(subNav, BoxLayout.X_AXIS));
 
         JButton modifyCard = new JButton("Update Banking Card");
-
-        modifyCard.addActionListener(e -> new VerifyPasswordModal(controller.getNavigation().getFrame()) {
-
-            @Override
-            public String onConfirm(char[] password) {
-                User user = AppSessionCache.getInstance().getUserLoggedIn();
-                if(UserDAO.verifyPassword(user.getEmail(), password) != null) {
-                    CompletableFuture.runAsync(() -> new UpdateCreditCardModal(controller.getNavigation().getFrame(), controller.getBankingCard(password)) {
-                        @Override
-                        public boolean onSave(String cardNumber, Date expiryDate, String securityCode, String holderName) {
-                            UserManager.updateUserBankDetails(user, new BankingCard(
-                                    holderName, cardNumber, expiryDate, securityCode
-                            ), password);
-                            return true;
-                        }
-                    }.setVisible(true));
-                    return null;
-                }
-                return "Incorrect password";
-            }
-        }.setVisible(true));
-
-//        modifyCard.addActionListener(e -> {
-//
-//        });
+        modifyCard.addActionListener(e -> changeBankDetails());
 
         subNav.add(modifyCard);
         content.add(subNav);
@@ -125,6 +101,29 @@ public class ManageProfileView extends UserView {
         postcode.setValidationFunction(() -> FieldsValidationManager.validatePostcode(postcode.getjTextField().getText()));
         postcode.addToPanel(content);
         inputFields.put("postcode", postcode);
+    }
+
+    private void changeBankDetails() {
+        new VerifyPasswordModal(controller.getNavigation().getFrame()) {
+
+            @Override
+            public String onConfirm(char[] password) {
+                User user = AppSessionCache.getInstance().getUserLoggedIn();
+                if(UserDAO.verifyPassword(user.getEmail(), password) != null) {
+                    CompletableFuture.runAsync(() -> new UpdateCreditCardModal(controller.getNavigation().getFrame(), controller.getBankingCard(password)) {
+                        @Override
+                        public boolean onSave(String cardNumber, Date expiryDate, String securityCode, String holderName) {
+                            UserManager.updateUserBankDetails(user, new BankingCard(
+                                    holderName, cardNumber, expiryDate, securityCode
+                            ), password);
+                            return true;
+                        }
+                    }.setVisible(true));
+                    return null;
+                }
+                return "Incorrect password";
+            }
+        }.setVisible(true);
     }
 
     private void updateButtonState() {
