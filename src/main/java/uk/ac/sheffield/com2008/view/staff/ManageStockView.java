@@ -61,7 +61,7 @@ public class ManageStockView extends StaffView {
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Track", "Locomotive", "Controller", "Rolling Stocks", "Train Sets", "Train Packs"};
+        String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
@@ -108,6 +108,8 @@ public class ManageStockView extends StaffView {
         }
 
         table = new JTable(tableModel);
+        table.setEnabled(false);
+
 
         // Center the content in "Quantity" and "Action" column
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -201,6 +203,7 @@ public class ManageStockView extends StaffView {
             return "";
         }
     }
+
 
     private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
         // Clear the existing rows in the table

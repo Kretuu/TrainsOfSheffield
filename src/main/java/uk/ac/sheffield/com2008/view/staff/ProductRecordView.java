@@ -5,11 +5,14 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.util.listeners.CustomActionListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class ProductRecordView extends StaffView {
@@ -45,10 +48,15 @@ public class ProductRecordView extends StaffView {
 
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
-        String[] categories = {"All", "Track", "Locomotive", "Controller", "Rolling Stocks", "Train Sets", "Train Packs"};
+        String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
-        addRecordButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM));
+        addRecordButton.addActionListener(new CustomActionListener(this) {
+            @Override
+            public void action(ActionEvent e) {
+                productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM);
+            }
+        });
 
         // Set tooltip for the combo box
         filterComboBox.setToolTipText("Select a category to filter the products");
@@ -86,6 +94,12 @@ public class ProductRecordView extends StaffView {
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
 
+        // Center the content in "Quantity" and "Action" column
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+
         // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
@@ -115,13 +129,13 @@ public class ProductRecordView extends StaffView {
             return "L";
         } else if ("Controller".equals(selectedCategory)) {
             return "C";
-        } else if ("Track".equals(selectedCategory)) {
-            return "R";
-        }else if ("Rolling Stock".equals(selectedCategory)) {
+        } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
-        }else if ("Train Sets".equals(selectedCategory)) {
+        }else if ("Track".equals(selectedCategory)) {
+            return "R";
+        }else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        }else if ("Train Packs".equals(selectedCategory)) {
+        }else if ("Track Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";
@@ -151,7 +165,5 @@ public class ProductRecordView extends StaffView {
         }
 
     }
-
-
 
 }
