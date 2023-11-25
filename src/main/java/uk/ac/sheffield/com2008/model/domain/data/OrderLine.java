@@ -49,4 +49,5 @@ public class OrderLine {
         if(!(obj instanceof OrderLine ol)) return false;
         return ol.getPrice() == this.price && ol.getQuantity() == this.quantity && ol.getProduct().equals(this.product);
     }
+
 }

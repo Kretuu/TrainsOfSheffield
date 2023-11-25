@@ -108,6 +108,15 @@ public class ProductDAO {
 
         return productSetItems;
     }
+
+    public static void updateProductStocks(Product product, int quantity){
+        String updateQuery = "UPDATE Products SET stock = ? WHERE productCode = ?";
+        try {
+            DatabaseConnectionHandler.update(updateQuery, quantity, product.getProductCode());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 

@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
 
 
 import javax.swing.*;
@@ -24,10 +25,16 @@ public class ManageOrdersView extends StaffView {
 
     public ManageOrdersView(ManageOrderController manageOrderController) {
         this.manageOrderController = manageOrderController;
-        InitializeUI();
     }
 
-    public void InitializeUI() {
+    public void onRefresh() {
+        removeAll();
+        initializeUI(); //Reinitialize UI
+        revalidate();
+        repaint();
+    }
+
+    public void initializeUI() {
 
         setLayout(new BorderLayout());
         int padding = 40;
@@ -66,11 +73,13 @@ public class ManageOrdersView extends StaffView {
         salesButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.SALES));
         navigationButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.STAFF));
 
+        final JPanel panel = new JPanel(); // Making 'panel' final
 
-        // Create a JPanel for the scroll panel with product labels
-        JPanel productPanel = new JPanel();
-        productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
-        productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Create a JPanel for the scroll panel with table
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         String[] columnNames = {"Order Number", "Date Ordered", "Status", "Total Price", "Action"};
 
         // Create a DefaultTableModel with column names and no data initially
@@ -81,18 +90,21 @@ public class ManageOrdersView extends StaffView {
         table.setEnabled(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        productPanel.add(scrollPane);
-        this.add(productPanel);
-        productPanel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
+        panel.add(scrollPane);
+        this.add(panel);
+        panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
+
+        // Create a final reference to 'panel' for access inside the mouse listener
+        final JPanel panelReference = panel;
 
         // Populate orders into the table
-        populateOrdersInTable();
+        populateOrdersInTable(panelReference);
 
     }
 
-    private void populateOrdersInTable() {
+    private void populateOrdersInTable(JPanel panelReference) {
         // Fetch all orders using OrderDAO
-        List<Order> orders = OrderDAO.getAllOrders(); // You need to implement this method in your OrderDAO
+        List<Order> orders = OrderDAO.getAllOrders();
 
         // Populate orders and order lines into the JTable
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
@@ -109,8 +121,6 @@ public class ManageOrdersView extends StaffView {
             tableModel.addRow(rowData);
         }
 
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
 
         // Create a custom renderer for the view hyperlink column
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
@@ -145,15 +155,23 @@ public class ManageOrdersView extends StaffView {
 
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
-                    // Define the action to take when the link is clicked
-                    manageOrderController.getNavigation().navigate(Navigation.ORDER_LIST);
+                    // Define the action to take when the label is clicked
+                    Order order = orders.get(row); // Retrieve the order from the list
+                    // Create an instance of the OrderLineModal class
+                    OrderLineModal modal = new OrderLineModal(manageOrderController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
+                    modal.setVisible(true); // Show the modal dialog
                 }
             }
         });
 
+        // Disable column dragging
+        table.getTableHeader().setReorderingAllowed(false);
+
     }
 
-
-
+    // Getter method to access the table model
+    public DefaultTableModel getTableModel() {
+        return (DefaultTableModel) table.getModel();
+    }
 
 }
