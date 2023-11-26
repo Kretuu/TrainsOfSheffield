@@ -2,8 +2,6 @@ package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
-import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
@@ -18,7 +16,7 @@ public class ManageOrderController extends ViewController {
 
     public ManageOrdersView manageOrdersView;
 
-    private List<Order> allOrderLine;
+    private List<Order> allOrders;
 
     public ManageOrderController(NavigationManager navigationManager, Navigation id){
         super(navigationManager, id);
@@ -27,7 +25,7 @@ public class ManageOrderController extends ViewController {
     }
 
     public void onNavigateTo(){
-        allOrderLine = OrderDAO.getAllOrders();
+        allOrders = OrderDAO.getAllOrders();
         manageOrdersView.onRefresh();
     }
 

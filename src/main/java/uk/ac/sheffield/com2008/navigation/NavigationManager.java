@@ -54,6 +54,7 @@ public class NavigationManager {
         new EditFormController(this, Navigation.EDIT_PRODUCT_RECORD);
         new FormController(this, Navigation.PRODUCTFORM);
         new SalesController(this,Navigation.SALES);
+        new FulfilledOrdersController(this,Navigation.FULFILLED_ORDERS);
     }
 
     public void registerController(Navigation id, ViewController controller) {

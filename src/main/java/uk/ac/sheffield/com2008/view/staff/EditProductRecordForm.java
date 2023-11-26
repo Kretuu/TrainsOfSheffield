@@ -46,6 +46,7 @@ public class EditProductRecordForm extends StaffView{
         JTextField productCodeField = new JTextField();
         add(productCodeField, gbc);
 
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
