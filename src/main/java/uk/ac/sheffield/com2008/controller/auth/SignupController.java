@@ -7,6 +7,8 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.auth.SignupView;
 
+import java.sql.SQLException;
+
 public class SignupController extends ViewController {
     private final SignupView signupView;
 
@@ -23,6 +25,8 @@ public class SignupController extends ViewController {
             navigation.navigate(Navigation.CUSTOMER);
         } catch (EmailAlreadyInUseException e) {
             signupView.updateErrorMessage(e.getMessage());
+        } catch (SQLException e) {
+            signupView.updateErrorMessage("Cannot connect to database.");
         }
     }
 

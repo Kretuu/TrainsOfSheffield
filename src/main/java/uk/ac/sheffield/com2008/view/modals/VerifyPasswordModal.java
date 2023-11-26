@@ -1,10 +1,12 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.sql.SQLException;
 
 public abstract class VerifyPasswordModal extends JDialog {
     private final JButton submitButton;
@@ -40,9 +42,15 @@ public abstract class VerifyPasswordModal extends JDialog {
 
         submitButton.setEnabled(false);
         submitButton.addActionListener(e -> {
-            String errorMessage = onConfirm(password.getjPasswordField().getPassword());
-            updateErrorMessage(errorMessage);
-            if(errorMessage == null) dispose();
+            try {
+                String errorMessage = onConfirm(password.getjPasswordField().getPassword());
+                updateErrorMessage(errorMessage);
+                if(errorMessage == null) dispose();
+            } catch (SQLException ex) {
+                updateErrorMessage("Cannot connect to database.");
+            } catch (Exception ex) {
+                updateErrorMessage(ex.getMessage());
+            }
         });
 
         JButton cancelButton = new JButton("Cancel");
@@ -66,5 +74,5 @@ public abstract class VerifyPasswordModal extends JDialog {
         errorMessage.setText("Error: " + message);
     }
 
-    public abstract String onConfirm(char[] password);
+    public abstract String onConfirm(char[] password) throws Exception;
 }

@@ -5,7 +5,7 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.util.listeners.CustomActionListener;
+import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +49,7 @@ public class ProductRecordView extends StaffView {
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
-        addRecordButton.addActionListener(new CustomActionListener(this) {
+        addRecordButton.addActionListener(new AuthorisationActionListener(this) {
             @Override
             public void action(ActionEvent e) {
                 productRecordController.getNavigation().navigate(Navigation.PRODUCTFORM);
