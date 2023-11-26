@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.view.user.UserView;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 
 import static uk.ac.sheffield.com2008.util.math.Rounding.roundToDecimalPlaces;
 
-public class BasketView extends CustomerView{
+public class BasketView extends UserView {
     BasketViewController basketViewController;
     JLabel totalTextLabel;
     public BasketView(BasketViewController basketViewController){

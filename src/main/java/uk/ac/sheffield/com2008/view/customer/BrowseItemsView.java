@@ -2,15 +2,15 @@ package uk.ac.sheffield.com2008.view.customer;
 
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.modals.AddProductToCartModal;
+import uk.ac.sheffield.com2008.view.user.UserView;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
-public class BrowseItemsView extends CustomerView {
+public class BrowseItemsView extends UserView {
     BrowseItemsController browseItemsController;
     public BrowseItemsView(BrowseItemsController loginController){
         browseItemsController = loginController;

@@ -2,14 +2,19 @@ package uk.ac.sheffield.com2008.navigation;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.ViewController;
-import uk.ac.sheffield.com2008.controller.auth.*;
-import uk.ac.sheffield.com2008.controller.customer.*;
+import uk.ac.sheffield.com2008.controller.auth.LoginController;
+import uk.ac.sheffield.com2008.controller.auth.SignupController;
+import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
+import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
+import uk.ac.sheffield.com2008.controller.customer.ManageProfileController;
+import uk.ac.sheffield.com2008.controller.customer.OrderHistoryController;
 import uk.ac.sheffield.com2008.controller.staff.*;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.listeners.NavigationFrameWindowListener;
-import uk.ac.sheffield.com2008.view.components.MainLayout;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.auth.AuthView;
+import uk.ac.sheffield.com2008.view.components.MainLayout;
+import uk.ac.sheffield.com2008.view.customer.CustomerView;
 import uk.ac.sheffield.com2008.view.manager.ManagerView;
 import uk.ac.sheffield.com2008.view.staff.StaffView;
 
@@ -41,6 +46,25 @@ public class NavigationManager {
         navigate(currentView);
     }
 
+    /**
+     * Before letting user go to given view this function should be called to validate if user has appropriate
+     * role to do it
+     *
+     * @param view View which user wants to navigate to
+     * @return true if user can access the view or false otherwise
+     */
+    public static boolean permissionsValid(View view) {
+        List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
+        if (view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
+        if (view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;
+        if (view instanceof CustomerView && !userRoles.contains(User.Role.CUSTOMER)) return false;
+        return true;
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
     private void registerControllers() {
         //All controllers are registered
         new LoginController(this, Navigation.LOGIN);
@@ -48,13 +72,14 @@ public class NavigationManager {
         new BrowseItemsController(this, Navigation.CUSTOMER);
         new StaffController(this, Navigation.STAFF);
         new BasketViewController(this, Navigation.BASKET);
-        new ManageOrderController(this,Navigation.MANAGE_ORDER);
+        new ManageOrderController(this, Navigation.MANAGE_ORDER);
         new OrderHistoryController(this, Navigation.ORDER_HISTORY);
-        new ProductRecordController(this,Navigation.PRODUCT_RECORD);
+        new ProductRecordController(this, Navigation.PRODUCT_RECORD);
         new EditFormController(this, Navigation.EDIT_PRODUCT_RECORD);
         new FormController(this, Navigation.PRODUCTFORM);
-        new SalesController(this,Navigation.SALES);
         new FulfilledOrdersController(this,Navigation.FULFILLED_ORDERS);
+        new SalesController(this, Navigation.SALES);
+        new ManageProfileController(this, Navigation.MANAGE_PROFILE);
     }
 
     public void registerController(Navigation id, ViewController controller) {
@@ -69,29 +94,16 @@ public class NavigationManager {
         view.updateNavigation();
         newController.onNavigateTo();
         //Check if View is Auth view. If it isn't, put the view into layout
-        if(view instanceof AuthView) {
+        if (view instanceof AuthView) {
             frame.setContentPane(view);
             layout.purgeContent();
-        } else if(permissionsValid(view)) {
-            if(!frame.getContentPane().equals(layout)) frame.setContentPane(layout);
+        } else if (permissionsValid(view)) {
+            if (!frame.getContentPane().equals(layout)) frame.setContentPane(layout);
             layout.setContent(view);
         }
         currentView = id;
         frame.revalidate();
         frame.repaint();
-    }
-
-    /**
-     * Before letting user go to given view this function should be called to validate if user has appropriate
-     * role to do it
-     * @param view View which user wants to navigate to
-     * @return true if user can access the view or false otherwise
-     */
-    public static boolean permissionsValid(View view) {
-        List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
-        if(view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
-        if(view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;
-        return true;
     }
 
     public ViewController getCurrentController() {

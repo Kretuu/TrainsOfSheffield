@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class BankingCard {
     private String holderName;
-    private Long number;
+    private String number;
     private Date expiryDate;
-    private int cvv;
+    private String cvv;
 
-    public BankingCard(String holderName, Long number, Date expiryDate, int cvv) {
+    public BankingCard(String holderName, String number, Date expiryDate, String cvv) {
         this.holderName = holderName;
         this.number = number;
         this.expiryDate = expiryDate;
@@ -16,19 +16,14 @@ public class BankingCard {
     }
 
     public Boolean checkValidity() {
-        //TODO
-        return true;
+        return (expiryDate.getTime() - new Date().getTime()) >= 0;
     }
 
     public String getHolderName() {
         return holderName;
     }
 
-    public void setHolderName(String holderName) {
-        this.holderName = holderName;
-    }
-
-    public void setNumber(Long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
@@ -36,11 +31,15 @@ public class BankingCard {
         return expiryDate;
     }
 
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
     }
 
-    public void setCvv(int cvv) {
-        this.cvv = cvv;
+    public String getNumber() {
+        return number;
+    }
+
+    public String getCvv() {
+        return cvv;
     }
 }
