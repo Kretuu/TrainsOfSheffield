@@ -236,7 +236,7 @@ public class OrderDAO {
             throw new RuntimeException("Error deleting order lines for order: " + order.getOrderNumber(), e);
         }
 
-        // Then, delete the order itself
+        // Then, delete the order
         String deleteOrderQuery = "DELETE FROM Orders WHERE orderNumber = ?";
         try {
             DatabaseConnectionHandler.update(deleteOrderQuery, order.getOrderNumber());

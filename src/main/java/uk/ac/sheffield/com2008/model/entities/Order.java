@@ -16,6 +16,8 @@ public class Order {
     private List<OrderLine> orderLines = new ArrayList<>();
     private final String userUUID;
 
+    private float totalAmount = 0.0f;
+
     public Order(int orderNumber, Date dateOrdered, float totalPrice, Status status, String userUUID){
         this.orderNumber = orderNumber;
         this.dateOrdered = dateOrdered;
@@ -182,4 +184,18 @@ public class Order {
                 && o.getOrderNumber() == this.orderNumber && o.getTotalPrice() == this.totalPrice
                 && o.getDateOrdered() == this.dateOrdered && o.getStatus().equals(this.status);
     }
+
+    public int getTotalOrder() {
+        Set<Integer> uniqueOrderNumbers = new HashSet<>();
+
+        for (OrderLine orderLine : orderLines) {
+            Product product = orderLine.getProduct();
+            if (hasProduct(product)) {
+               // uniqueOrderNumbers.add(getOrderLineFromProduct(product).());
+            }
+        }
+
+        return uniqueOrderNumbers.size();
+    }
+
 }
