@@ -21,7 +21,14 @@ public class SignupView extends AuthView {
         super();
         this.signupController = signupController;
         this.inputForm = createInputForm();
-        add(inputForm);
+
+        JPanel header = new JPanel();
+        JLabel label = new JLabel("Sign up");
+        label.setFont(new Font(null, Font.BOLD, 16));
+        header.add(label);
+
+        panel.add(header);
+        panel.add(inputForm);
     }
 
     private InputForm createInputForm() {

@@ -6,6 +6,7 @@ import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,14 @@ public class LoginView extends AuthView {
         super();
         this.loginController = loginController;
         this.inputForm = createInputForm();
+
+        JPanel header = new JPanel();
+        JLabel label = new JLabel("Log in");
+        label.setFont(new Font(null, Font.BOLD, 16));
+        header.add(label);
+
+        panel.add(header);
+
         panel.add(inputForm);
     }
 
