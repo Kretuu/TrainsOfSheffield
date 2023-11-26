@@ -27,13 +27,13 @@ public class ProductRecordForm extends StaffView {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        //TODO: think why category is not aligned to the left
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.NORTH;
         add(new JLabel("Category: "), gbc);
 
-        String[] categories = {"All categories", "Locomotive", "Rolling Stock", "Track", "Controller",
+        String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
                 "Train Set", "Track Pack"};
         JComboBox<String> categoryComboBox = new JComboBox<>(categories);
         gbc.gridx = 1;
@@ -70,42 +70,17 @@ public class ProductRecordForm extends StaffView {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(productCodeField, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        add(new JLabel("Product Name: "), gbc);
-
-        JTextField productNameField = new JTextField();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(productNameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        add(new JLabel("Description: "), gbc);
-
-        JTextArea descriptionField = new JTextArea(5, 30); // Specify the number of rows and columns
-        descriptionField.setLineWrap(true);
-        descriptionField.setWrapStyleWord(true);
-        gbc.gridx = 1;
-        gbc.gridy = 3; // Move to the next row
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        add(new JScrollPane(descriptionField), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 1;
         add(new JLabel("Gauge: "), gbc);
 
-        String[] gauges = {"All gauges", "OO Gauge (1/76th scale)", "TT Gauge (1/120th scale)",
+        String[] gauges = {"NULL", "OO Gauge (1/76th scale)", "TT Gauge (1/120th scale)",
                 "N gauge (1/148th scale)"};
         JComboBox<String> gaugesComboBox = new JComboBox<>(gauges);
         gbc.gridx = 1;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(gaugesComboBox, gbc);
 
@@ -138,6 +113,11 @@ public class ProductRecordForm extends StaffView {
         gbc.gridy = 7;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
+
+        cardPanel.add(getCategoryPanel("Locomotive"), "Locomotive");
+        // Set the identifier based on the selected category
+        cardLayout.show(cardPanel, "Locomotive");
+
         add(cardPanel, gbc);
 
         gbc.gridx = 1;
@@ -232,9 +212,10 @@ public class ProductRecordForm extends StaffView {
         panel.add(kindTextField);
 
         panel.add(new JLabel("Class:"));
-        JTextField classTextField = new JTextField();
-        classTextField.setPreferredSize(new Dimension(25, classTextField.getPreferredSize().height));
-        panel.add(classTextField);
+        String[] classes = {"FIRST", "SECOND", "THIRD", "STANDARD"};
+        JComboBox<String> classesComboBox = new JComboBox<>(classes);
+        panel.add(classesComboBox);
+
 
         panel.add(new JLabel("ERA:"));
         JTextField eraTextField = new JTextField();
@@ -311,7 +292,7 @@ public class ProductRecordForm extends StaffView {
         return panel;
 
     }
-    private JPanel trainSetsPanel() {
+        private JPanel trainSetsPanel() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
@@ -337,6 +318,30 @@ public class ProductRecordForm extends StaffView {
         return panel;
 
     }
+        /*private JPanel trainSetsPanel() {
+            JPanel panel = new JPanel(new GridLayout(3, 4));
+            panel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+
+            panel.add(new JLabel("Locomotive"));
+            panel.add(new JButton("Add"));
+
+            panel.add(new JLabel("Rolling Stock"));
+            panel.add(new JButton("Add"));
+
+            panel.add(new JLabel("Controller"));
+            panel.add(new JButton("Add"));
+
+            panel.add(new JLabel("Starter Oval Track Pack"));
+            panel.add(new JButton("Add"));
+
+            panel.add(new JLabel("Extension Track Pack"));
+            panel.add(new JButton("Add"));
+
+
+            return panel;
+
+        }*/
+
 
     private JSpinner createSpinner() {
         SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
