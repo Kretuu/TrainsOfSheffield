@@ -158,8 +158,6 @@ public class ProductRecordView extends StaffView {
             }
         });
 
-
-
     }
 
     // Method to get the initial letter based on the selected category

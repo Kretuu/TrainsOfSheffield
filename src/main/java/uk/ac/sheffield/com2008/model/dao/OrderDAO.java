@@ -245,4 +245,19 @@ public class OrderDAO {
         }
     }
 
+    public static List<Order> getFulfilledOrders() {
+        // Query for fetching orders with status 'FULFILLED'
+        String query = "SELECT * FROM Orders WHERE status = 'FULFILLED'";
+        List<Order> fulfilledOrders;
+
+        try {
+            OrderMapper mapper = new OrderMapper();
+            fulfilledOrders = DatabaseConnectionHandler.select(mapper, query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return fulfilledOrders;
+    }
+
 }

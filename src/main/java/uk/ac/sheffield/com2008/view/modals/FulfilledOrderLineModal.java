@@ -1,8 +1,9 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.controller.staff.FulfilledOrdersController;
 import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
-import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
+import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 
 import javax.swing.*;
@@ -11,10 +12,8 @@ import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class OrderLineModal extends JDialog {
-    //private JTextArea orderLinesTextArea;
-
-    public OrderLineModal (ManageOrderController manageOrderController, JFrame parentFrame, Order order) {
+public class FulfilledOrderLineModal extends JDialog {
+    public FulfilledOrderLineModal (FulfilledOrdersController fulfilledOrdersController, JFrame parentFrame, Order order) {
 
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
 
@@ -29,7 +28,7 @@ public class OrderLineModal extends JDialog {
         int orderNum = order.getOrderNumber(); // Retrieve the order number
 
         // Display order number label
-        JLabel titleLabel = new JLabel("Items Ordered For Order Number : " + orderNum);
+        JLabel titleLabel = new JLabel("Fulfilled Orders For Order Number :  " + orderNum);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20));
         topPanel.add(titleLabel);
 
@@ -40,7 +39,7 @@ public class OrderLineModal extends JDialog {
         LinkedHashMap<String, String> fieldsMap = new LinkedHashMap<>();
         fieldsMap.put("Orders.orderNumber", String.valueOf(orderNum)); // Filter by order number
 
-        List<Order> orders = OrderDAO.getOrderListByFields(fieldsMap);
+        java.util.List<Order> orders = OrderDAO.getOrderListByFields(fieldsMap);
 
         JTextArea orderLinesTextArea = new JTextArea(10, 30);
         orderLinesTextArea.setEditable(false);
@@ -73,61 +72,14 @@ public class OrderLineModal extends JDialog {
         // Add orderLinesTextArea to the main panel
         panel.add(new JScrollPane(orderLinesTextArea), BorderLayout.CENTER);
 
-        // Create a panel for Delete button and Fulfill checkbox
-        JButton deleteButton = new JButton("Delete Order");
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        bottomPanel.add(deleteButton);
-
-        // Delete the order when click on yes button
-        deleteButton.addActionListener(e -> {
-            int dialogResult = JOptionPane.showConfirmDialog(this,
-                    "Delete Order?",
-                    "Confirm Deletion",
-                    JOptionPane.YES_NO_OPTION);
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                // Call method to delete the order
-                manageOrderController.deleteOrder(order);
-                // Display a message and close the dialog
-                JOptionPane.showMessageDialog(this, "The order has been deleted");
-                dispose(); // Close the dialog
-                manageOrderController.repopulateTable();
-                //Refresh the UI
-                manageOrderController.onNavigateTo();
-            }
-        });
-
-       // Check if the order status is CONFIRMED to display the Fulfill checkbox
-        if (order.getStatus() == Order.Status.CONFIRMED) {
-            JCheckBox fulfilledCheckBox = new JCheckBox("Fulfill");
-            bottomPanel.add(fulfilledCheckBox);
-
-            // When checkbox is ticked, update the order status to "FULFILLED"
-            fulfilledCheckBox.addActionListener(e -> {
-                if (fulfilledCheckBox.isSelected()) {
-                    order.setAsFulfilled();
-                    // Update the status in the backend
-                    manageOrderController.updateOrderStatus(order);
-                    // Display a message and close the dialog
-                    JOptionPane.showMessageDialog(this, "The order is now fulfilled");
-                    dispose(); // Close the dialog
-                    manageOrderController.repopulateTable();
-                    //Refresh the UI
-                    manageOrderController.onNavigateTo();
-                }
-            });
-        }
-
-        panel.add(bottomPanel, BorderLayout.SOUTH);
-
         // Set panel to the content pane of the dialog
         setContentPane(panel);
         setMinimumSize(new Dimension(500, 300));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
         setResizable(false);
         setLocationRelativeTo(parentFrame);
+        //Refresh the UI
+        fulfilledOrdersController.onNavigateTo();
 
     }
-
 }
-
-

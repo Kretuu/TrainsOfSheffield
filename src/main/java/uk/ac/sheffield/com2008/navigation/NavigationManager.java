@@ -77,6 +77,7 @@ public class NavigationManager {
         new ProductRecordController(this, Navigation.PRODUCT_RECORD);
         new EditFormController(this, Navigation.EDIT_PRODUCT_RECORD);
         new FormController(this, Navigation.PRODUCTFORM);
+        new FulfilledOrdersController(this,Navigation.FULFILLED_ORDERS);
         new SalesController(this, Navigation.SALES);
         new ManageProfileController(this, Navigation.MANAGE_PROFILE);
     }

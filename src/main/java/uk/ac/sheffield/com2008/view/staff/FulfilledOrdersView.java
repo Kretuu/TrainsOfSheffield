@@ -1,37 +1,41 @@
 package uk.ac.sheffield.com2008.view.staff;
 
-import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
+import uk.ac.sheffield.com2008.controller.staff.FulfilledOrdersController;
+import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.modals.FulfilledOrderLineModal;
 import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 
+public class FulfilledOrdersView extends StaffView{
 
-public class ManageOrdersView extends StaffView {
+    FulfilledOrdersController fulfilledOrdersController;
 
     private JTable table;
 
-    ManageOrderController manageOrderController;
-
-    public ManageOrdersView(ManageOrderController manageOrderController) {
-        this.manageOrderController = manageOrderController;
+    public FulfilledOrdersView(FulfilledOrdersController fulfilledOrdersController) {
+        this.fulfilledOrdersController = fulfilledOrdersController;
     }
 
-    public void onRefresh() {
+    public void onRefresh(){
         removeAll();
-        initializeUI(); //Reinitialize UI
+        initializeUI();
         revalidate();
         repaint();
     }
 
     public void initializeUI() {
+
+        final JPanel panel = new JPanel(); // Making 'panel' final
 
         setLayout(new BorderLayout());
         int padding = 40;
@@ -40,8 +44,8 @@ public class ManageOrdersView extends StaffView {
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
 
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //Create a label for Manage Orders
-        JLabel viewLabel = new JLabel("Manage Orders");
+        //Create a label for Fulfilled Orders
+        JLabel viewLabel = new JLabel("Fulfilled Orders");
         // Add the top panel to the top of the frame
         row1.add(viewLabel);
         topPanel.add(row1);
@@ -49,14 +53,8 @@ public class ManageOrdersView extends StaffView {
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        // Create a Fulfilled Orders button
-        JButton fulfilledOrdersButton = new JButton("Fulfilled Orders");
-        bottomPanel.add(fulfilledOrdersButton);
 
-        // Create a Sales button
-        JButton salesButton = new JButton("Sales");
-        bottomPanel.add(salesButton);
-
+        // Create a home button
         JButton navigationButton = new JButton("Home");
         bottomPanel.add(navigationButton);
 
@@ -67,15 +65,10 @@ public class ManageOrdersView extends StaffView {
 
         // Add the bottom panel to the bottom of the frame
         add(bottomPanel, BorderLayout.SOUTH);
-        fulfilledOrdersButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.FULFILLED_ORDERS));
-        salesButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.SALES));
-        navigationButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.STAFF));
-
-        final JPanel panel = new JPanel(); // Making 'panel' final
+        navigationButton.addActionListener(e -> fulfilledOrdersController.getNavigation().navigate(Navigation.STAFF));
 
 
         // Create a JPanel for the scroll panel with table
-
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         String[] columnNames = {"Order Number", "Date Ordered", "Status", "Total Price", "Action"};
@@ -98,12 +91,11 @@ public class ManageOrdersView extends StaffView {
 
         // Populate orders into the table
         populateOrdersInTable(panelReference);
-
     }
 
     private void populateOrdersInTable(JPanel panelReference) {
-        // Fetch all orders using OrderDAO
-        List<Order> orders = OrderDAO.getAllOrders();
+        // Fetch all fulfilled orders using OrderDAO
+        List<Order> orders = OrderDAO.getFulfilledOrders();
 
         // Populate orders and order lines into the JTable
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
@@ -120,8 +112,9 @@ public class ManageOrdersView extends StaffView {
             tableModel.addRow(rowData);
         }
 
-        // Create a custom renderer for the fourth column (Action) - Set the text color to blue
+        // Create a custom renderer for the view hyperlink column
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 setOpaque(true);  // Ensure opaque is set to true
@@ -130,8 +123,7 @@ public class ManageOrdersView extends StaffView {
                 }
                 if (value instanceof String) {
                     JLabel label = new JLabel((String) value);
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setForeground(Color.BLUE); // Set the text color to blue
+                    label.setForeground(Color.BLUE.darker()); // Set the text color to blue
                     label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     return label;
                 }
@@ -155,8 +147,8 @@ public class ManageOrdersView extends StaffView {
                 if (col == 4) {
                     // Define the action to take when the label is clicked
                     Order order = orders.get(row); // Retrieve the order from the list
-                    // Create an instance of the OrderLineModal class
-                    OrderLineModal modal = new OrderLineModal(manageOrderController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
+                    // Create an instance of the FulfilledOrderLineModal class
+                    FulfilledOrderLineModal modal = new FulfilledOrderLineModal(fulfilledOrdersController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
                     modal.setVisible(true); // Show the modal dialog
                 }
             }
@@ -164,12 +156,6 @@ public class ManageOrdersView extends StaffView {
 
         // Disable column dragging
         table.getTableHeader().setReorderingAllowed(false);
-
-    }
-
-    // Getter method to access the table model
-    public DefaultTableModel getTableModel() {
-        return (DefaultTableModel) table.getModel();
     }
 
 }
