@@ -95,4 +95,6 @@ public class ProductManager {
     public static ArrayList<ProductSetItem> fetchProductSetItems(ProductSet productSet){
         return (ArrayList<ProductSetItem>) ProductDAO.getProductSetItems(productSet);
     }
+
+
 }

@@ -13,11 +13,12 @@ import java.util.List;
 public class FormController extends ViewController {
 
     private List<Product> allProducts;
+    ProductRecordForm productRecordForm;
 
     public FormController(NavigationManager navigationManager, Navigation id){
         super(navigationManager, id);
         view = new ProductRecordForm(this);
-        ProductRecordForm productRecordForm = (ProductRecordForm) view;
+        productRecordForm = (ProductRecordForm) view;
 
     }
 
@@ -44,6 +45,12 @@ public class FormController extends ViewController {
             return "Train Packs";
         } else {
             return "Other Category";
+        }
+    }
+
+    public void tryCreateProduct(){
+        if(!productRecordForm.validateAllFields()){
+            return;
         }
     }
 
