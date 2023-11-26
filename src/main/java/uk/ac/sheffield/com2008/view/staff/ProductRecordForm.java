@@ -1,11 +1,13 @@
 package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
+import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 
 import javax.swing.*;
 import java.awt.*;
-
+import java.util.ArrayList;
 
 
 public class ProductRecordForm extends StaffView {
@@ -294,54 +296,67 @@ public class ProductRecordForm extends StaffView {
     }
         private JPanel trainSetsPanel() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
-        panel.add(new JLabel("Locomotive"));
-        JSpinner locomotiveSpinner = createSpinner();
-        panel.add(locomotiveSpinner);
-        panel.add(new JLabel("Carriage"));
-        JSpinner carriageSpinner = createSpinner();
-        panel.add(carriageSpinner);
-        panel.add(new JLabel("Wagon"));
-        JSpinner wagonSpinner = createSpinner();
-        panel.add(wagonSpinner);
-        panel.add(new JLabel("Controller"));
-        JSpinner controllerSpinner = createSpinner();
-        panel.add(controllerSpinner);
-        panel.add(new JLabel("Starter Oval Track Pack"));
-        JSpinner starterOvalTrackPackSpinner = createSpinner();
-        panel.add(starterOvalTrackPackSpinner);
-        panel.add(new JLabel("Extension Track Pack"));
-        JSpinner extensionTrackPackSpinner = createSpinner();
-        panel.add(extensionTrackPackSpinner);
+        ArrayList<Product> products = new ArrayList<>();
+
+        JPanel headerPanel =  new JPanel (new GridLayout (2, 1));
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel title = new JLabel("Add products to set: ");
+        row1.add(title);
+        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller",
+                "Train Set", "Track Pack"};
+        JComboBox<String> itemTypesComboBox = new JComboBox<>(itemTypes);
+        row2.add(itemTypesComboBox);
+        JButton findButton = new JButton("Find");
+        findButton.addActionListener(e -> {
+            ProductSetModal modal = new ProductSetModal(formController,(JFrame) SwingUtilities.getWindowAncestor(panel));
+            modal.setVisible(true);
+        });
+        row2.add(findButton);
+        headerPanel.add(row1);
+        headerPanel.add(row2);
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        JPanel selectedPanel =  new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel selected = new JLabel("Item Selected: ");
+        JLabel itemSelected = new JLabel("Example:retrieve item displayed here");
+        JButton addButton= new JButton("Add");
+        selectedPanel.add(selected);
+        selectedPanel.add(itemSelected);
+        selectedPanel.add(addButton);
+        panel.add(selectedPanel, BorderLayout.CENTER);
+
+
+        JPanel inSetPanel =  new JPanel (new GridLayout (2, 1));
+        JPanel inSetHeadingPanel =  new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel displayItemsLabel = new JLabel("Items in set:  ");
+        inSetPanel.add(inSetHeadingPanel.add(displayItemsLabel));
+        //for(Product product : products){
+            JPanel subItemsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JLabel itemCode = new JLabel("Code...");
+            JLabel itemName = new JLabel("Name.....");
+            JSpinner quantitySpinner = createSpinner();
+            Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
+            spinnerPreferredSize.width = 70; // Adjust the width as needed
+            quantitySpinner.setPreferredSize(spinnerPreferredSize);
+            JButton removeItemButton = new JButton("X");
+            subItemsPanel.add(itemCode);
+            subItemsPanel.add(itemName);
+            subItemsPanel.add(quantitySpinner);
+            subItemsPanel.add(removeItemButton);
+            inSetPanel.add(subItemsPanel);
+
+        //}
+            JScrollPane scrollPane = new JScrollPane(inSetPanel);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            panel.add(inSetPanel);
+
+
 
         return panel;
 
     }
-        /*private JPanel trainSetsPanel() {
-            JPanel panel = new JPanel(new GridLayout(3, 4));
-            panel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-
-            panel.add(new JLabel("Locomotive"));
-            panel.add(new JButton("Add"));
-
-            panel.add(new JLabel("Rolling Stock"));
-            panel.add(new JButton("Add"));
-
-            panel.add(new JLabel("Controller"));
-            panel.add(new JButton("Add"));
-
-            panel.add(new JLabel("Starter Oval Track Pack"));
-            panel.add(new JButton("Add"));
-
-            panel.add(new JLabel("Extension Track Pack"));
-            panel.add(new JButton("Add"));
-
-
-            return panel;
-
-        }*/
-
 
     private JSpinner createSpinner() {
         SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
@@ -349,73 +364,3 @@ public class ProductRecordForm extends StaffView {
     }
 }
 
-    /*private JPanel trainSetsPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(5, 5, 5, 5); // Add padding around components
-
-        panel.add(new JLabel("Locomotive"), gbc);
-        gbc.gridx = 1;
-        JSpinner locomotiveSpinner = createSpinner();
-        panel.add(locomotiveSpinner, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panel.add(new JLabel("Carriage"), gbc);
-        gbc.gridx = 1;
-        JSpinner carriageSpinner = createSpinner();
-        panel.add(carriageSpinner, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panel.add(new JLabel("Wagon"), gbc);
-        gbc.gridx = 1;
-        JSpinner wagonSpinner = createSpinner();
-        panel.add(wagonSpinner, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panel.add(new JLabel("Controller"), gbc);
-        gbc.gridx = 1;
-        JSpinner controllerSpinner = createSpinner();
-        panel.add(controllerSpinner, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        panel.add(new JLabel("Starter Oval Track Pack"), gbc);
-        gbc.gridx = 1;
-        JSpinner starterOvalTrackPackSpinner = createSpinner();
-        panel.add(starterOvalTrackPackSpinner, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        panel.add(new JLabel("Extension Track Pack"), gbc);
-        gbc.gridx = 1;
-        JSpinner extensionTrackPackSpinner = createSpinner();
-        panel.add(extensionTrackPackSpinner, gbc);
-
-        // Adjust spinner size
-        Dimension spinnerSize = new Dimension(30, 20);
-        locomotiveSpinner.setPreferredSize(spinnerSize);
-        carriageSpinner.setPreferredSize(spinnerSize);
-        wagonSpinner.setPreferredSize(spinnerSize);
-        controllerSpinner.setPreferredSize(spinnerSize);
-        starterOvalTrackPackSpinner.setPreferredSize(spinnerSize);
-        extensionTrackPackSpinner.setPreferredSize(spinnerSize);
-
-        return panel;
-    }
-
-    private JSpinner createSpinner() {
-        // Create and customize your spinner as needed
-        JSpinner spinner = new JSpinner();
-        return spinner;
-    }
-
-
-
-
-}
-*/
