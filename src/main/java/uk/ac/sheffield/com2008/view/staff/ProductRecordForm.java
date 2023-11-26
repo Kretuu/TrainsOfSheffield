@@ -3,10 +3,18 @@ package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.util.FieldsValidationManager;
+import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ArrayList;
 
 
@@ -16,12 +24,38 @@ public class ProductRecordForm extends StaffView {
     private JPanel cardPanel;
     private CardLayout cardLayout;
 
+    private final JButton submitButton;
+    JComboBox<String> gaugesComboBox;
+    JLabel gaugeLabel;
+    private final Map<String, CustomInputField> sharedInputFields = new HashMap<>();
+
+    private final String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
+            "Train Set", "Track Pack"};
+    private final Map<String, Character> catChar = Map.of(
+            "Locomotive", 'L',
+            "Rolling Stock", 'S',
+            "Track", 'R',
+            "Controller", 'C',
+            "Train Set", 'M',
+            "Track Pack", 'P'
+    );
+
     public ProductRecordForm(FormController formController) {
+        this.submitButton = new JButton("Save");
         this.formController = formController;
+
+        Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
+        gauges.put("OO Gauge (1/76th scale)", Product.Gauge.OO);
+        gauges.put("TT Gauge (1/120th scale)", Product.Gauge.TT);
+        gauges.put("N gauge (1/148th scale)", Product.Gauge.N);
+        gaugesComboBox = new JComboBox<>(gauges.keySet().toArray(new String[0]));
+        gaugeLabel = new JLabel("Gauge: ");
+
         initializeUI();
     }
 
     private void initializeUI() {
+        submitButton.setEnabled(false);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -35,8 +69,6 @@ public class ProductRecordForm extends StaffView {
         gbc.anchor = GridBagConstraints.NORTH;
         add(new JLabel("Category: "), gbc);
 
-        String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
-                "Train Set", "Track Pack"};
         JComboBox<String> categoryComboBox = new JComboBox<>(categories);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
@@ -58,6 +90,16 @@ public class ProductRecordForm extends StaffView {
             // Set the identifier based on the selected category
             cardLayout.show(cardPanel, selectedCategory);
             revalidate();  // Ensure the layout manager updates the container
+
+            if(selectedCategory.equals("Controller")){
+                gaugesComboBox.setVisible(false);
+                gaugeLabel.setVisible(false);
+            }
+            else{
+                gaugesComboBox.setVisible(true);
+                gaugeLabel.setVisible(true);
+            }
+            repaint();
         });
 
         gbc.gridx = 0;
@@ -65,22 +107,27 @@ public class ProductRecordForm extends StaffView {
         gbc.gridwidth = 1;
         add(new JLabel("Product Code: "), gbc);
 
-        JTextField productCodeField = new JTextField();
+        CustomInputField productCodeField = new CustomInputField("",
+                this::updateButtonState,
+                false
+        );
+        productCodeField.setValidationFunction(
+                () -> FieldsValidationManager.validateProductCode(
+                        productCodeField.getjTextField().getText(),
+                        catChar.get((String) categoryComboBox.getSelectedItem())));
+        sharedInputFields.put("productcode", productCodeField);
+
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(productCodeField, gbc);
-
+        productCodeField.addToPanel(this, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 1;
-        add(new JLabel("Gauge: "), gbc);
+        add(gaugeLabel, gbc);
 
-        String[] gauges = {"NULL", "OO Gauge (1/76th scale)", "TT Gauge (1/120th scale)",
-                "N gauge (1/148th scale)"};
-        JComboBox<String> gaugesComboBox = new JComboBox<>(gauges);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -91,24 +138,37 @@ public class ProductRecordForm extends StaffView {
         gbc.gridwidth = 1;
         add(new JLabel("Price: "), gbc);
 
-        JTextField priceField = new JTextField();
+        CustomInputField priceField = new CustomInputField("",
+                this::updateButtonState,
+                false
+                );
+        priceField.setValidationFunction(
+                () -> FieldsValidationManager.validatePrice(priceField.getjTextField().getText()));
+        sharedInputFields.put("price", priceField);
         gbc.gridx = 1;
         gbc.gridy = 5; // Move to the next row
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(priceField, gbc);
+        priceField.addToPanel(this, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.gridwidth = 1;
         add(new JLabel("Quantity: "), gbc);
 
-        JTextField QuantityField = new JTextField();
+        NumberFormat integerFormat = NumberFormat.getIntegerInstance();
+        NumberFormatter formatter = new NumberFormatter(integerFormat);
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        JFormattedTextField quantityField = new JFormattedTextField(formatter);
+        quantityField.setValue(1);
+        quantityField.setColumns(10);
+
         gbc.gridx = 1;
         gbc.gridy = 6; // Move to the next row
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(QuantityField, gbc);
+        add(quantityField, gbc);
 
         // Add cardPanel to the layout
         gbc.gridx = 0;
@@ -166,8 +226,6 @@ public class ProductRecordForm extends StaffView {
         JButton cancelButton = new JButton("Cancel");
         buttonsPanel.add(cancelButton);
         cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
-
-        JButton submitButton = new JButton("Save");
         buttonsPanel.add(submitButton);
 
         return buttonsPanel;
@@ -361,6 +419,10 @@ public class ProductRecordForm extends StaffView {
     private JSpinner createSpinner() {
         SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
         return new JSpinner(model);
+    }
+
+    private void updateButtonState() {
+        submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid));
     }
 }
 
