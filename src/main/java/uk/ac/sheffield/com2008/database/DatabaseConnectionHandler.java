@@ -21,7 +21,7 @@ public class DatabaseConnectionHandler {
 
     public static void connectToDatabase() {
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        config.setMaximumPoolSize(5);
+        config.setMaximumPoolSize(10);
         ds = new HikariDataSource(config);
     }
 
