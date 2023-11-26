@@ -1,5 +1,6 @@
 package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.staff.SalesController;
+import uk.ac.sheffield.com2008.navigation.Navigation;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -60,6 +61,24 @@ public class SalesView extends StaffView{
 
         gbc.gridx = 1;
         add(totalSalesPanel, gbc);
+
+        // Create the bottom panel for navigation to Home
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Align the button to the right
+        JButton navigationButton = new JButton("Home");
+        bottomPanel.add(navigationButton);
+
+        GridBagConstraints gbcBottom = new GridBagConstraints();
+        gbcBottom.gridx = 0;
+        gbcBottom.gridy = 2; // Place it in the third row, at the bottom
+        gbcBottom.gridwidth = 2; // Span across two columns
+        gbcBottom.anchor = GridBagConstraints.WEST;
+        gbcBottom.insets = new Insets(90, 10, 10, 10); // Add padding
+
+        // Add the bottom panel to the main frame using GridBagLayout constraints
+        add(bottomPanel, gbcBottom);
+        // Action listener for home button
+        navigationButton.addActionListener(e -> salesController.getNavigation().navigate(Navigation.STAFF));
 
     }
 
