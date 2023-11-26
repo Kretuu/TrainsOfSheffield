@@ -10,14 +10,13 @@ import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
-import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
+import uk.ac.sheffield.com2008.view.components.InputForm;
 import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
 import uk.ac.sheffield.com2008.view.modals.VerifyPasswordModal;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,17 +25,14 @@ import java.util.concurrent.CompletableFuture;
 
 public class ManageProfileView extends UserView {
     private final ManageProfileController controller;
-    private final JButton submitButton;
     private final JPanel content;
-    private final JLabel errorMessage;
+    private InputForm inputForm;
     private User user;
     private final Map<String, CustomInputField> inputFields = new HashMap<>();
 
     public ManageProfileView(ManageProfileController controller) {
         this.controller = controller;
         this.content = new JPanel();
-        this.submitButton = new JButton("Update");
-        this.errorMessage = new JLabel(" ");
 
         initialiseUI();
         add(content);
@@ -44,81 +40,98 @@ public class ManageProfileView extends UserView {
 
     private void initialiseUI() {
         setLayout(new GridBagLayout());
-
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setAlignmentX(Component.CENTER_ALIGNMENT);
-        submitButton.setEnabled(false);
-        submitButton.addActionListener(new AuthorisationActionListener(this) {
-            @Override
-            public void action(ActionEvent e) { updateUserDetails(); }
-        });
-
 
         JPanel subNav = new JPanel(new BorderLayout());
         subNav.setLayout(new BoxLayout(subNav, BoxLayout.X_AXIS));
 
         JButton modifyCard = new JButton("Update Banking Card");
-        modifyCard.addActionListener(e -> changeBankDetails());
+        modifyCard.addActionListener(e -> startChangeBankDetailsProcess());
 
         subNav.add(modifyCard);
         content.add(subNav);
         content.add(new JSeparator());
 
-        errorMessage.setForeground(Color.RED);
-        content.add(errorMessage);
-
-        JButton cancelButton = new JButton("Reset");
-        createTextFields();
-
-        JPanel buttonsPanel = new JPanel(new GridLayout(1,2,10,0));
-        buttonsPanel.add(cancelButton);
-        buttonsPanel.add(submitButton);
-        content.add(buttonsPanel);
+        inputForm = createInputForm();
+        content.add(inputForm);
     }
 
-    private void createTextFields() {
-        CustomInputField email = new CustomInputField("Email", this::updateButtonState, false);
-        email.setValidationFunction(() -> FieldsValidationManager.validateEmail(email.getjTextField().getText()));
-        email.addToPanel(content);
-        inputFields.put("email", email);
+    private InputForm createInputForm() {
+        return new InputForm(this, "Update", "Reset") {
+            @Override
+            protected void createTextFields(JPanel panel) {
+                CustomInputField email = new CustomInputField(
+                        "Email", this::updateSubmitButtonState, false);
+                email.setValidationFunction(
+                        () -> FieldsValidationManager.validateEmail(email.getjTextField().getText())
+                );
+                email.addToPanel(panel);
+                inputFields.put("email", email);
 
-        CustomInputField firstname = new CustomInputField(
-                "First Name", this::updateButtonState, false
-        );
-        firstname.addToPanel(content);
-        inputFields.put("firstname", firstname);
+                CustomInputField firstname = new CustomInputField(
+                        "First Name", this::updateSubmitButtonState, false);
+                firstname.addToPanel(panel);
+                inputFields.put("firstname", firstname);
 
-        CustomInputField lastname = new CustomInputField(
-                "Last Name", this::updateButtonState, false
-        );
-        lastname.addToPanel(content);
-        inputFields.put("lastname", lastname);
+                CustomInputField lastname = new CustomInputField(
+                        "Last Name", this::updateSubmitButtonState, false);
+                lastname.addToPanel(panel);
+                inputFields.put("lastname", lastname);
 
-        content.add(new JSeparator());
+                panel.add(new JSeparator());
 
-        CustomInputField street = new CustomInputField("Street", this::updateButtonState, false);
-        street.addToPanel(content);
-        inputFields.put("street", street);
+                CustomInputField street = new CustomInputField(
+                        "Street", this::updateSubmitButtonState, false);
+                street.addToPanel(panel);
+                inputFields.put("street", street);
 
-        CustomInputField houseNo = new CustomInputField("House number", this::updateButtonState, false);
-        houseNo.setValidationFunction(() -> FieldsValidationManager.validateHouseNo(houseNo.getjTextField().getText()));
-        houseNo.addToPanel(content);
-        inputFields.put("houseNo", houseNo);
+                CustomInputField houseNo = new CustomInputField(
+                        "House number", this::updateSubmitButtonState, false);
+                houseNo.setValidationFunction(
+                        () -> FieldsValidationManager.validateHouseNo(houseNo.getjTextField().getText())
+                );
+                houseNo.addToPanel(panel);
+                inputFields.put("houseNo", houseNo);
 
-        CustomInputField flat = new CustomInputField("Flat", this::updateButtonState, true);
-        flat.addToPanel(content);
-        inputFields.put("flat", flat);
+                CustomInputField flat = new CustomInputField(
+                        "Flat", this::updateSubmitButtonState, true);
+                flat.addToPanel(panel);
+                inputFields.put("flat", flat);
 
-        CustomInputField town = new CustomInputField("Town", this::updateButtonState, false);
-        town.setValidationFunction(() -> FieldsValidationManager.validateTown(town.getjTextField().getText()));
-        town.addToPanel(content);
-        inputFields.put("town", town);
+                CustomInputField town = new CustomInputField(
+                        "Town", this::updateSubmitButtonState, false
+                );
+                town.setValidationFunction(() -> FieldsValidationManager.validateTown(town.getjTextField().getText()));
+                town.addToPanel(panel);
+                inputFields.put("town", town);
 
-        CustomInputField postcode = new CustomInputField("Postcode", this::updateButtonState, false);
-        postcode.setValidationFunction(() -> FieldsValidationManager.validatePostcode(postcode.getjTextField().getText()));
-        postcode.addToPanel(content);
-        inputFields.put("postcode", postcode);
+                CustomInputField postcode = new CustomInputField(
+                        "Postcode", this::updateSubmitButtonState, false);
+                postcode.setValidationFunction(
+                        () -> FieldsValidationManager.validatePostcode(postcode.getjTextField().getText())
+                );
+                postcode.addToPanel(panel);
+                inputFields.put("postcode", postcode);
+            }
+
+            @Override
+            protected void onSubmit() {
+                updateUserDetails();
+            }
+
+            @Override
+            protected void onCancel() {
+                populateTextFields();
+            }
+
+            @Override
+            protected boolean submitEnabled() {
+                return inputFields.values().stream().allMatch(CustomInputField::isValid);
+            }
+        };
     }
+
 
     public void populateTextFields() {
         this.user = AppSessionCache.getInstance().getUserLoggedIn();
@@ -138,28 +151,31 @@ public class ManageProfileView extends UserView {
         inputFields.get("postcode").getjTextField().setText(address.getPostCode());
     }
 
-    private void changeBankDetails() {
-        new VerifyPasswordModal(controller.getNavigation().getFrame()) {
+    private void startChangeBankDetailsProcess() {
+        new VerifyPasswordModal(controller.getNavigation().getFrame(), this) {
 
             @Override
             public String onConfirm(char[] password) throws SQLException, BankDetailsEncryptionException {
                 if(UserDAO.verifyPassword(user.getEmail(), password) != null) {
                     BankingCard bankingCard = controller.getBankingCard(password);
-                    CompletableFuture.runAsync(() -> new UpdateCreditCardModal(
-                            controller.getNavigation().getFrame(), bankingCard) {
-                        @Override
-                        public boolean onSave(
-                                String cardNumber, Date expiryDate, String securityCode, String holderName
-                        ) throws SQLException, BankDetailsEncryptionException {
-                            UserManager.updateUserBankDetails(user, new BankingCard(
-                                    holderName, cardNumber, expiryDate, securityCode
-                            ), password);
-                            return true;
-                        }
-                    }.setVisible(true));
+                    CompletableFuture.runAsync(() -> openChangeBankDetailsModal(bankingCard, password));
                     return null;
                 }
                 return "Incorrect password";
+            }
+        }.setVisible(true);
+    }
+
+    private void openChangeBankDetailsModal(BankingCard bankingCard, char[] password) {
+        new UpdateCreditCardModal(
+                controller.getNavigation().getFrame(), bankingCard, this) {
+            @Override
+            public void onSave(
+                    String cardNumber, Date expiryDate, String securityCode, String holderName
+            ) throws SQLException, BankDetailsEncryptionException {
+                UserManager.updateUserBankDetails(
+                        user, new BankingCard(holderName, cardNumber, expiryDate, securityCode), password
+                );
             }
         }.setVisible(true);
     }
@@ -183,14 +199,6 @@ public class ManageProfileView extends UserView {
     }
 
     public void updateErrorMessage(String message) {
-        if(message == null) {
-            errorMessage.setText(" ");
-            return;
-        }
-        errorMessage.setText("Error: " + message);
-    }
-
-    private void updateButtonState() {
-        submitButton.setEnabled(inputFields.values().stream().allMatch(CustomInputField::isValid));
+        inputForm.updateErrorMessage(message);
     }
 }

@@ -4,7 +4,9 @@ import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
 import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.util.DateUtils;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
+import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
+import uk.ac.sheffield.com2008.view.components.InputForm;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,18 +20,16 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 public abstract class UpdateCreditCardModal extends JDialog {
-    private final JButton submitButton;
+    private final View view;
     private final BankingCard bankingCard;
-    private final JLabel errorMessage;
     private final JPanel content;
     private final Map<String, CustomInputField> inputFields = new HashMap<>();
     private final Map<String, JComboBox<Integer>> comboBoxes = new HashMap<>();
 
-    public UpdateCreditCardModal(JFrame frame, BankingCard bankingCard) {
+    public UpdateCreditCardModal(JFrame frame, BankingCard bankingCard, View view) {
         super(frame, "Banking Card Details", true);
-        this.submitButton = new JButton("Save");
+        this.view = view;
         this.content = new JPanel();
-        this.errorMessage = new JLabel(" ");
         this.bankingCard = bankingCard;
 
         initialiseUI();
@@ -46,44 +46,87 @@ public abstract class UpdateCreditCardModal extends JDialog {
         content.setAlignmentX(Component.CENTER_ALIGNMENT);
         content.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        errorMessage.setForeground(Color.RED);
-        content.add(errorMessage);
-
-        submitButton.setEnabled(false);
-        submitButton.addActionListener(e -> updateCardDetails());
-
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(e -> dispose());
-        createTextFields();
-        populateFieldsWithCardDetails();
-
-        JPanel buttonsPanel = new JPanel(new GridLayout(1,2,10,0));
-        buttonsPanel.add(cancelButton);
-        buttonsPanel.add(submitButton);
-        content.add(buttonsPanel);
+        InputForm inputForm = createInputForm();
+        content.add(inputForm);
     }
 
-    private void createTextFields() {
-        CustomInputField cardNumber = new CustomInputField("Card Number", this::updateButtonState, false);
-        cardNumber.setValidationFunction(() -> FieldsValidationManager.validateBankingCard(cardNumber.getjTextField().getText()));
-        cardNumber.addToPanel(content);
-        inputFields.put("cardNumber", cardNumber);
+    private InputForm createInputForm() {
+        return new InputForm(view, "Save") {
+            @Override
+            protected void createTextFields(JPanel panel) {
+                CustomInputField cardNumber = new CustomInputField(
+                        "Card Number", this::updateSubmitButtonState, false);
+                cardNumber.setValidationFunction(
+                        () -> FieldsValidationManager.validateBankingCard(cardNumber.getjTextField().getText())
+                );
+                cardNumber.addToPanel(panel);
+                inputFields.put("cardNumber", cardNumber);
 
-        CustomInputField holderName = new CustomInputField("Holder Name", this::updateButtonState, false);
-        holderName.addToPanel(content);
-        inputFields.put("holderName", holderName);
+                CustomInputField holderName = new CustomInputField(
+                        "Holder Name", this::updateSubmitButtonState, false);
+                holderName.addToPanel(panel);
+                inputFields.put("holderName", holderName);
 
-        JPanel bottomInformationPanel = new JPanel(new GridLayout(1, 2));
+                JPanel bottomInformationPanel = new JPanel(new GridLayout(1, 2));
 
 
-        bottomInformationPanel.add(createExpiryDate());
+                bottomInformationPanel.add(createExpiryDate());
 
-        CustomInputField securityCode = new CustomInputField("Security Code", this::updateButtonState, false);
-        securityCode.setValidationFunction(() -> FieldsValidationManager.validateSecurityCode(securityCode.getjTextField().getText()));
-        securityCode.addToPanel(bottomInformationPanel);
-        inputFields.put("securityCode", securityCode);
+                CustomInputField securityCode = new CustomInputField(
+                        "Security Code", this::updateSubmitButtonState, false);
+                securityCode.setValidationFunction(
+                        () -> FieldsValidationManager.validateSecurityCode(securityCode.getjTextField().getText())
+                );
+                securityCode.addToPanel(bottomInformationPanel);
+                inputFields.put("securityCode", securityCode);
 
-        content.add(bottomInformationPanel);
+                panel.add(bottomInformationPanel);
+                populateFieldsWithCardDetails();
+            }
+
+            @Override
+            protected void onSubmit() {
+                Integer month = (Integer) comboBoxes.get("months").getSelectedItem();
+                Integer year = (Integer) comboBoxes.get("years").getSelectedItem();
+                if(month == null || year == null) {
+                    updateErrorMessage("Expiry date is invalid");
+                    return;
+                }
+
+                Date expiryDate = DateUtils.getLastDayOfMonth(year, month);
+                JTextField cardNumberField = inputFields.get("cardNumber").getjTextField();
+                String cardNumber = cardNumberField.getText().replaceAll("\\s", "");
+
+                JTextField securityCodeField = inputFields.get("securityCode").getjTextField();
+                String securityCode = securityCodeField.getText();
+
+                JTextField holderNameField = inputFields.get("holderName").getjTextField();
+                String holderName = holderNameField.getText();
+
+                try {
+                    onSave(cardNumber, expiryDate, securityCode, holderName);
+                    cardNumberField.setText("");
+                    securityCodeField.setText("");
+                    holderNameField.setText("");
+                    this.updateErrorMessage(null);
+                    dispose();
+                } catch (SQLException e) {
+                    this.updateErrorMessage("Cannot connect to database.");
+                } catch (BankDetailsEncryptionException e) {
+                    this.updateErrorMessage(e.getMessage());
+                }
+            }
+
+            @Override
+            protected void onCancel() {
+                dispose();
+            }
+
+            @Override
+            protected boolean submitEnabled() {
+                return inputFields.values().stream().allMatch(CustomInputField::isValid);
+            }
+        };
     }
 
     private void populateFieldsWithCardDetails() {
@@ -127,7 +170,8 @@ public abstract class UpdateCreditCardModal extends JDialog {
         months.addItemListener(e -> {
             Integer yearItem = years.getSelectedItem() == null ? null : (Integer) years.getSelectedItem();
             if(e.getStateChange() == ItemEvent.SELECTED && yearItem != null) {
-                long dateDiff = new Date().getTime() - DateUtils.getLastDayOfMonth(yearItem, (Integer) e.getItem()).getTime();
+                long dateDiff = new Date().getTime() - DateUtils.getLastDayOfMonth(
+                        yearItem, (Integer) e.getItem()).getTime();
                 if(dateDiff > 0) {
                     years.setSelectedItem(Calendar.getInstance().get(Calendar.YEAR) + 1);
                 }
@@ -138,7 +182,8 @@ public abstract class UpdateCreditCardModal extends JDialog {
         years.addItemListener(e -> {
             Integer monthItem = months.getSelectedItem() == null ? null : (Integer) months.getSelectedItem();
             if(e.getStateChange() == ItemEvent.SELECTED && monthItem != null) {
-                long dateDiff = new Date().getTime() - DateUtils.getLastDayOfMonth((Integer) e.getItem(), monthItem).getTime();
+                long dateDiff = new Date().getTime() - DateUtils.getLastDayOfMonth(
+                        (Integer) e.getItem(), monthItem).getTime();
                 if(dateDiff > 0) {
                     months.setSelectedItem(Calendar.getInstance().get(Calendar.MONTH) + 1);
                 }
@@ -149,53 +194,7 @@ public abstract class UpdateCreditCardModal extends JDialog {
         return expiryDate;
     }
 
-    private void updateButtonState() {
-        submitButton.setEnabled(inputFields.values().stream().allMatch(CustomInputField::isValid));
-    }
-
-    private void updateErrorMessage(String message) {
-        if(message == null) {
-            errorMessage.setText(" ");
-            return;
-        }
-        errorMessage.setText("Error: " + message);
-    }
-
-    private void updateCardDetails() {
-        Integer month = (Integer) comboBoxes.get("months").getSelectedItem();
-        Integer year = (Integer) comboBoxes.get("years").getSelectedItem();
-        if(month == null || year == null) {
-            updateErrorMessage("Expiry date is invalid");
-            return;
-        }
-
-        Date expiryDate = DateUtils.getLastDayOfMonth(year, month);
-        JTextField cardNumberField = inputFields.get("cardNumber").getjTextField();
-        String cardNumber = cardNumberField.getText().replaceAll("\\s", "");
-
-        JTextField securityCodeField = inputFields.get("securityCode").getjTextField();
-        String securityCode = securityCodeField.getText();
-
-        JTextField holderNameField = inputFields.get("holderName").getjTextField();
-        String holderName = holderNameField.getText();
-
-        try {
-            if(onSave(cardNumber, expiryDate, securityCode, holderName)) {
-                cardNumberField.setText("");
-                securityCodeField.setText("");
-                holderNameField.setText("");
-                updateErrorMessage(null);
-                dispose();
-            } else {
-                updateErrorMessage("Cannot update banking card. Try again later");
-            }
-        } catch (SQLException e) {
-            updateErrorMessage("Cannot connect to database.");
-        } catch (BankDetailsEncryptionException e) {
-            updateErrorMessage(e.getMessage());
-        }
-    }
-
-    public abstract boolean onSave(String cardNumber, Date expiryDate, String securityCode, String holderName) throws SQLException, BankDetailsEncryptionException;
+    public abstract void onSave(String cardNumber, Date expiryDate, String securityCode, String holderName)
+            throws SQLException, BankDetailsEncryptionException;
 
 }
