@@ -54,6 +54,8 @@ public class NavigationManager {
      * @return true if user can access the view or false otherwise
      */
     public static boolean permissionsValid(View view) {
+        if (view instanceof AuthView) return true;
+
         List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
         if (view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
         if (view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;

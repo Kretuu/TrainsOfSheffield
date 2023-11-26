@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
+import uk.ac.sheffield.com2008.view.components.InputForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,89 +14,85 @@ import java.util.Map;
 
 public class SignupView extends AuthView {
     private final SignupController signupController;
-    private JButton submitButton;
-    private JLabel errorMessage;
+    private final InputForm inputForm;
     private final Map<String, CustomInputField> inputFields = new HashMap<>();
 
     public SignupView(SignupController signupController) {
         super();
         this.signupController = signupController;
-        initializeUI();
+        this.inputForm = createInputForm();
+        add(inputForm);
     }
 
-    private void initializeUI() {
-        errorMessage = new JLabel(" ");
-        errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
-        panel.add(errorMessage);
+    private InputForm createInputForm() {
+        return new InputForm(this, "Sign up", "Go back") {
+            @Override
+            protected void createTextFields(JPanel panel) {
+                CustomInputField email = new CustomInputField(
+                        "Email", this::updateSubmitButtonState, false);
+                email.setValidationFunction(
+                        () -> FieldsValidationManager.validateEmail(email.getjTextField().getText())
+                );
+                email.addToPanel(panel);
+                inputFields.put("email", email);
 
-        submitButton = new JButton("Register");
-        submitButton.setEnabled(false);
+                CustomInputField password = new CustomInputField(
+                        "Password", this::updateSubmitButtonState, false, true);
+                password.setValidationFunction(
+                        () -> FieldsValidationManager.validatePassword(password.getjTextField().getText())
+                );
+                password.addToPanel(panel);
+                inputFields.put("password", password);
 
-        JButton cancelButton = new JButton("Cancel");
-        createTextFields();
+                CustomInputField confirmPassword = new CustomInputField(
+                        "Confirm Password", this::updateSubmitButtonState, false, true);
+                confirmPassword.setValidationFunction(() -> FieldsValidationManager.validateConfirmPassword(
+                        password.getjTextField().getText(), confirmPassword.getjTextField().getText()
+                ));
+                confirmPassword.addToPanel(panel);
+                inputFields.put("confirmPassword", confirmPassword);
 
-        JPanel buttonsPanel = new JPanel(new GridLayout(1,2,10,0));
-        buttonsPanel.add(cancelButton);
-        buttonsPanel.add(submitButton);
-        panel.add(buttonsPanel);
+                CustomInputField firstname = new CustomInputField(
+                        "First Name", this::updateSubmitButtonState, false);
+                firstname.addToPanel(panel);
+                inputFields.put("firstname", firstname);
 
+                CustomInputField surname = new CustomInputField(
+                        "Last Name", this::updateSubmitButtonState, false);
+                surname.addToPanel(panel);
+                inputFields.put("surname", surname);
+            }
 
-        submitButton.addActionListener(e -> {
-            String email = inputFields.get("email").getjTextField().getText();
-            char[] password = inputFields.get("password").getjPasswordField().getPassword();
-            String firstname = inputFields.get("firstname").getjTextField().getText();
-            String surname = inputFields.get("surname").getjTextField().getText();
+            @Override
+            protected void onSubmit() {
+                String email = inputFields.get("email").getjTextField().getText();
+                char[] password = inputFields.get("password").getjPasswordField().getPassword();
+                String firstname = inputFields.get("firstname").getjTextField().getText();
+                String surname = inputFields.get("surname").getjTextField().getText();
 
-            signupController.signup(email, password, firstname, surname);
-            // Add logic for register button click
-            // You can switch to another state or perform other actions
-        });
-        cancelButton.addActionListener(e -> signupController.getNavigation().navigate(Navigation.LOGIN));
-    }
+                signupController.signup(email, password, firstname, surname);
+            }
 
-    private void createTextFields() {
-        CustomInputField email = new CustomInputField("Email", this::updateButtonState, false);
-        email.setValidationFunction(() -> FieldsValidationManager.validateEmail(email.getjTextField().getText()));
-        email.addToPanel(panel);
-        inputFields.put("email", email);
+            @Override
+            protected void onCancel() {
+                purgeTextFields();
+                signupController.getNavigation().navigate(Navigation.LOGIN);
+            }
 
-        CustomInputField password = new CustomInputField(
-                "Password", this::updateButtonState, false, true
-        );
-        password.setValidationFunction(() -> FieldsValidationManager.validatePassword(password.getjTextField().getText()));
-        password.addToPanel(panel);
-        inputFields.put("password", password);
-
-        CustomInputField confirmPassword = new CustomInputField(
-                "Confirm Password", this::updateButtonState, false, true
-        );
-        confirmPassword.setValidationFunction(() -> FieldsValidationManager.validateConfirmPassword(
-                password.getjTextField().getText(), confirmPassword.getjTextField().getText()
-        ));
-        confirmPassword.addToPanel(panel);
-        inputFields.put("confirmPassword", confirmPassword);
-
-        CustomInputField firstname = new CustomInputField(
-                "First Name", this::updateButtonState, false
-        );
-        firstname.addToPanel(panel);
-        inputFields.put("firstname", firstname);
-
-        CustomInputField surname = new CustomInputField("Last Name", this::updateButtonState, false);
-        surname.addToPanel(panel);
-        inputFields.put("surname", surname);
+            @Override
+            protected boolean submitEnabled() {
+                return inputFields.values().stream().allMatch(CustomInputField::isValid);
+            }
+        };
     }
 
     public void updateErrorMessage(String message) {
-        errorMessage.setText("Error: " + message);
+        inputForm.updateErrorMessage(message);
     }
 
     public void purgeTextFields() {
         inputFields.values().forEach(CustomInputField::purgeField);
     }
 
-    private void updateButtonState() {
-        submitButton.setEnabled(inputFields.values().stream().allMatch(CustomInputField::isValid));
-    }
 
 }
