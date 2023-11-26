@@ -90,10 +90,41 @@ public class CustomInputField implements DocumentListener {
 
     public void addToPanel(JPanel panel) {
         JPanel internalPanel = new JPanel(new GridLayout(3, 1));
-        internalPanel.add(label);
+        if(!label.getText().equals("")){
+            internalPanel.add(label);
+        }
         internalPanel.add(jTextField);
         internalPanel.add(errorMessage);
         panel.add(internalPanel);
+    }
+
+    public void addToPanel(JPanel panel, GridBagConstraints gbc){
+        JPanel internalPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcInternal = new GridBagConstraints();
+        gbcInternal.weightx = 1.0;
+        gbcInternal.fill = GridBagConstraints.HORIZONTAL;
+        gbcInternal.anchor = GridBagConstraints.WEST;
+        gbcInternal.gridwidth = GridBagConstraints.REMAINDER;
+        gbcInternal.gridy = 0;
+        gbcInternal.gridx = 0;
+
+        // Adjust insets to control spacing
+        gbcInternal.insets = new Insets(0, 5, 0, 0); // Left padding for input field
+
+        if (!label.getText().equals("")) {
+            gbcInternal.gridy++;
+            gbcInternal.insets = new Insets(0, 0, 0, 5); // Right padding for label
+            internalPanel.add(label, gbcInternal);
+        }
+
+        gbcInternal.insets = new Insets(0, 0, 0, 0); // Reset insets
+        internalPanel.add(jTextField, gbcInternal);
+
+        gbcInternal.gridy++;
+        internalPanel.add(errorMessage, gbcInternal);
+
+        gbcInternal.gridy = 0;
+        panel.add(internalPanel, gbc);
     }
 
     public void validate(String text) {
