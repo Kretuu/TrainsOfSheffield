@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.navigation;
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.controller.auth.LoginController;
+import uk.ac.sheffield.com2008.controller.auth.ProvideAddressController;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
@@ -17,6 +18,7 @@ import uk.ac.sheffield.com2008.view.components.MainLayout;
 import uk.ac.sheffield.com2008.view.customer.CustomerView;
 import uk.ac.sheffield.com2008.view.manager.ManagerView;
 import uk.ac.sheffield.com2008.view.staff.StaffView;
+import uk.ac.sheffield.com2008.view.user.UserView;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -55,8 +57,10 @@ public class NavigationManager {
      */
     public static boolean permissionsValid(View view) {
         if (view instanceof AuthView) return true;
+        User user = AppSessionCache.getInstance().getUserLoggedIn();
+        if(user == null) return false;
 
-        List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
+        List<User.Role> userRoles = user.getRoles();
         if (view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
         if (view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;
         if (view instanceof CustomerView && !userRoles.contains(User.Role.CUSTOMER)) return false;
@@ -82,6 +86,7 @@ public class NavigationManager {
         new FulfilledOrdersController(this,Navigation.FULFILLED_ORDERS);
         new SalesController(this, Navigation.SALES);
         new ManageProfileController(this, Navigation.MANAGE_PROFILE);
+        new ProvideAddressController(this, Navigation.PROVIDE_ADDRESS);
     }
 
     public void registerController(Navigation id, ViewController controller) {

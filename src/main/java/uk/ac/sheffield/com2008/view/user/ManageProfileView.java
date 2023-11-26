@@ -12,6 +12,7 @@ import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
+import uk.ac.sheffield.com2008.view.components.UpdateAddressTemplate;
 import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
 import uk.ac.sheffield.com2008.view.modals.VerifyPasswordModal;
 
@@ -27,6 +28,7 @@ public class ManageProfileView extends UserView {
     private final ManageProfileController controller;
     private final JPanel content;
     private InputForm inputForm;
+    private UpdateAddressTemplate updateAddressTemplate;
     private User user;
     private final Map<String, CustomInputField> inputFields = new HashMap<>();
 
@@ -81,38 +83,8 @@ public class ManageProfileView extends UserView {
 
                 panel.add(new JSeparator());
 
-                CustomInputField street = new CustomInputField(
-                        "Street", this::updateSubmitButtonState, false);
-                street.addToPanel(panel);
-                inputFields.put("street", street);
-
-                CustomInputField houseNo = new CustomInputField(
-                        "House number", this::updateSubmitButtonState, false);
-                houseNo.setValidationFunction(
-                        () -> FieldsValidationManager.validateHouseNo(houseNo.getjTextField().getText())
-                );
-                houseNo.addToPanel(panel);
-                inputFields.put("houseNo", houseNo);
-
-                CustomInputField flat = new CustomInputField(
-                        "Flat", this::updateSubmitButtonState, true);
-                flat.addToPanel(panel);
-                inputFields.put("flat", flat);
-
-                CustomInputField town = new CustomInputField(
-                        "Town", this::updateSubmitButtonState, false
-                );
-                town.setValidationFunction(() -> FieldsValidationManager.validateTown(town.getjTextField().getText()));
-                town.addToPanel(panel);
-                inputFields.put("town", town);
-
-                CustomInputField postcode = new CustomInputField(
-                        "Postcode", this::updateSubmitButtonState, false);
-                postcode.setValidationFunction(
-                        () -> FieldsValidationManager.validatePostcode(postcode.getjTextField().getText())
-                );
-                postcode.addToPanel(panel);
-                inputFields.put("postcode", postcode);
+                updateAddressTemplate = new UpdateAddressTemplate(panel, this::updateSubmitButtonState);
+                inputFields.putAll(updateAddressTemplate.getInputFields());
             }
 
             @Override
@@ -182,18 +154,11 @@ public class ManageProfileView extends UserView {
 
     private void updateUserDetails() {
         PersonalDetails pd = user.getPersonalDetails();
-        Address ad = user.getAddress() == null ? new Address() : user.getAddress();
-        user.setAddress(ad);
 
         user.setEmail(inputFields.get("email").getjTextField().getText());
         pd.changeForename(inputFields.get("firstname").getjTextField().getText());
         pd.changeSurname(inputFields.get("lastname").getjTextField().getText());
-
-        ad.setStreet(inputFields.get("street").getjTextField().getText());
-        ad.setHouseNumber(Integer.parseInt(inputFields.get("houseNo").getjTextField().getText()));
-        ad.setFlatIdentifier(inputFields.get("flat").getjTextField().getText());
-        ad.setCity(inputFields.get("town").getjTextField().getText());
-        ad.setPostCode(inputFields.get("postcode").getjTextField().getText());
+        updateAddressTemplate.saveAddress(user);
 
         controller.updateUserDetails(user);
     }
