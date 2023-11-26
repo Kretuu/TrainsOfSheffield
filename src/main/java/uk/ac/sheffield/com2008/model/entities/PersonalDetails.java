@@ -3,24 +3,10 @@ package uk.ac.sheffield.com2008.model.entities;
 public class PersonalDetails {
     private String forename;
     private String surname;
-    private BankingCard bankingCard;
-
-    public PersonalDetails(String forename, String surname, BankingCard bankingCard) {
-        this.forename = forename;
-        this.surname = surname;
-        this.bankingCard = bankingCard;
-    }
-
-    public BankingCard getBankingCard() {
-        return bankingCard;
-    }
-
-    public void setBankingCard(BankingCard bankingCard) {
-        this.bankingCard = bankingCard;
-    }
 
     public PersonalDetails(String forename, String surname) {
-        this(forename, surname, null);
+        this.forename = forename;
+        this.surname = surname;
     }
 
     public void changeForename(String forename) {

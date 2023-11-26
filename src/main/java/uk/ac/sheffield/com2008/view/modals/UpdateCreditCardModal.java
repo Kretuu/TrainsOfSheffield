@@ -1,5 +1,6 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
 import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.util.DateUtils;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -177,17 +179,23 @@ public abstract class UpdateCreditCardModal extends JDialog {
         JTextField holderNameField = inputFields.get("holderName").getjTextField();
         String holderName = holderNameField.getText();
 
-        if(onSave(cardNumber, expiryDate, securityCode, holderName)) {
-            cardNumberField.setText("");
-            securityCodeField.setText("");
-            holderNameField.setText("");
-            updateErrorMessage(null);
-            dispose();
-        } else {
-            updateErrorMessage("Cannot update banking card. Try again later");
+        try {
+            if(onSave(cardNumber, expiryDate, securityCode, holderName)) {
+                cardNumberField.setText("");
+                securityCodeField.setText("");
+                holderNameField.setText("");
+                updateErrorMessage(null);
+                dispose();
+            } else {
+                updateErrorMessage("Cannot update banking card. Try again later");
+            }
+        } catch (SQLException e) {
+            updateErrorMessage("Cannot connect to database.");
+        } catch (BankDetailsEncryptionException e) {
+            updateErrorMessage(e.getMessage());
         }
     }
 
-    public abstract boolean onSave(String cardNumber, Date expiryDate, String securityCode, String holderName);
+    public abstract boolean onSave(String cardNumber, Date expiryDate, String securityCode, String holderName) throws SQLException, BankDetailsEncryptionException;
 
 }

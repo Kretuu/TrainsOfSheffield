@@ -1,5 +1,8 @@
 package uk.ac.sheffield.com2008.model.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Address {
     private int houseNumber;
     private String flatIdentifier;
@@ -7,16 +10,15 @@ public class Address {
     private String city;
     private String postCode;
 
-    public Address(int houseNumber, String flatIdentifier, String street, String city, String postCode) {
-        this.houseNumber = houseNumber;
-        this.flatIdentifier = flatIdentifier;
+    public Address() {}
+
+    public Address(String combinedHouseNumber, String street, String city, String postCode) {
+        List<String> combinedHouseNumberList = Arrays.stream(combinedHouseNumber.split("/")).toList();
+        this.houseNumber = Integer.parseInt(combinedHouseNumberList.get(0));
+        this.flatIdentifier = combinedHouseNumberList.size() > 1 ? combinedHouseNumberList.get(1) : null;
         this.street = street;
         this.city = city;
         this.postCode = postCode;
-    }
-
-    public Address(int houseNumber, String street, String city, String postCode) {
-        this(houseNumber, null, street, city, postCode);
     }
 
     public int getHouseNumber() {
@@ -32,7 +34,7 @@ public class Address {
     }
 
     public void setFlatIdentifier(String flatIdentifier) {
-        this.flatIdentifier = flatIdentifier;
+        this.flatIdentifier = flatIdentifier.isEmpty() ? null : flatIdentifier;
     }
 
     public String getStreet() {
@@ -45,6 +47,11 @@ public class Address {
 
     public String getCity() {
         return city;
+    }
+
+    public String getCombinedHouseNo() {
+        if(flatIdentifier == null) return String.valueOf(houseNumber);
+        return new StringBuilder().append(houseNumber).append("/").append(flatIdentifier).toString();
     }
 
     public void setCity(String city) {

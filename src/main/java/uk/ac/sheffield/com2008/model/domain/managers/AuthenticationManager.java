@@ -12,8 +12,10 @@ import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.EncryptionManager;
 import uk.ac.sheffield.com2008.util.UUIDGenerator;
 
+import java.sql.SQLException;
+
 public class AuthenticationManager {
-    public static void loginUser(String userEmail, char[] password) throws IncorrectLoginCredentialsException {
+    public static void loginUser(String userEmail, char[] password) throws IncorrectLoginCredentialsException, SQLException {
         User user = UserDAO.verifyPassword(userEmail, password);
         if(user == null) {
             throw new IncorrectLoginCredentialsException();
@@ -26,7 +28,7 @@ public class AuthenticationManager {
         user.setBasket(usersBasket);
     }
 
-    public static void registerUser(String userEmail, char[] password, String forename, String surname) throws EmailAlreadyInUseException {
+    public static void registerUser(String userEmail, char[] password, String forename, String surname) throws EmailAlreadyInUseException, SQLException {
         User user = UserDAO.getUserByEmail(userEmail);
         if(user != null) {
             throw new EmailAlreadyInUseException(userEmail);
@@ -36,7 +38,7 @@ public class AuthenticationManager {
         String uuid = UUIDGenerator.generate();
         String salt = EncryptionManager.generateSalt();
         String hashedPassword = EncryptionManager.hashPassword(password, salt);
-        user = new User(uuid, userEmail, personalDetails, null);
+        user = new User(uuid, userEmail, personalDetails, null, null);
         AuthUser authUser = new AuthUser(hashedPassword, salt);
         UserDAO.createUser(user, authUser);
 

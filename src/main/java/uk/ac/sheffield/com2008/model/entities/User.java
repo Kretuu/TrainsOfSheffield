@@ -9,18 +9,29 @@ public class User {
     private String email;
     private Order basket;
     private PersonalDetails personalDetails;
+
+    private Address address;
     private final List<Role> roles;
 
-    public User(String uuid, String email, Order basket, PersonalDetails personalDetails, String rolesString) {
+    public User(String uuid, String email, Order basket, PersonalDetails personalDetails, String rolesString, Address address) {
         this.uuid = uuid;
         this.email = email;
         this.basket = basket;
         this.personalDetails = personalDetails;
         this.roles = Role.parseRoles(rolesString);
+        this.address = address;
     }
 
-    public User(String uuid, String email, PersonalDetails personalDetails, String rolesString) {
-        this(uuid, email, null, personalDetails, rolesString);
+    public User(String uuid, String email, PersonalDetails personalDetails, String rolesString, Address address) {
+        this(uuid, email, null, personalDetails, rolesString, address);
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public List<Role> getRoles() {

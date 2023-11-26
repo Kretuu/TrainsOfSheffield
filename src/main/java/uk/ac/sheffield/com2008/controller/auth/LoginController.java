@@ -7,6 +7,8 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.auth.LoginView;
 
+import java.sql.SQLException;
+
 /**
  * Controller responsible for Login Screen.
  */
@@ -30,6 +32,8 @@ public class LoginController extends ViewController {
             navigation.navigate(Navigation.CUSTOMER);
         } catch (IncorrectLoginCredentialsException e) {
             loginView.updateErrorMessage(e.getMessage());
+        } catch (SQLException e) {
+            loginView.updateErrorMessage("Cannot connect to database.");
         }
     }
 }
