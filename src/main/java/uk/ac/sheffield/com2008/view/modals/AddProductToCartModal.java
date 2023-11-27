@@ -34,17 +34,20 @@ public class AddProductToCartModal extends JDialog {
         panel.setBorder(emptyBorder);
 
         // Create a panel for the top section
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcTop = new GridBagConstraints();
+
+        JPanel productDetails = new JPanel();
+        productDetails.setLayout(new BoxLayout(productDetails, BoxLayout.Y_AXIS));
 
         // Create "Add To Cart" label at the top
         JLabel titleLabel = new JLabel("Add To Cart:");
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 16));
-        topPanel.add(titleLabel, BorderLayout.NORTH);
+        productDetails.add(titleLabel);
 
         // Create a label that can be customized
         productName = new JLabel("<html><div style='width: 100%;'>" + product.printName() + "</div></html>");
-        topPanel.add(productName, BorderLayout.CENTER);
-        panel.add(topPanel, BorderLayout.NORTH);
+        productDetails.add(productName);
 
         //create a list of the set items if this product is a set
         if(product instanceof ProductSet productSet){
@@ -54,10 +57,64 @@ public class AddProductToCartModal extends JDialog {
                         .append(psi.getProduct().printName())
                         .append("</li>");
             }
+
             htmlList.append("</ul></html>");
             JLabel productSetItemsLabel = new JLabel(htmlList.toString());
-            topPanel.add(productSetItemsLabel, BorderLayout.SOUTH);
+            productDetails.add(productSetItemsLabel);
         }
+
+        gbcTop.gridx = 0;
+        gbcTop.gridy = 0;
+        gbcTop.weightx = 1.0;
+        gbcTop.anchor = GridBagConstraints.WEST;
+        gbcTop.fill = GridBagConstraints.HORIZONTAL;
+        topPanel.add(productDetails, gbcTop);
+
+        //extra details
+        JPanel extraDetails = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcTopExtra = new GridBagConstraints();
+        gbcTopExtra.insets = new Insets(5, 15, 5, 15);
+
+        //gauge label
+        gbcTopExtra.gridx = 0;
+        gbcTopExtra.gridy = 0;
+        JLabel gaugeLabel = new JLabel("OO");
+        gaugeLabel.setFont(gaugeLabel.getFont().deriveFont(Font.BOLD, 12));
+        gbcTopExtra.anchor = GridBagConstraints.CENTER;
+        extraDetails.add(gaugeLabel, gbcTopExtra);
+
+        //gauge subtitle
+        gbcTopExtra.gridx = 0;
+        gbcTopExtra.gridy = 1;
+        JLabel gaugeSub = new JLabel("Gauge");
+        gaugeSub.setFont(gaugeSub.getFont().deriveFont(Font.BOLD, 10));
+        gaugeSub.setForeground(new Color(117, 117, 117));
+        gbcTopExtra.anchor = GridBagConstraints.CENTER;
+        extraDetails.add(gaugeSub, gbcTopExtra);
+
+        //brand label
+        gbcTopExtra.gridx = 1;
+        gbcTopExtra.gridy = 0;
+        JLabel brandLabel = new JLabel("Hornby");
+        brandLabel.setFont(brandLabel.getFont().deriveFont(Font.BOLD, 12));
+        gbcTopExtra.anchor = GridBagConstraints.CENTER;
+        extraDetails.add(brandLabel, gbcTopExtra);
+
+        //brand label
+        gbcTopExtra.gridx = 1;
+        gbcTopExtra.gridy = 1;
+        JLabel brandSub = new JLabel("Brand");
+        brandSub.setFont(brandSub.getFont().deriveFont(Font.BOLD, 10));
+        brandSub.setForeground(new Color(117, 117, 117));
+        gbcTopExtra.anchor = GridBagConstraints.CENTER;
+        extraDetails.add(brandSub, gbcTopExtra);
+
+        gbcTopExtra.gridx = 0;
+        gbcTopExtra.gridy = 1;
+        gbcTopExtra.anchor = GridBagConstraints.NORTH;
+        topPanel.add(extraDetails, gbcTopExtra);
+
+        panel.add(topPanel, BorderLayout.NORTH);
 
         // Create a panel for quantity and add to cart button
         JPanel bottomPanel = new JPanel();
@@ -102,7 +159,6 @@ public class AddProductToCartModal extends JDialog {
         });
         buttonPanel.add(addToCartButton);
 
-
         JPanel summaryInfoPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -112,8 +168,6 @@ public class AddProductToCartModal extends JDialog {
         totalPriceLabel = new JLabel("Total Price: " + product.getPrice());
         JLabel stockInBasketLabel = new JLabel("already in basket: " + quantityInBasket);
         stockInBasketLabel.setForeground(new Color(117, 117, 117));
-        //totalPriceLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        //stockInBasketLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
         if(quantityInBasket > 0){
             summaryInfoPanel.add(stockInBasketLabel, gbc);
@@ -143,7 +197,8 @@ public class AddProductToCartModal extends JDialog {
         // Set panel to the content pane of the dialog
         setContentPane(panel);
         setMinimumSize(new Dimension(300, 200));
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 800));
+        pack();
         setResizable(false);
         setLocationRelativeTo(parentFrame);
     }

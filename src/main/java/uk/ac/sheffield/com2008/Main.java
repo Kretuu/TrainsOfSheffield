@@ -3,8 +3,6 @@ package uk.ac.sheffield.com2008;
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 
-
-
 public class Main {
     public static void main(String[] args) {
         DatabaseConnectionHandler.connectToDatabase();
