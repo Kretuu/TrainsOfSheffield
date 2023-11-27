@@ -62,7 +62,7 @@ public class Locomotive extends Product {
     public String deriveName(){
         String output = brClass + ",";
         if(individualName != null){
-            output += individualName = ",";
+            output += individualName + ",";
         }else{
             output += "NULL,";
         }

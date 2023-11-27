@@ -1,8 +1,10 @@
 package uk.ac.sheffield.com2008.view.staff;
 
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.Controller;
+import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
 import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
 import uk.ac.sheffield.com2008.model.entities.products.Track;
 import uk.ac.sheffield.com2008.navigation.Navigation;
@@ -25,8 +27,9 @@ public class ProductRecordForm extends StaffView {
     private CardLayout cardLayout;
 
     private final JButton submitButton;
-    JComboBox<String> gaugesComboBox;
     JLabel gaugeLabel;
+
+    JLabel errorMessage;
 
     //Panels
     JPanel locomotivePanel;
@@ -37,8 +40,12 @@ public class ProductRecordForm extends StaffView {
     JPanel trackPackPanel;
     JPanel currentPanel;
 
+    JComboBox<String> categoryComboBox;
 
     private final Map<String, CustomInputField> sharedInputFields = new HashMap<>();
+    JComboBox<String> gaugesComboBox;
+    JFormattedTextField quantityField;
+    Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
 
     //Locomotive
     private final Map<String, CustomInputField> locomotiveInputFields = new HashMap<>();
@@ -71,13 +78,14 @@ public class ProductRecordForm extends StaffView {
     private final Map<JPanel, Map<String, CustomInputField>> categorySpecificFields = new HashMap<>();
 
     public ProductRecordForm(FormController formController) {
-        this.submitButton = new JButton("Save");
-        this.submitButton.addActionListener(e -> {
-            formController.tryCreateProduct();
-        });
         this.formController = formController;
+        this.submitButton = new JButton("Save");
 
-        Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
+        categoryComboBox = new JComboBox<>(categories);
+        this.submitButton.addActionListener(e -> {
+            formController.tryCreateProduct(sharedInputFields.get("productCode").getjTextField().getText());
+        });
+
         gauges.put("OO Gauge (1/76th scale)", Product.Gauge.OO);
         gauges.put("TT Gauge (1/120th scale)", Product.Gauge.TT);
         gauges.put("N gauge (1/148th scale)", Product.Gauge.N);
@@ -113,9 +121,19 @@ public class ProductRecordForm extends StaffView {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.NORTH;
+
+        gbc.insets = new Insets(0, 0, 15, 5);
+        errorMessage = new JLabel("");
+        errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 3;
+        add(errorMessage, gbc);
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        gbc.gridy++;
+        gbc.gridwidth = 1;
         add(new JLabel("Category: "), gbc);
 
-        JComboBox<String> categoryComboBox = new JComboBox<>(categories);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -153,7 +171,7 @@ public class ProductRecordForm extends StaffView {
         });
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(new JLabel("Product Code: "), gbc);
 
@@ -165,16 +183,35 @@ public class ProductRecordForm extends StaffView {
                 () -> FieldsValidationManager.validateProductCode(
                         productCodeField.getjTextField().getText(),
                         catChar.get((String) categoryComboBox.getSelectedItem())));
-        sharedInputFields.put("productcode", productCodeField);
+        sharedInputFields.put("productCode", productCodeField);
 
         gbc.gridx = 1;
-        gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         productCodeField.addToPanel(this, gbc);
 
+        gbc.gridy++;
+        gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        add(new JLabel("Brand: "), gbc);
+
+        CustomInputField brandField = new CustomInputField("",
+                this::updateButtonState,
+                false
+        );
+        brandField.setValidationFunction(
+                () -> FieldsValidationManager.validateForLength(
+                        brandField.getjTextField().getText(),
+                        3));
+        sharedInputFields.put("brand", brandField);
+
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        brandField.addToPanel(this, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(gaugeLabel, gbc);
 
@@ -184,7 +221,7 @@ public class ProductRecordForm extends StaffView {
         add(gaugesComboBox, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(new JLabel("Price: "), gbc);
 
@@ -196,13 +233,12 @@ public class ProductRecordForm extends StaffView {
                 () -> FieldsValidationManager.validatePrice(priceField.getjTextField().getText()));
         sharedInputFields.put("price", priceField);
         gbc.gridx = 1;
-        gbc.gridy = 5; // Move to the next row
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         priceField.addToPanel(this, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(new JLabel("Quantity: "), gbc);
 
@@ -210,19 +246,18 @@ public class ProductRecordForm extends StaffView {
         NumberFormatter formatter = new NumberFormatter(integerFormat);
         formatter.setValueClass(Integer.class);
         formatter.setMinimum(0);
-        JFormattedTextField quantityField = new JFormattedTextField(formatter);
+        quantityField = new JFormattedTextField(formatter);
         quantityField.setValue(1);
         quantityField.setColumns(10);
 
         gbc.gridx = 1;
-        gbc.gridy = 6; // Move to the next row
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(quantityField, gbc);
 
         // Add cardPanel to the layout
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy++;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
 
@@ -233,7 +268,7 @@ public class ProductRecordForm extends StaffView {
         add(cardPanel, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy++;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
         add(buttonPanel(), gbc);
@@ -291,7 +326,7 @@ public class ProductRecordForm extends StaffView {
         brClassField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
                 brClassField.getjTextField().getText(),
                 2));
-        locomotiveInputFields.put("brclass", brClassField);
+        locomotiveInputFields.put("brClass", brClassField);
         brClassField.addToPanel(panel, gbc);
 
         // Individual Name
@@ -317,7 +352,9 @@ public class ProductRecordForm extends StaffView {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.NORTH;
         panel.add(new JLabel("Model Type:"), gbc);
-        String[] powerTypes = {"Analogue", "DCC-Ready", "DCC-Fitted", "DCC-Sound"};
+        String[] powerTypes = Arrays.stream(Locomotive.DCCType.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
         powerTypeComboBox = new JComboBox<>(powerTypes);
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(powerTypeComboBox, gbc);
@@ -570,6 +607,40 @@ public class ProductRecordForm extends StaffView {
         submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
                 && categoryFields.values().stream().allMatch(CustomInputField::isValid)
         );
+    }
+
+    public void setErrorMessage(String err){
+        errorMessage.setText(err);
+    }
+
+    /**
+     * given the character, will take values from the panel a instantiate a
+     * temporary product of given type.
+     * @param type L,S,R,M etc..
+     * @return a subtype of Product
+     */
+    public Product getProductFromInputs(Character type){
+
+        switch(type){
+            case 'L': {
+                Locomotive locomotive = new Locomotive(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        locomotiveInputFields.get("brClass").getjTextField().getText(),
+                        locomotiveInputFields.get("individualName").getjTextField().getText(),
+                        Integer.parseInt(locomotiveInputFields.get("era").getjTextField().getText()),
+                        Locomotive.DCCType.valueOf((String) powerTypeComboBox.getSelectedItem()));
+                locomotive.setName(locomotive.deriveName());
+                return locomotive;
+            }
+            default:
+                throw new RuntimeException("Unknown Type: " + type);
+        }
     }
 }
 
