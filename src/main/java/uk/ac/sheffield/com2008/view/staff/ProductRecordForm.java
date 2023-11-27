@@ -2,7 +2,9 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.Controller;
 import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
+import uk.ac.sheffield.com2008.model.entities.products.Track;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
@@ -46,6 +48,15 @@ public class ProductRecordForm extends StaffView {
     private final Map<String, CustomInputField> rollingStockInputFields = new HashMap<>();
     private JComboBox<String> classesComboBox;
 
+    //Track
+    private final Map<String, CustomInputField> trackInputFields = new HashMap<>();
+    private JComboBox<String> trackTypeComboBox;
+
+    //Controller
+    private final Map<String, CustomInputField> controllerInputFields = new HashMap<>();
+    private JComboBox<String> controllerTypeComboBox;
+
+
     private final String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
             "Train Set", "Track Pack"};
     private final Map<String, Character> catChar = Map.of(
@@ -83,6 +94,8 @@ public class ProductRecordForm extends StaffView {
 
         categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
         categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
+        categorySpecificFields.put(trackPackPanel, trackInputFields);
+        categorySpecificFields.put(controllerPanel, controllerInputFields);
 
         initializeUI();
     }
@@ -365,34 +378,62 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel trackPanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy= 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 0, 10);
 
-        panel.add(new JLabel("Descriptor:"));
-        JTextField descriptorTextField = new JTextField();
-        descriptorTextField.setPreferredSize(new Dimension(100, descriptorTextField.getPreferredSize().height));
-        panel.add(descriptorTextField);
+        // Descriptor
+        CustomInputField descriptorField = new CustomInputField("Descriptor: ", this::updateButtonState, false);
+        descriptorField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                descriptorField.getjTextField().getText(), 3));
+        trackInputFields.put("descriptor", descriptorField);
+        gbc.anchor = GridBagConstraints.WEST;
+        descriptorField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Track Type:"));
-        String[] trackTypes = {"Straight", "Curve"};
-        JComboBox<String> trackTypeComboBox = new JComboBox<>(trackTypes);
-        panel.add(trackTypeComboBox);
+        // Track Type
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.NORTH;
+        panel.add(new JLabel("Track Type:"), gbc);
+        String[] trackTypes = Arrays.stream(Track.TrackType.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
+        trackTypeComboBox = new JComboBox<>(trackTypes);
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(trackTypeComboBox,gbc);
 
         return panel;
     }
 
     private JPanel controllersPanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy= 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 0, 10);
 
-        panel.add(new JLabel("Descriptor:"));
-        JTextField descriptorTextField = new JTextField();
-        descriptorTextField.setPreferredSize(new Dimension(100, descriptorTextField.getPreferredSize().height));
-        panel.add(descriptorTextField);
+        // Descriptor
+        CustomInputField descriptorField = new CustomInputField("Descriptor: ", this::updateButtonState, false);
+        descriptorField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                descriptorField.getjTextField().getText(), 3));
+        controllerInputFields.put("descriptor", descriptorField);
+        gbc.anchor = GridBagConstraints.WEST;
+        descriptorField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Power Type:"));
-        String[] trackTypes = {"Analogue", "Digital (DCC)"};
-        JComboBox<String> trackTypeComboBox = new JComboBox<>(trackTypes);
-        panel.add(trackTypeComboBox);
+        // Power Type
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.NORTH;
+        panel.add(new JLabel("Power Type:"),gbc);
+        String[] powerTypes = Arrays.stream(Controller.PowerType.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
+        controllerTypeComboBox = new JComboBox<>(powerTypes);
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(controllerTypeComboBox, gbc);
 
         return panel;
     }
