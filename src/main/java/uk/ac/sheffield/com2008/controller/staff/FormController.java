@@ -49,9 +49,9 @@ public class FormController extends ViewController {
     }
 
     public void tryCreateProduct(){
-        if(!productRecordForm.validateAllFields()){
-            return;
-        }
+//        if(!productRecordForm.validateAllFields()){
+//            return;
+//        }
     }
 
 }

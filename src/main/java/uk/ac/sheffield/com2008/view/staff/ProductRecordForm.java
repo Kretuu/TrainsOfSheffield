@@ -22,7 +22,9 @@ public class ProductRecordForm extends StaffView {
     private final FormController formController;
     private JPanel cardPanel;
     private CardLayout cardLayout;
+    private JLabel itemSelected = new JLabel();
     private final JButton submitButton;
+
     private JPanel getInSetPanel;
     private JScrollPane scrollPane;
     private Map<Product, Integer> selectedProductsMap = new HashMap<>();
@@ -397,14 +399,14 @@ public class ProductRecordForm extends StaffView {
         inSetPanel.setPreferredSize(new Dimension(200, 200));
         scrollPane = new JScrollPane(inSetPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        inSetPanel.add(scrollPane, BorderLayout.SOUTH);
+        panel.add(scrollPane, BorderLayout.SOUTH);
 
 
         JPanel inSetHeadingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel displayItemsLabel = new JLabel("Items in set:  ");
         inSetHeadingPanel.add(displayItemsLabel);
 
-        inSetPanel.add(inSetHeadingPanel);
+        inSetPanel.add(inSetHeadingPanel, BorderLayout.NORTH);
 
 
         addButton.addActionListener(e -> {
