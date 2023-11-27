@@ -22,6 +22,8 @@ public class CustomInputField implements DocumentListener {
     private boolean isValid = false;
     private final boolean emptyAllowed;
 
+    private double rowWeight = 1;
+
     public JTextField getjTextField() {
         return jTextField;
     }
@@ -86,6 +88,9 @@ public class CustomInputField implements DocumentListener {
             }
         });
     }
+    public void setRowWeight(double weight) {
+        this.rowWeight = weight;
+    }
 
 
     public void addToPanel(JPanel panel) {
@@ -101,7 +106,6 @@ public class CustomInputField implements DocumentListener {
     public void addToPanel(JPanel panel, GridBagConstraints gbc){
         JPanel internalPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbcInternal = new GridBagConstraints();
-        gbcInternal.weightx = 1.0;
         gbcInternal.fill = GridBagConstraints.HORIZONTAL;
         gbcInternal.anchor = GridBagConstraints.WEST;
         gbcInternal.gridwidth = GridBagConstraints.REMAINDER;
@@ -112,15 +116,16 @@ public class CustomInputField implements DocumentListener {
         gbcInternal.insets = new Insets(0, 5, 0, 0); // Left padding for input field
 
         if (!label.getText().equals("")) {
-            gbcInternal.gridy++;
             gbcInternal.insets = new Insets(0, 0, 0, 5); // Right padding for label
             internalPanel.add(label, gbcInternal);
+            gbcInternal.gridy++;
         }
 
         gbcInternal.insets = new Insets(0, 0, 0, 0); // Reset insets
         internalPanel.add(jTextField, gbcInternal);
 
         gbcInternal.gridy++;
+        gbcInternal.weightx = rowWeight;
         internalPanel.add(errorMessage, gbcInternal);
 
         gbcInternal.gridy = 0;
