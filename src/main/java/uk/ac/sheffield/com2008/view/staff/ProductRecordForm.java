@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 
 public class ProductRecordForm extends StaffView {
@@ -364,7 +364,7 @@ public class ProductRecordForm extends StaffView {
         gbc.anchor = GridBagConstraints.NORTH;
         panel.add(new JLabel("Model Type:"), gbc);
         String[] powerTypes = Arrays.stream(Locomotive.DCCType.values())
-                .map(Enum::name)
+                .map(Locomotive.DCCType::deriveName)
                 .toArray(String[]::new);
         powerTypeComboBox = new JComboBox<>(powerTypes);
         gbc.anchor = GridBagConstraints.WEST;
@@ -404,13 +404,13 @@ public class ProductRecordForm extends StaffView {
         gbc.gridx += 2;
         gbc.anchor = GridBagConstraints.NORTH;
         panel.add(new JLabel("Class:"), gbc);
-        String[] classes = Arrays.stream(RollingStock.Class_.values())
-                .map(Enum::name)
-                .toArray(String[]::new);
-        classesComboBox = new JComboBox<>(classes);
+        List<String> classes = Arrays.stream(RollingStock.Class_.values())
+                .map(RollingStock.Class_::deriveName)
+                .collect(Collectors.toList());
+        classes.add("Null");
+        classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(classesComboBox, gbc);
-
 
         // Era
         gbc.gridx++;
@@ -446,7 +446,7 @@ public class ProductRecordForm extends StaffView {
         gbc.anchor = GridBagConstraints.NORTH;
         panel.add(new JLabel("Track Type:"), gbc);
         String[] trackTypes = Arrays.stream(Track.TrackType.values())
-                .map(Enum::name)
+                .map(Track.TrackType::deriveName)
                 .toArray(String[]::new);
         trackTypeComboBox = new JComboBox<>(trackTypes);
         gbc.anchor = GridBagConstraints.WEST;
@@ -676,7 +676,7 @@ public class ProductRecordForm extends StaffView {
                         locomotiveInputFields.get("brClass").getjTextField().getText(),
                         locomotiveInputFields.get("individualName").getjTextField().getText(),
                         Integer.parseInt(locomotiveInputFields.get("era").getjTextField().getText()),
-                        Locomotive.DCCType.valueOf((String) powerTypeComboBox.getSelectedItem()));
+                        Locomotive.DCCType.deriveType((String) powerTypeComboBox.getSelectedItem()));
                 locomotive.setName(locomotive.deriveName());
                 return locomotive;
             }
@@ -691,7 +691,7 @@ public class ProductRecordForm extends StaffView {
                         Integer.parseInt(quantityField.getText()),
                         rollingStockInputFields.get("mark").getjTextField().getText(),
                         rollingStockInputFields.get("kind").getjTextField().getText(),
-                        RollingStock.Class_.valueOf((String)classesComboBox.getSelectedItem()),
+                        RollingStock.Class_.deriveType((String)classesComboBox.getSelectedItem()),
                         Integer.parseInt(rollingStockInputFields.get("era").getjTextField().getText()));
                 rollingStock.setName(rollingStock.deriveName());
                 return rollingStock;
@@ -706,7 +706,7 @@ public class ProductRecordForm extends StaffView {
                         false,
                         Integer.parseInt(quantityField.getText()),
                         trackInputFields.get("descriptor").getjTextField().getText(),
-                        Track.TrackType.valueOf((String)trackTypeComboBox.getSelectedItem()));
+                        Track.TrackType.deriveType((String)trackTypeComboBox.getSelectedItem()));
                 track.setName(track.deriveName());
                 return track;
             }

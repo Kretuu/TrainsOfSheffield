@@ -10,7 +10,29 @@ public class Locomotive extends Product {
     private String brClass; //e.g 01, 02, A3
     private String individualName; //e.g "The Flying Scotsman"
     private int era; // ERA 1-11
-    public enum DCCType{ ANALOGUE, DCCREADY, DCCFITTED, DCCSOUND};
+    public enum DCCType{
+        ANALOGUE("Analogue"),
+        DCCREADY("DCC-Ready"),
+        DCCFITTED("DCC-Fitted"),
+        DCCSOUND("DCC-Sound");
+
+        private final String name;
+        DCCType(String name){
+            this.name = name;
+        }
+
+        public String deriveName(){
+            return this.name;
+        }
+        public static DCCType deriveType(String name){
+            for(DCCType d : DCCType.values()){
+                if(d.deriveName().equals(name)){
+                    return d;
+                }
+            }
+            return null;
+        }
+    };
     private DCCType dccType;
 
     public Locomotive(

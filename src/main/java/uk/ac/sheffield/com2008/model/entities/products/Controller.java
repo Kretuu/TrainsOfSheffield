@@ -7,7 +7,12 @@ import java.util.List;
 
 public class Controller extends Product {
     private String descriptor;
-    public enum PowerType{ANALOGUE,DIGITAL};
+    public enum PowerType{
+        ANALOGUE,
+        DIGITAL;
+
+        
+    };
     private PowerType powerType;
 
     public Controller(
