@@ -22,10 +22,7 @@ public class AuthenticationManager {
         }
         AppSessionCache.getInstance().setUserLoggedIn(user);
 
-        //GET THEIR BASKET AND ASSIGN IT TO THE USER
-        Order usersBasket = OrderDAO.getUsersBasket(user);
-        if(usersBasket == null) usersBasket = OrderManager.createNewOrder(user);
-        user.setBasket(usersBasket);
+        OrderManager.updateUserBasket(user);
     }
 
     public static void registerUser(String userEmail, char[] password, String forename, String surname) throws EmailAlreadyInUseException, SQLException {
@@ -43,8 +40,7 @@ public class AuthenticationManager {
         UserDAO.createUser(user, authUser);
 
         //GENERATE A NEW BLANK ORDER (BASKET) FOR THEM
-        Order newOrder = OrderManager.createNewOrder(user);
-        user.setBasket(newOrder);
+        OrderManager.updateUserBasket(user);
         AppSessionCache.getInstance().setUserLoggedIn(user);
     }
 }

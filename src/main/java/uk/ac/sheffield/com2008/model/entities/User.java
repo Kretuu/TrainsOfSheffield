@@ -58,6 +58,14 @@ public class User {
         this.basket = basket;
     }
 
+    public void addRole(Role role) {
+        if(!roles.contains(role)) roles.add(role);
+    }
+
+    public boolean hasRole(Role role) {
+        return roles.contains(role);
+    }
+
     public PersonalDetails getPersonalDetails() {
         return personalDetails;
     }
@@ -72,6 +80,15 @@ public class User {
         public static List<Role> parseRoles(String rolesString) {
             if (rolesString == null) return new ArrayList<>();
             return Arrays.stream(rolesString.split(";")).map(Role::valueOf).toList();
+        }
+
+        public static String parseRolesToString(List<Role> roles) {
+            if(roles.isEmpty()) return null;
+
+            StringBuilder builder = new StringBuilder();
+            roles.forEach(role -> builder.append(role.toString()).append(";"));
+            builder.setLength(builder.length() - 1);
+            return builder.toString();
         }
     }
 }

@@ -60,7 +60,7 @@ public class MainLayout extends JPanel {
         }
     }
 
-    private void setNavigationBar(View v) {
+    public void setNavigationBar(View v) {
         navigation.removeAll();
         v.getNavigation().forEach((key, value) -> {
             value.addActionListener(e -> navigationManager.navigate(key));
