@@ -8,10 +8,26 @@ import java.util.List;
 public class Controller extends Product {
     private String descriptor;
     public enum PowerType{
-        ANALOGUE,
-        DIGITAL;
+        ANALOGUE("Analogue"),
+        DIGITAL("Digital");
 
-        
+        private final String name;
+        PowerType(String name){
+            this.name = name;
+        }
+
+        public String deriveName(){
+            return this.name;
+        }
+        public static Controller.PowerType deriveType(String name){
+            for(Controller.PowerType d : Controller.PowerType.values()){
+                if(d.deriveName().equals(name)){
+                    return d;
+                }
+            }
+            return null;
+        }
+
     };
     private PowerType powerType;
 

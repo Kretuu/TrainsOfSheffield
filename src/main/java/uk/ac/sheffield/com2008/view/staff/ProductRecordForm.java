@@ -474,7 +474,7 @@ public class ProductRecordForm extends StaffView {
         gbc.anchor = GridBagConstraints.NORTH;
         panel.add(new JLabel("Power Type:"),gbc);
         String[] powerTypes = Arrays.stream(Controller.PowerType.values())
-                .map(Enum::name)
+                .map(Controller.PowerType::deriveName)
                 .toArray(String[]::new);
         controllerTypeComboBox = new JComboBox<>(powerTypes);
         gbc.anchor = GridBagConstraints.WEST;
@@ -771,7 +771,7 @@ public class ProductRecordForm extends StaffView {
                         false,
                         Integer.parseInt(quantityField.getText()),
                         controllerInputFields.get("descriptor").getjTextField().getText(),
-                        Controller.PowerType.valueOf((String)controllerTypeComboBox.getSelectedItem()));
+                        Controller.PowerType.deriveType((String)controllerTypeComboBox.getSelectedItem()));
                 controller.setName(controller.deriveName());
                 return controller;
             }
