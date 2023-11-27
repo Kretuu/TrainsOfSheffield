@@ -638,6 +638,22 @@ public class ProductRecordForm extends StaffView {
                 locomotive.setName(locomotive.deriveName());
                 return locomotive;
             }
+            case 'S':{
+                RollingStock rollingStock = new RollingStock(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        rollingStockInputFields.get("mark").getjTextField().getText(),
+                        rollingStockInputFields.get("kind").getjTextField().getText(),
+                        RollingStock.Class_.valueOf((String)classesComboBox.getSelectedItem()),
+                        Integer.parseInt(rollingStockInputFields.get("era").getjTextField().getText()));
+                rollingStock.setName(rollingStock.deriveName());
+                return rollingStock;
+            }
             default:
                 throw new RuntimeException("Unknown Type: " + type);
         }

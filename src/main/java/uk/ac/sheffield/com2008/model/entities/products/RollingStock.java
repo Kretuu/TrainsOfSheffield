@@ -63,6 +63,13 @@ public class RollingStock extends Product {
      */
     public String deriveName(){
         String output = mark + ",";
+
+        if(kind != null){
+            output += kind + ",";
+        }
+        else{
+            output += "NULL,";
+        }
         if(class_ != null){
             output += class_ + ",";
         }else{
