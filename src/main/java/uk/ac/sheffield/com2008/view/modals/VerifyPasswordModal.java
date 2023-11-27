@@ -1,6 +1,5 @@
 package uk.ac.sheffield.com2008.view.modals;
 
-import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;

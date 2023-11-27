@@ -9,7 +9,7 @@ public class RollingStock extends Product {
 
     private String mark; //company or standard, (GWR,LNER, BR Mk1, BR Mk2, BR Mk3)
     private String kind; //Corridor, Open, Mail Van, Shisha Lounge
-    public enum Class_{THIRD, SECOND, FIRST, STANDARD};
+    public enum Class_{THIRD, SECOND, FIRST, STANDARD, NULL};
     private Class_ class_;
     private int era; //1-11
 

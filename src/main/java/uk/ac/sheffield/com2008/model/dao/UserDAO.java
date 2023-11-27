@@ -88,9 +88,9 @@ public class UserDAO {
         Address address = user.getAddress();
         addOrUpdateAddress(address);
 
-        StringBuilder userQueryBuilder = new StringBuilder();
-        userQueryBuilder.append("UPDATE Users SET ");
-        userQueryBuilder.append("email = ?, forename = ?, surname = ?, houseNumber = ?, postcode = ? WHERE uuid = ?");
+        StringBuilder userQueryBuilder = new StringBuilder().append("UPDATE Users SET ")
+                .append("email = ?, forename = ?, surname = ?, houseNumber = ?, postcode = ?, roles = ? ")
+                .append("WHERE uuid = ?");
         String userQuery = userQueryBuilder.toString();
         PersonalDetails personalDetails = user.getPersonalDetails();
 
@@ -101,6 +101,7 @@ public class UserDAO {
                 personalDetails.getSurname(),
                 address.getCombinedHouseNo(),
                 address.getPostCode(),
+                User.Role.parseRolesToString(user.getRoles()),
                 user.getUuid()
         );
     }

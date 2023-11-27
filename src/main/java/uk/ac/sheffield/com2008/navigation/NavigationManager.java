@@ -98,7 +98,6 @@ public class NavigationManager {
 
         ViewController newController = controllers.get(id);
         View view = newController.getView();
-        view.updateNavigation();
         newController.onNavigateTo();
         //Check if View is Auth view. If it isn't, put the view into layout
         if (view instanceof AuthView) {
@@ -111,6 +110,10 @@ public class NavigationManager {
         currentView = id;
         frame.revalidate();
         frame.repaint();
+    }
+
+    public void refreshNavigation() {
+        layout.setNavigationBar(getCurrentController().getView());
     }
 
     public ViewController getCurrentController() {

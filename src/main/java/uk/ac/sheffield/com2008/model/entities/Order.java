@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.model.entities;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Order {
 
@@ -116,6 +117,11 @@ public class Order {
         totalPrice = 0;
         orderLines.forEach(OrderLine::calculatePrice);
         orderLines.forEach(orderLine -> totalPrice += orderLine.getPrice());
+    }
+
+    public Integer getQuantityOfProduct(Product product) {
+        if(!hasProduct(product)) return null;
+        return getOrderLineFromProduct(product).getQuantity();
     }
 
     public void setAsConfirmed(){

@@ -60,4 +60,9 @@ public class UserManager {
         UserDAO.updateUser(user);
         UserDAO.removeUnusedAddresses();
     }
+
+    public static boolean validateUserBankingCard(User user) throws SQLException {
+        BankingCard bankingCard = BankingDetailsDAO.getUserBankingCard(user);
+        return bankingCard != null && bankingCard.checkValidity();
+    }
 }

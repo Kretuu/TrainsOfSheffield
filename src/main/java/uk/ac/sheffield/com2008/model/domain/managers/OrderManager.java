@@ -1,10 +1,19 @@
 package uk.ac.sheffield.com2008.model.domain.managers;
 
+import uk.ac.sheffield.com2008.exceptions.*;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
+import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Mediator class between Order object in memory, UI actions, and database
@@ -70,15 +79,54 @@ public class OrderManager {
         OrderDAO.updateOrderEntirely(order);
     }
 
+    public static void updateUserBasket(User user) {
+        Order usersBasket = OrderDAO.getUsersBasket(user);
+        if(usersBasket == null) usersBasket = OrderManager.createNewOrder(user);
+        user.setBasket(usersBasket);
+    }
+
     /**
      * Set an order as confirmed
      * @param order order to confirm
      * @param user the user who that order belongs to
      */
-    public static void confirmOrder(Order order, User user){
+    public static void confirmOrder(Order order, User user)
+            throws SQLException, BankDetailsNotValidException, OrderQuantitiesInvalidException,
+            OrderOutdatedException, InvalidOrderStateException {
+        if(order.getOrderLines().isEmpty()) throw new InvalidOrderStateException("Empty order cannot be confirmed");
+
+        if(!order.getStatus().equals(Order.Status.PENDING))
+            throw new InvalidOrderStateException("Order is already confirmed");
+
+        if(!UserManager.validateUserBankingCard(user))
+            throw new BankDetailsNotValidException();
+
+        validateOrder(order);
         order.setAsConfirmed();
-        createNewOrder(user);
-        //TODO: OrderDAO UPDATE status FOR ORDER
+        order.setDateOrdered(new Date());
+        saveFullOrderState(order);
+    }
+
+    public static void validateOrder(Order order)
+            throws OrderQuantitiesInvalidException, OrderOutdatedException {
+        List<OrderLine> orderLines = order.getOrderLines();
+
+        String[] productCodes = order.getOrderLines().stream()
+                .map(orderLine -> orderLine.getProduct().getProductCode()).toArray(String[]::new);
+        Map<String, Product> orderProducts = ProductDAO.getProductsByCodes(productCodes).stream()
+                .collect(Collectors.toMap(Product::getProductCode, product -> product));
+        if(orderProducts.size() != orderLines.size()) throw new OrderOutdatedException();
+
+        List<OrderLine> invalidOrderLines = new ArrayList<>();
+        for(OrderLine orderLine : orderLines){
+            int stockProductQty = orderProducts.get(orderLine.getProduct().getProductCode()).getStock();
+            if(stockProductQty < orderLine.getQuantity()) {
+                orderLine.setQuantity(stockProductQty);
+                invalidOrderLines.add(orderLine);
+            }
+        }
+
+        if(!invalidOrderLines.isEmpty()) throw new OrderQuantitiesInvalidException(invalidOrderLines);
     }
 
     /**
