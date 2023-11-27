@@ -8,7 +8,26 @@ import java.util.List;
 public class Track extends Product {
 
     private String descriptor; //eg Single, Double, Left-Hand Crossover, etc..
-    public enum TrackType {STRAIGHT, CURVE};
+    public enum TrackType {
+        STRAIGHT("Straight"),
+        CURVE("Curved");
+        private final String name;
+        TrackType(String name){
+            this.name = name;
+        }
+
+        public String deriveName(){
+            return this.name;
+        }
+        public static Track.TrackType deriveType(String name){
+            for(Track.TrackType d : Track.TrackType.values()){
+                if(d.deriveName().equals(name)){
+                    return d;
+                }
+            }
+            return null;
+        }
+    };
     private TrackType trackType;
     public Track(String productCode,
                  String name,
@@ -38,7 +57,7 @@ public class Track extends Product {
      * @return
      */
     public String deriveName(){
-        return descriptor + trackType;
+        return descriptor + "," + trackType;
     }
 
     /**

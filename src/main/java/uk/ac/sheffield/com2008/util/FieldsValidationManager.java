@@ -93,4 +93,20 @@ public class FieldsValidationManager {
             return "First character must be '" + c + "'";
         }
     }
+
+    public static String validateForLength(String text, Integer minLength){
+        if(text.length() >= minLength){
+            return null;
+        }
+        return "Must be at least " + minLength + " characters";
+    }
+
+    public static String validateEra(String text){
+        String regex = "^(1[0-1]|[1-9])$";
+        if(text.matches(regex)){
+            return null;
+        }
+        return "Era must be between 1 and 11";
+
+    }
 }

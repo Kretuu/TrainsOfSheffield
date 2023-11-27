@@ -1,8 +1,13 @@
 package uk.ac.sheffield.com2008.view.staff;
 
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.Controller;
+import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
+import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
+import uk.ac.sheffield.com2008.model.entities.products.Track;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
@@ -13,8 +18,14 @@ import javax.swing.border.Border;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.text.NumberFormat;
+
 import java.util.*;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class ProductRecordForm extends StaffView {
@@ -28,10 +39,47 @@ public class ProductRecordForm extends StaffView {
     private JPanel getInSetPanel;
     private JScrollPane scrollPane;
     private Map<Product, Integer> selectedProductsMap = new HashMap<>();
+
+
     List<Product> filteredProducts;
     JComboBox<String> gaugesComboBox;
+
     JLabel gaugeLabel;
+
+    JLabel errorMessage;
+
+    //Panels
+    JPanel locomotivePanel;
+    JPanel rollingStockPanel;
+    JPanel trackPanel;
+    JPanel controllerPanel;
+    JPanel trainSetPanel;
+    JPanel trackPackPanel;
+    JPanel currentPanel;
+
+    JComboBox<String> categoryComboBox;
+
     private final Map<String, CustomInputField> sharedInputFields = new HashMap<>();
+
+    JFormattedTextField quantityField;
+    Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
+
+    //Locomotive
+    private final Map<String, CustomInputField> locomotiveInputFields = new HashMap<>();
+    private JComboBox<String> powerTypeComboBox;
+
+    //Rolling stock
+    private final Map<String, CustomInputField> rollingStockInputFields = new HashMap<>();
+    private JComboBox<String> classesComboBox;
+
+    //Track
+    private final Map<String, CustomInputField> trackInputFields = new HashMap<>();
+    private JComboBox<String> trackTypeComboBox;
+
+    //Controller
+    private final Map<String, CustomInputField> controllerInputFields = new HashMap<>();
+    private JComboBox<String> controllerTypeComboBox;
+
 
     private final String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
             "Train Set", "Track Pack"};
@@ -44,19 +92,35 @@ public class ProductRecordForm extends StaffView {
             "Track Pack", 'P'
     );
 
-    public ProductRecordForm(FormController formController) {
-        this.submitButton = new JButton("Save");
-        this.submitButton.addActionListener(e -> {
-            formController.tryCreateProduct();
-        });
-        this.formController = formController;
+    private final Map<JPanel, Map<String, CustomInputField>> categorySpecificFields = new HashMap<>();
 
-        Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
+    public ProductRecordForm(FormController formController) {
+        this.formController = formController;
+        this.submitButton = new JButton("Save");
+
+        categoryComboBox = new JComboBox<>(categories);
+        this.submitButton.addActionListener(e -> {
+            formController.tryCreateProduct(sharedInputFields.get("productCode").getjTextField().getText());
+        });
+
         gauges.put("OO Gauge (1/76th scale)", Product.Gauge.OO);
         gauges.put("TT Gauge (1/120th scale)", Product.Gauge.TT);
         gauges.put("N gauge (1/148th scale)", Product.Gauge.N);
         gaugesComboBox = new JComboBox<>(gauges.keySet().toArray(new String[0]));
         gaugeLabel = new JLabel("Gauge: ");
+
+        locomotivePanel = locomotivePanel();
+        rollingStockPanel = rollingStocksPanel();
+        trackPanel = trackPanel();
+        controllerPanel = controllersPanel();
+        trainSetPanel = trainSetsPanel();
+        trackPackPanel = trackPackPanel();
+        currentPanel = locomotivePanel;
+
+        categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
+        categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
+        categorySpecificFields.put(trackPanel, trackInputFields);
+        categorySpecificFields.put(controllerPanel, controllerInputFields);
 
         initializeUI();
     }
@@ -74,9 +138,19 @@ public class ProductRecordForm extends StaffView {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.NORTH;
+
+        gbc.insets = new Insets(0, 0, 15, 5);
+        errorMessage = new JLabel("");
+        errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 3;
+        add(errorMessage, gbc);
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        gbc.gridy++;
+        gbc.gridwidth = 1;
         add(new JLabel("Category: "), gbc);
 
-        JComboBox<String> categoryComboBox = new JComboBox<>(categories);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -86,16 +160,19 @@ public class ProductRecordForm extends StaffView {
             String selectedCategory = (String) categoryComboBox.getSelectedItem();
 
             // Remove the panel associated with the previously selected category
-            String previousCategory = getCurrentlyDisplayedCategory();
+            JPanel previousCategory = currentPanel;
             if (previousCategory != null) {
-                cardPanel.remove(getCategoryPanel(previousCategory));
+                cardPanel.remove(currentPanel);
             }
 
             // Add the panel for the selected category
-            cardPanel.add(getCategoryPanel(selectedCategory), selectedCategory);
+            JPanel newCategory = getCategoryPanel(selectedCategory);
+            cardPanel.add(newCategory);
+            currentPanel = newCategory;
 
             // Set the identifier based on the selected category
             cardLayout.show(cardPanel, selectedCategory);
+            validateSharedFields();
             updateButtonState();
             revalidate();  // Ensure the layout manager updates the container
 
@@ -110,7 +187,7 @@ public class ProductRecordForm extends StaffView {
         });
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(new JLabel("Product Code: "), gbc);
 
@@ -122,16 +199,35 @@ public class ProductRecordForm extends StaffView {
                 () -> FieldsValidationManager.validateProductCode(
                         productCodeField.getjTextField().getText(),
                         catChar.get((String) categoryComboBox.getSelectedItem())));
-        sharedInputFields.put("productcode", productCodeField);
+        sharedInputFields.put("productCode", productCodeField);
 
         gbc.gridx = 1;
-        gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         productCodeField.addToPanel(this, gbc);
 
+        gbc.gridy++;
+        gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        add(new JLabel("Brand: "), gbc);
+
+        CustomInputField brandField = new CustomInputField("",
+                this::updateButtonState,
+                false
+        );
+        brandField.setValidationFunction(
+                () -> FieldsValidationManager.validateForLength(
+                        brandField.getjTextField().getText(),
+                        3));
+        sharedInputFields.put("brand", brandField);
+
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        brandField.addToPanel(this, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(gaugeLabel, gbc);
 
@@ -141,7 +237,7 @@ public class ProductRecordForm extends StaffView {
         add(gaugesComboBox, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(new JLabel("Price: "), gbc);
 
@@ -153,13 +249,12 @@ public class ProductRecordForm extends StaffView {
                 () -> FieldsValidationManager.validatePrice(priceField.getjTextField().getText()));
         sharedInputFields.put("price", priceField);
         gbc.gridx = 1;
-        gbc.gridy = 5; // Move to the next row
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         priceField.addToPanel(this, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy++;
         gbc.gridwidth = 1;
         add(new JLabel("Quantity: "), gbc);
 
@@ -167,30 +262,29 @@ public class ProductRecordForm extends StaffView {
         NumberFormatter formatter = new NumberFormatter(integerFormat);
         formatter.setValueClass(Integer.class);
         formatter.setMinimum(0);
-        JFormattedTextField quantityField = new JFormattedTextField(formatter);
+        quantityField = new JFormattedTextField(formatter);
         quantityField.setValue(1);
         quantityField.setColumns(10);
 
         gbc.gridx = 1;
-        gbc.gridy = 6; // Move to the next row
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(quantityField, gbc);
 
         // Add cardPanel to the layout
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy++;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
 
-        cardPanel.add(getCategoryPanel("Locomotive"), "Locomotive");
+        cardPanel.add(locomotivePanel);
         // Set the identifier based on the selected category
         cardLayout.show(cardPanel, "Locomotive");
 
         add(cardPanel, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy++;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
         add(buttonPanel(), gbc);
@@ -200,31 +294,20 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel getCategoryPanel(String category) {
         if ("Locomotive".equals(category)) {
-            return locomotivePanel();
+            return locomotivePanel;
         } else if ("Rolling Stock".equals(category)) {
-            return rollingStocksPanel();
+            return rollingStockPanel;
         } else if ("Track".equals(category)) {
-            return trackPanel();
+            return trackPanel;
         } else if ("Controller".equals(category)) {
-            return controllersPanel();
+            return controllerPanel;
         } else if ("Train Set".equals(category)) {
-            return trainSetsPanel();
-        } else if ("Track Pack".equals(category)) {
-            return trackPackPanel();
-        } else {
-            buttonPanel();
-            return new JPanel();
+            return trainSetPanel;
+        } else if ("Track Pack".equals(category)){
+            return trackPackPanel;
+        }else{
+            throw new RuntimeException("cant get category panel that doesnt exist: " + category);
         }
-    }
-
-
-    private String getCurrentlyDisplayedCategory() {
-        for (Component component : cardPanel.getComponents()) {
-            if (cardPanel.isVisible()) {
-                return cardPanel.getComponentZOrder(component) == 0 ? null : component.getName();
-            }
-        }
-        return null;
     }
 
     private JPanel buttonPanel() {
@@ -239,89 +322,163 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel locomotivePanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy= 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 0, 10);
 
-        panel.add(new JLabel("BR Class:"));
-        JTextField classTextField = new JTextField();
-        classTextField.setPreferredSize(new Dimension(25, classTextField.getPreferredSize().height));
-        panel.add(classTextField);
+        // BR Class
+        CustomInputField brClassField = new CustomInputField("BR Class:", this::updateButtonState, false);
+        brClassField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                brClassField.getjTextField().getText(),
+                2));
+        locomotiveInputFields.put("brClass", brClassField);
+        brClassField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Individual Name:"));
-        JTextField individualNameTextField = new JTextField();
-        individualNameTextField.setPreferredSize(new Dimension(100, individualNameTextField.getPreferredSize().height));
-        panel.add(individualNameTextField);
+        // Individual Name
+        gbc.gridx++;
+        CustomInputField indivNameField = new CustomInputField("Individual Name:", this::updateButtonState, false);
+        indivNameField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                indivNameField.getjTextField().getText(),
+                3));
+        locomotiveInputFields.put("individualName", indivNameField);
+        gbc.anchor = GridBagConstraints.WEST;
+        indivNameField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("ERA:"));
-        JTextField eraTextField = new JTextField();
-        eraTextField.setPreferredSize(new Dimension(25, eraTextField.getPreferredSize().height));
-        panel.add(eraTextField);
+        // ERA
+        gbc.gridx++;
+        CustomInputField eraField = new CustomInputField("Era:", this::updateButtonState, false);
+        eraField.setValidationFunction(() -> FieldsValidationManager.validateEra(
+                eraField.getjTextField().getText()));
+        locomotiveInputFields.put("era", eraField);
+        gbc.anchor = GridBagConstraints.WEST;
+        eraField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Model Type:"));
-        String[] powerTypes = {"Analogue", "DCC-Ready", "DCC-Fitted", "DCC-Sound"};
-        JComboBox<String> powerTypeComboBox = new JComboBox<>(powerTypes);
-        panel.add(powerTypeComboBox);
+        // Model Type
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.NORTH;
+        panel.add(new JLabel("Model Type:"), gbc);
+        String[] powerTypes = Arrays.stream(Locomotive.DCCType.values())
+                .map(Locomotive.DCCType::deriveName)
+                .toArray(String[]::new);
+        powerTypeComboBox = new JComboBox<>(powerTypes);
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(powerTypeComboBox, gbc);
 
         return panel;
     }
 
     private JPanel rollingStocksPanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy= 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 0, 10);
 
-        panel.add(new JLabel("Mark:"));
-        JTextField markTextField = new JTextField();
-        markTextField.setPreferredSize(new Dimension(25, markTextField.getPreferredSize().height));
-        panel.add(markTextField);
+        // Mark
+        CustomInputField markField = new CustomInputField("Mark:", this::updateButtonState, false);
+        markField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                markField.getjTextField().getText(),
+                2));
+        rollingStockInputFields.put("mark", markField);
+        markField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Kind:"));
-        JTextField kindTextField = new JTextField();
-        kindTextField.setPreferredSize(new Dimension(100, kindTextField.getPreferredSize().height));
-        panel.add(kindTextField);
+        // Kind
+        gbc.gridx++;
+        CustomInputField kindField = new CustomInputField("Kind:", this::updateButtonState, false);
+        kindField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                kindField.getjTextField().getText(),
+                3));
+        rollingStockInputFields.put("kind", kindField);
+        gbc.anchor = GridBagConstraints.WEST;
+        kindField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Class:"));
-        String[] classes = {"FIRST", "SECOND", "THIRD", "STANDARD"};
-        JComboBox<String> classesComboBox = new JComboBox<>(classes);
-        panel.add(classesComboBox);
+        // Class
+        gbc.gridx += 2;
+        gbc.anchor = GridBagConstraints.NORTH;
+        panel.add(new JLabel("Class:"), gbc);
+        List<String> classes = Arrays.stream(RollingStock.Class_.values())
+                .map(RollingStock.Class_::deriveName)
+                .collect(Collectors.toList());
+        classes.add("Null");
+        classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(classesComboBox, gbc);
 
-
-        panel.add(new JLabel("ERA:"));
-        JTextField eraTextField = new JTextField();
-        eraTextField.setPreferredSize(new Dimension(25, eraTextField.getPreferredSize().height));
-        panel.add(eraTextField);
+        // Era
+        gbc.gridx++;
+        CustomInputField eraField = new CustomInputField("Era:", this::updateButtonState, false);
+        eraField.setValidationFunction(() -> FieldsValidationManager.validateEra(
+                eraField.getjTextField().getText()));
+        rollingStockInputFields.put("era", eraField);
+        gbc.anchor = GridBagConstraints.WEST;
+        eraField.addToPanel(panel, gbc);
 
         return panel;
     }
 
     private JPanel trackPanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy= 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 0, 10);
 
-        panel.add(new JLabel("Descriptor:"));
-        JTextField descriptorTextField = new JTextField();
-        descriptorTextField.setPreferredSize(new Dimension(100, descriptorTextField.getPreferredSize().height));
-        panel.add(descriptorTextField);
+        // Descriptor
+        CustomInputField descriptorField = new CustomInputField("Descriptor: ", this::updateButtonState, false);
+        descriptorField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                descriptorField.getjTextField().getText(), 3));
+        trackInputFields.put("descriptor", descriptorField);
+        gbc.anchor = GridBagConstraints.WEST;
+        descriptorField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Track Type:"));
-        String[] trackTypes = {"Straight", "Curve"};
-        JComboBox<String> trackTypeComboBox = new JComboBox<>(trackTypes);
-        panel.add(trackTypeComboBox);
+        // Track Type
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.NORTH;
+        panel.add(new JLabel("Track Type:"), gbc);
+        String[] trackTypes = Arrays.stream(Track.TrackType.values())
+                .map(Track.TrackType::deriveName)
+                .toArray(String[]::new);
+        trackTypeComboBox = new JComboBox<>(trackTypes);
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(trackTypeComboBox,gbc);
 
         return panel;
     }
 
     private JPanel controllersPanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy= 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 0, 10);
 
-        panel.add(new JLabel("Descriptor:"));
-        JTextField descriptorTextField = new JTextField();
-        descriptorTextField.setPreferredSize(new Dimension(100, descriptorTextField.getPreferredSize().height));
-        panel.add(descriptorTextField);
+        // Descriptor
+        CustomInputField descriptorField = new CustomInputField("Descriptor: ", this::updateButtonState, false);
+        descriptorField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
+                descriptorField.getjTextField().getText(), 3));
+        controllerInputFields.put("descriptor", descriptorField);
+        gbc.anchor = GridBagConstraints.WEST;
+        descriptorField.addToPanel(panel, gbc);
 
-        panel.add(new JLabel("Power Type:"));
-        String[] trackTypes = {"Analogue", "Digital (DCC)"};
-        JComboBox<String> trackTypeComboBox = new JComboBox<>(trackTypes);
-        panel.add(trackTypeComboBox);
+        // Power Type
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.NORTH;
+        panel.add(new JLabel("Power Type:"),gbc);
+        String[] powerTypes = Arrays.stream(Controller.PowerType.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
+        controllerTypeComboBox = new JComboBox<>(powerTypes);
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(controllerTypeComboBox, gbc);
 
         return panel;
     }
@@ -512,21 +669,115 @@ public class ProductRecordForm extends StaffView {
         return new JSpinner(model);
     }
 
+    private void validateSharedFields(){
+        for(CustomInputField field : sharedInputFields.values()){
+            field.validate(field.getjTextField().getText());
+        }
+    }
+
     /**
      * revalidates shared input fields, as well as those of
      * the category selected
      *
      * @return
      */
-    public boolean validateAllFields() {
-        for (CustomInputField field : sharedInputFields.values()) {
+    public boolean validateAllFields(){
+        validateSharedFields();
+
+        Map<String, CustomInputField> categoryFields = categorySpecificFields.get(currentPanel);
+        for(CustomInputField field : categoryFields.values()){
             field.validate(field.getjTextField().getText());
         }
-        return sharedInputFields.values().stream().allMatch(CustomInputField::isValid);
+
+        return (sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
+                && categoryFields.values().stream().allMatch(CustomInputField::isValid)
+        );
     }
 
     private void updateButtonState() {
-        submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid));
+        Map<String, CustomInputField> categoryFields = categorySpecificFields.get(currentPanel);
+
+        submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
+                && categoryFields.values().stream().allMatch(CustomInputField::isValid)
+        );
+    }
+
+    public void setErrorMessage(String err){
+        errorMessage.setText(err);
+    }
+
+    /**
+     * given the character, will take values from the panel a instantiate a
+     * temporary product of given type.
+     * @param type L,S,R,M etc..
+     * @return a subtype of Product
+     */
+    public Product getProductFromInputs(Character type){
+
+        switch(type){
+            case 'L': {
+                Locomotive locomotive = new Locomotive(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        locomotiveInputFields.get("brClass").getjTextField().getText(),
+                        locomotiveInputFields.get("individualName").getjTextField().getText(),
+                        Integer.parseInt(locomotiveInputFields.get("era").getjTextField().getText()),
+                        Locomotive.DCCType.deriveType((String) powerTypeComboBox.getSelectedItem()));
+                locomotive.setName(locomotive.deriveName());
+                return locomotive;
+            }
+            case 'S':{
+                RollingStock rollingStock = new RollingStock(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        rollingStockInputFields.get("mark").getjTextField().getText(),
+                        rollingStockInputFields.get("kind").getjTextField().getText(),
+                        RollingStock.Class_.deriveType((String)classesComboBox.getSelectedItem()),
+                        Integer.parseInt(rollingStockInputFields.get("era").getjTextField().getText()));
+                rollingStock.setName(rollingStock.deriveName());
+                return rollingStock;
+            }
+            case 'R':{
+                Track track = new Track(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        trackInputFields.get("descriptor").getjTextField().getText(),
+                        Track.TrackType.deriveType((String)trackTypeComboBox.getSelectedItem()));
+                track.setName(track.deriveName());
+                return track;
+            }
+            case 'C':{
+                Controller controller = new Controller(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        controllerInputFields.get("descriptor").getjTextField().getText(),
+                        Controller.PowerType.valueOf((String)controllerTypeComboBox.getSelectedItem()));
+                controller.setName(controller.deriveName());
+                return controller;
+            }
+            default:
+                throw new RuntimeException("Unknown Type: " + type);
+        }
     }
 
     private String getInitialLetter(String selectedCategory) {
