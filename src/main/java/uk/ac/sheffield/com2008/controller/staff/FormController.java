@@ -23,10 +23,10 @@ public class FormController extends ViewController {
 
     }
 
-    public List<Product> getAllSelectedProducts(){
-       /* if(allProducts != null){
+    public List<Product> getAllProducts(){
+        if(allProducts != null){
             return allProducts;
-        }*/
+        }
         return new ArrayList<>();
     }
 
