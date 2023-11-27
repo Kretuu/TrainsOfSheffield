@@ -38,7 +38,7 @@ public class Track extends Product {
      * @return
      */
     public String deriveName(){
-        return descriptor + trackType;
+        return descriptor + "," + trackType;
     }
 
     /**

@@ -113,7 +113,7 @@ public class ProductRecordForm extends StaffView {
 
         categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
         categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
-        categorySpecificFields.put(trackPackPanel, trackInputFields);
+        categorySpecificFields.put(trackPanel, trackInputFields);
         categorySpecificFields.put(controllerPanel, controllerInputFields);
 
         initializeUI();
@@ -695,6 +695,34 @@ public class ProductRecordForm extends StaffView {
                         Integer.parseInt(rollingStockInputFields.get("era").getjTextField().getText()));
                 rollingStock.setName(rollingStock.deriveName());
                 return rollingStock;
+            }
+            case 'R':{
+                Track track = new Track(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        trackInputFields.get("descriptor").getjTextField().getText(),
+                        Track.TrackType.valueOf((String)trackTypeComboBox.getSelectedItem()));
+                track.setName(track.deriveName());
+                return track;
+            }
+            case 'C':{
+                Controller controller = new Controller(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        controllerInputFields.get("descriptor").getjTextField().getText(),
+                        Controller.PowerType.valueOf((String)controllerTypeComboBox.getSelectedItem()));
+                controller.setName(controller.deriveName());
+                return controller;
             }
             default:
                 throw new RuntimeException("Unknown Type: " + type);

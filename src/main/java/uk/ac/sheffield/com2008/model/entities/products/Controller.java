@@ -39,7 +39,7 @@ public class Controller extends Product {
      * @return
      */
     public String deriveName(){
-        return descriptor + powerType;
+        return descriptor + "," + powerType;
     }
 
     /**
