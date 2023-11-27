@@ -1,10 +1,19 @@
 package uk.ac.sheffield.com2008.model.domain.managers;
 
+import uk.ac.sheffield.com2008.exceptions.OrderDetailsOutdatedException;
+import uk.ac.sheffield.com2008.exceptions.OrderNotExistException;
+import uk.ac.sheffield.com2008.exceptions.OrderQuantitiesNotValid;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.exceptions.BankDetailsNotValidException;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Mediator class between Order object in memory, UI actions, and database
@@ -75,10 +84,33 @@ public class OrderManager {
      * @param order order to confirm
      * @param user the user who that order belongs to
      */
-    public static void confirmOrder(Order order, User user){
+    public static void confirmOrder(Order order, User user)
+            throws SQLException, BankDetailsNotValidException,
+            OrderDetailsOutdatedException, OrderNotExistException, OrderQuantitiesNotValid {
+        if(!UserManager.validateUserBankingCard(user)){
+            throw new BankDetailsNotValidException();
+        }
+        validateOrder(order);
         order.setAsConfirmed();
         createNewOrder(user);
-        //TODO: OrderDAO UPDATE status FOR ORDER
+        OrderDAO.updateOrderStatus(order);
+    }
+
+    public static void validateOrder(Order order)
+            throws OrderNotExistException, OrderDetailsOutdatedException, OrderQuantitiesNotValid {
+        LinkedHashMap<String, String> params = new LinkedHashMap<>();
+        params.put("orderNumber", String.valueOf(order.getOrderNumber()));
+        Order refreshedOrder = OrderDAO.getFirstOrderByFields(params);
+        if(refreshedOrder == null) throw new OrderNotExistException(order);
+
+        List<OrderLine> invalidOrderLines = new ArrayList<>();
+        for(OrderLine orderLine : order.getOrderLines()){
+            Integer refreshedOrderLineQty = refreshedOrder.getQuantityOfProduct(orderLine.getProduct());
+            if(refreshedOrderLineQty == null) throw new OrderDetailsOutdatedException();
+            if(refreshedOrderLineQty < orderLine.getQuantity()) invalidOrderLines.add(orderLine);
+        }
+
+        if(!invalidOrderLines.isEmpty()) throw new OrderQuantitiesNotValid(invalidOrderLines);
     }
 
     /**

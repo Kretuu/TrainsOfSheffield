@@ -35,7 +35,7 @@ public abstract class UpdateCreditCardModal extends JDialog {
         initialiseUI();
 
         setContentPane(content);
-        setMinimumSize(new Dimension(500, 300));
+        setMinimumSize(new Dimension(600, 300));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
         setResizable(false);
         setLocationRelativeTo(frame);

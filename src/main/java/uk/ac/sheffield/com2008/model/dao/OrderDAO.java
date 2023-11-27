@@ -40,7 +40,7 @@ public class OrderDAO {
      * @param fieldsMap parameters where key is column name in database and value is corresponding value
      * @return Order if there was found matching order, null otherwise
      */
-    private static Order getFirstOrderByFields(LinkedHashMap<String, String> fieldsMap) {
+    public static Order getFirstOrderByFields(LinkedHashMap<String, String> fieldsMap) {
         List<Order> orders = getOrderListByFields(fieldsMap);
         if(orders.isEmpty()) return null;
         return orders.get(0);
