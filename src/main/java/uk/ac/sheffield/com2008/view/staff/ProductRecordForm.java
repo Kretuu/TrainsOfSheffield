@@ -9,13 +9,12 @@ import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 
 public class ProductRecordForm extends StaffView {
@@ -23,8 +22,10 @@ public class ProductRecordForm extends StaffView {
     private final FormController formController;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-    private JLabel itemSelected = new JLabel();
     private final JButton submitButton;
+    private JPanel getInSetPanel;
+    private JScrollPane scrollPane;
+    private Map<Product, Integer> selectedProductsMap = new HashMap<>();
     List<Product> filteredProducts;
     JComboBox<String> gaugesComboBox;
     JLabel gaugeLabel;
@@ -96,11 +97,10 @@ public class ProductRecordForm extends StaffView {
             updateButtonState();
             revalidate();  // Ensure the layout manager updates the container
 
-            if(selectedCategory.equals("Controller")){
+            if (selectedCategory.equals("Controller")) {
                 gaugesComboBox.setVisible(false);
                 gaugeLabel.setVisible(false);
-            }
-            else{
+            } else {
                 gaugesComboBox.setVisible(true);
                 gaugeLabel.setVisible(true);
             }
@@ -146,7 +146,7 @@ public class ProductRecordForm extends StaffView {
         CustomInputField priceField = new CustomInputField("",
                 this::updateButtonState,
                 false
-                );
+        );
         priceField.setValidationFunction(
                 () -> FieldsValidationManager.validatePrice(priceField.getjTextField().getText()));
         sharedInputFields.put("price", priceField);
@@ -207,14 +207,13 @@ public class ProductRecordForm extends StaffView {
             return controllersPanel();
         } else if ("Train Set".equals(category)) {
             return trainSetsPanel();
-        } else if ("Track Pack".equals(category)){
+        } else if ("Track Pack".equals(category)) {
             return trackPackPanel();
-        }else{
+        } else {
             buttonPanel();
             return new JPanel();
         }
     }
-
 
 
     private String getCurrentlyDisplayedCategory() {
@@ -235,6 +234,7 @@ public class ProductRecordForm extends StaffView {
 
         return buttonsPanel;
     }
+
     private JPanel locomotivePanel() {
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -330,7 +330,7 @@ public class ProductRecordForm extends StaffView {
         JCheckBox starterOval = new JCheckBox("Starter Oval Track Pack");
         JCheckBox extension = new JCheckBox("Extension Track Pack");
 
-        JLabel trackLabel =new JLabel("Track");
+        JLabel trackLabel = new JLabel("Track");
         JSpinner extensionSpinner = createSpinner();
         extensionSpinner.setEnabled(false);
         extension.addItemListener(e -> {
@@ -357,17 +357,17 @@ public class ProductRecordForm extends StaffView {
         return panel;
 
     }
-        private JPanel trainSetsPanel() {
-        JPanel panel = new JPanel(new GridLayout(3, 2));
 
-        //HEADER panel
-        JPanel headerPanel =  new JPanel (new GridLayout (2, 1));
+    private JPanel trainSetsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        // HEADER panel
+        JPanel headerPanel = new JPanel(new GridLayout(2, 1));
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel title = new JLabel("Add products to set: ");
         row1.add(title);
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller",
-                "Train Set", "Track Pack"};
+        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller", "Train Set", "Track Pack"};
         JComboBox<String> itemTypesComboBox = new JComboBox<>(itemTypes);
         row2.add(itemTypesComboBox);
         JButton findButton = new JButton("Find");
@@ -375,7 +375,8 @@ public class ProductRecordForm extends StaffView {
             String selectedCategory = (String) itemTypesComboBox.getSelectedItem();
             String initialLetter = getInitialLetter(selectedCategory);
             filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
-            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
+            ProductSetModal modal = new ProductSetModal(formController, (JFrame)
+                    SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
             modal.setVisible(true);
         });
         row2.add(findButton);
@@ -383,51 +384,148 @@ public class ProductRecordForm extends StaffView {
         headerPanel.add(row2);
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        //Selected panel
-        JPanel selectedPanel =  new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Selected panel
+        JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
         JLabel itemSelected = new JLabel();
-        JButton addButton= new JButton("Add");
+        JButton addButton = new JButton("Add");
+
+        //Items in set panel
+        JPanel inSetPanel = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(inSetPanel, BoxLayout.Y_AXIS);
+        inSetPanel.setLayout(boxLayout);
+        inSetPanel.setPreferredSize(new Dimension(200, 200));
+        scrollPane = new JScrollPane(inSetPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        inSetPanel.add(scrollPane, BorderLayout.SOUTH);
+
+
+        JPanel inSetHeadingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel displayItemsLabel = new JLabel("Items in set:  ");
+        inSetHeadingPanel.add(displayItemsLabel);
+
+        inSetPanel.add(inSetHeadingPanel);
+
+
+        addButton.addActionListener(e -> {
+            // Add a new subItemsPanel for each selected product in the map
+            inSetPanel.removeAll();
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridy = 0;
+            for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
+                Product product = entry.getKey();
+                int quantity = entry.getValue();
+
+                JPanel subItemsPanel = new JPanel(new GridBagLayout());
+
+                gbc.gridx = 0;
+                gbc.anchor = GridBagConstraints.NORTHWEST;
+                gbc.insets = new Insets(5, 5, 5, 5);
+
+                Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+                subItemsPanel.setBorder((emptyBorder));
+
+                JLabel itemCodeLabel = new JLabel(product.getProductCode());
+                JLabel itemNameLabel = new JLabel(product.getName());
+                JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel(quantity, 0, Integer.MAX_VALUE, 1));
+                Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
+                spinnerPreferredSize.width = 40; // Adjust the width as needed
+                quantitySpinner.setPreferredSize(spinnerPreferredSize);
+                JButton removeItemButton = new JButton("X");
+
+                gbc.gridx++;
+                gbc.weightx = 1.0;
+                gbc.anchor = GridBagConstraints.WEST;
+                subItemsPanel.add(itemCodeLabel, gbc);
+
+                gbc.gridx++;
+                gbc.anchor = GridBagConstraints.WEST;
+                subItemsPanel.add(itemNameLabel, gbc);
+
+                gbc.gridx++;
+                gbc.anchor = GridBagConstraints.EAST;
+                gbc.weightx = 0.0;
+                subItemsPanel.add(quantitySpinner, gbc);
+
+                gbc.gridx = GridBagConstraints.RELATIVE; // Move to the next cell
+                gbc.anchor = GridBagConstraints.CENTER;
+                subItemsPanel.add(removeItemButton, gbc);
+
+                inSetPanel.add(subItemsPanel);
+
+                // Reset GridBagConstraints for the next iteration
+                gbc.gridx = 0;
+                gbc.gridy++;
+                gbc.weightx = 0.0;
+            }
+            // Revalidate and repaint the panel to reflect the changes
+            inSetPanel.revalidate();
+            inSetPanel.repaint();
+        });
+
         selectedPanel.add(selected);
         selectedPanel.add(itemSelected);
         selectedPanel.add(addButton);
         panel.add(selectedPanel, BorderLayout.CENTER);
 
 
-        JPanel inSetPanel =  new JPanel (new GridLayout (2, 1));
-        JPanel inSetHeadingPanel =  new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel displayItemsLabel = new JLabel("Items in set:  ");
-        inSetPanel.add(inSetHeadingPanel.add(displayItemsLabel));
-        //for(Product product : products){
-            JPanel subItemsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JLabel itemCode = new JLabel("Code...");
-            JLabel itemName = new JLabel("Name.....");
-            JSpinner quantitySpinner = createSpinner();
-            JButton removeItemButton = new JButton("X");
-
-
-            Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
-            spinnerPreferredSize.width = 70; // Adjust the width as needed
-            quantitySpinner.setPreferredSize(spinnerPreferredSize);
-
-            subItemsPanel.add(itemCode);
-            subItemsPanel.add(itemName);
-            subItemsPanel.add(quantitySpinner);
-            subItemsPanel.add(removeItemButton);
-
-            inSetPanel.add(subItemsPanel);
-
-        //}
-            JScrollPane scrollPane = new JScrollPane(inSetPanel);
-            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            panel.add(scrollPane, BorderLayout.SOUTH);
-
-
 
         return panel;
+    }
+
+    public void updateItemSelectedLabel(String selectedProductName, String selectedProductCode) {
+        // Find the selected product
+        Product selectedProduct = findProductByCode(filteredProducts, selectedProductCode);
+
+        if (selectedProduct != null) {
+            // Add the selected product to the map with an initial quantity of 1
+            selectedProductsMap.put(selectedProduct, selectedProductsMap.getOrDefault(selectedProduct, 0) + 1);
+
+            // Update the itemSelected label with the map of selected products
+            updateItemSelectedLabel();
+        }
+    }
+
+    private Product findProductByCode(List<Product> products, String productCode) {
+        for (Product product : products) {
+            if (product.getProductCode().equals(productCode)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    private void updateItemSelectedLabel() {
+        StringBuilder labelText = new StringBuilder("Items Selected: ");
+        for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
+            Product product = entry.getKey();
+            int quantity = entry.getValue();
+            labelText.append(product.getName()).append(" (").append(product.getProductCode()).append(") x ").append(quantity).append(", ");
+        }
 
     }
 
+    private JSpinner createSpinner() {
+        SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
+        return new JSpinner(model);
+    }
+
+    /**
+     * revalidates shared input fields, as well as those of
+     * the category selected
+     *
+     * @return
+     */
+    public boolean validateAllFields() {
+        for (CustomInputField field : sharedInputFields.values()) {
+            field.validate(field.getjTextField().getText());
+        }
+        return sharedInputFields.values().stream().allMatch(CustomInputField::isValid);
+    }
+
+    private void updateButtonState() {
+        submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid));
+    }
 
     private String getInitialLetter(String selectedCategory) {
         if ("Locomotive".equals(selectedCategory)) {
@@ -447,30 +545,5 @@ public class ProductRecordForm extends StaffView {
         }
     }
 
-    public void updateItemSelectedLabel(String selectedProductName) {
-        itemSelected.setText(selectedProductName);
-        System.out.println(itemSelected);
-    }
 
-    private JSpinner createSpinner() {
-        SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
-        return new JSpinner(model);
-    }
-
-    /**
-     * revalidates shared input fields, as well as those of
-     * the category selected
-     * @return
-     */
-    public boolean validateAllFields(){
-        for(CustomInputField field : sharedInputFields.values()){
-            field.validate(field.getjTextField().getText());
-        }
-        return sharedInputFields.values().stream().allMatch(CustomInputField::isValid);
-    }
-
-    private void updateButtonState() {
-        submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid));
-    }
 }
-
