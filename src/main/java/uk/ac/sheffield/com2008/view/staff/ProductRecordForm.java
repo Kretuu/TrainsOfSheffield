@@ -43,6 +43,9 @@ public class ProductRecordForm extends StaffView {
 
     public ProductRecordForm(FormController formController) {
         this.submitButton = new JButton("Save");
+        this.submitButton.addActionListener(e -> {
+            formController.tryCreateProduct();
+        });
         this.formController = formController;
 
         Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
@@ -90,6 +93,7 @@ public class ProductRecordForm extends StaffView {
 
             // Set the identifier based on the selected category
             cardLayout.show(cardPanel, selectedCategory);
+            updateButtonState();
             revalidate();  // Ensure the layout manager updates the container
 
             if(selectedCategory.equals("Controller")){
@@ -451,6 +455,18 @@ public class ProductRecordForm extends StaffView {
     private JSpinner createSpinner() {
         SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
         return new JSpinner(model);
+    }
+
+    /**
+     * revalidates shared input fields, as well as those of
+     * the category selected
+     * @return
+     */
+    public boolean validateAllFields(){
+        for(CustomInputField field : sharedInputFields.values()){
+            field.validate(field.getjTextField().getText());
+        }
+        return sharedInputFields.values().stream().allMatch(CustomInputField::isValid);
     }
 
     private void updateButtonState() {
