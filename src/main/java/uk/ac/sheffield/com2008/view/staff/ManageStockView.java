@@ -193,11 +193,11 @@ public class ManageStockView extends StaffView {
             return "C";
         } else if ("Track".equals(selectedCategory)) {
             return "R";
-        } else if ("Rolling Stocks".equals(selectedCategory)) {
+        } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
-        } else if ("Train Sets".equals(selectedCategory)) {
+        } else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        } else if ("Train Packs".equals(selectedCategory)) {
+        } else if ("Train Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";

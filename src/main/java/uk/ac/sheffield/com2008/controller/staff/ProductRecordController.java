@@ -42,11 +42,11 @@ public class ProductRecordController extends ViewController {
         } else if (productCode.startsWith("R")) {
             return "Track";
         } else if (productCode.startsWith("S")) {
-            return "Rolling Stocks";
+            return "Rolling Stock";
         } else if (productCode.startsWith("M")) {
-            return "Train Sets";
+            return "Train Set";
         } else if (productCode.startsWith("P")) {
-            return "Train Packs";
+            return "Track Pack";
         } else {
             return "Other Category";
         }

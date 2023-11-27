@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
+import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
@@ -10,12 +11,11 @@ import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 
 public class ProductRecordForm extends StaffView {
@@ -23,8 +23,9 @@ public class ProductRecordForm extends StaffView {
     private final FormController formController;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-
+    private JLabel itemSelected = new JLabel();
     private final JButton submitButton;
+    List<Product> filteredProducts;
     JComboBox<String> gaugesComboBox;
     JLabel gaugeLabel;
     private final Map<String, CustomInputField> sharedInputFields = new HashMap<>();
@@ -355,8 +356,7 @@ public class ProductRecordForm extends StaffView {
         private JPanel trainSetsPanel() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
 
-        ArrayList<Product> products = new ArrayList<>();
-
+        //HEADER panel
         JPanel headerPanel =  new JPanel (new GridLayout (2, 1));
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel title = new JLabel("Add products to set: ");
@@ -368,7 +368,10 @@ public class ProductRecordForm extends StaffView {
         row2.add(itemTypesComboBox);
         JButton findButton = new JButton("Find");
         findButton.addActionListener(e -> {
-            ProductSetModal modal = new ProductSetModal(formController,(JFrame) SwingUtilities.getWindowAncestor(panel));
+            String selectedCategory = (String) itemTypesComboBox.getSelectedItem();
+            String initialLetter = getInitialLetter(selectedCategory);
+            filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
             modal.setVisible(true);
         });
         row2.add(findButton);
@@ -376,9 +379,10 @@ public class ProductRecordForm extends StaffView {
         headerPanel.add(row2);
         panel.add(headerPanel, BorderLayout.NORTH);
 
+        //Selected panel
         JPanel selectedPanel =  new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
-        JLabel itemSelected = new JLabel("Example:retrieve item displayed here");
+        JLabel itemSelected = new JLabel();
         JButton addButton= new JButton("Add");
         selectedPanel.add(selected);
         selectedPanel.add(itemSelected);
@@ -395,25 +399,53 @@ public class ProductRecordForm extends StaffView {
             JLabel itemCode = new JLabel("Code...");
             JLabel itemName = new JLabel("Name.....");
             JSpinner quantitySpinner = createSpinner();
+            JButton removeItemButton = new JButton("X");
+
+
             Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
             spinnerPreferredSize.width = 70; // Adjust the width as needed
             quantitySpinner.setPreferredSize(spinnerPreferredSize);
-            JButton removeItemButton = new JButton("X");
+
             subItemsPanel.add(itemCode);
             subItemsPanel.add(itemName);
             subItemsPanel.add(quantitySpinner);
             subItemsPanel.add(removeItemButton);
+
             inSetPanel.add(subItemsPanel);
 
         //}
             JScrollPane scrollPane = new JScrollPane(inSetPanel);
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            panel.add(inSetPanel);
+            panel.add(scrollPane, BorderLayout.SOUTH);
 
 
 
         return panel;
 
+    }
+
+
+    private String getInitialLetter(String selectedCategory) {
+        if ("Locomotive".equals(selectedCategory)) {
+            return "L";
+        } else if ("Controller".equals(selectedCategory)) {
+            return "C";
+        } else if ("Track".equals(selectedCategory)) {
+            return "R";
+        } else if ("Rolling Stock".equals(selectedCategory)) {
+            return "S";
+        } else if ("Train Set".equals(selectedCategory)) {
+            return "M";
+        } else if ("Track Pack".equals(selectedCategory)) {
+            return "P";
+        } else {
+            return "";
+        }
+    }
+
+    public void updateItemSelectedLabel(String selectedProductName) {
+        itemSelected.setText(selectedProductName);
+        System.out.println(itemSelected);
     }
 
     private JSpinner createSpinner() {
