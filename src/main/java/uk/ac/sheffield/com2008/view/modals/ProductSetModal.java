@@ -1,7 +1,6 @@
 package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
 
@@ -46,7 +45,7 @@ public class ProductSetModal extends JDialog {
                 String selectedProductName = findProductNameByCode(filteredProducts, selectedProductCode);
                 System.out.println("Selected Product Name: " + selectedProductName);
                 // Update the itemSelected label in ProductRecordForm
-                productRecordForm.updateItemSelectedLabel(selectedProductName);
+                productRecordForm.updateItemSelectedLabel(selectedProductName, selectedProductCode);
             });
             buttonGroup.add(radioButton);
             radioButtonsPanel.add(radioButton);
