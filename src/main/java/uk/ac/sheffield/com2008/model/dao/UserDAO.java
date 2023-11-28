@@ -20,6 +20,10 @@ public class UserDAO {
         return getUserByField("email", email);
     }
 
+    public static User getUserByUuid(String uuid) throws SQLException {
+        return getUserByField("uuid", uuid);
+    }
+
     private static User getUserByField(String fieldName, Object value) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT uuid, email, forename, surname, roles, Users.houseNumber, Users.postcode, ")

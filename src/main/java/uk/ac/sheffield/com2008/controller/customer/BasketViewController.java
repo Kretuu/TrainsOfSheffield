@@ -56,8 +56,6 @@ public class BasketViewController extends ViewController {
      * FOR NOW JUST SAVES THE ORDER
      */
     public void confirmOrder(){
-        System.out.println("PRESSED CONFIRM");
-        userBasket.PrintFullOrder();
         String errorMessage = null;
         try {
             OrderManager.confirmOrder(userBasket, user);
@@ -73,6 +71,7 @@ public class BasketViewController extends ViewController {
         } catch (InvalidOrderStateException e) {
             errorMessage = e.getMessage();
         } catch (OrderQuantitiesInvalidException e) {
+            e.addMessage("All quantities have been set to maximum available in stock.");
             errorMessage = e.getMessage();
             basketView.onRefresh();
         } catch (OrderOutdatedException e) {

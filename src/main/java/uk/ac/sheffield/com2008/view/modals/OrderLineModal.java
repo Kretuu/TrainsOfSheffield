@@ -13,6 +13,7 @@ import java.util.List;
 
 public class OrderLineModal extends JDialog {
     //private JTextArea orderLinesTextArea;
+    private final JCheckBox fulfilledCheckBox;
 
     public OrderLineModal (ManageOrderController manageOrderController, JFrame parentFrame, Order order) {
 
@@ -96,23 +97,25 @@ public class OrderLineModal extends JDialog {
             }
         });
 
+        fulfilledCheckBox = new JCheckBox("Fulfill");
        // Check if the order status is CONFIRMED to display the Fulfill checkbox
         if (order.getStatus() == Order.Status.CONFIRMED) {
-            JCheckBox fulfilledCheckBox = new JCheckBox("Fulfill");
             bottomPanel.add(fulfilledCheckBox);
 
             // When checkbox is ticked, update the order status to "FULFILLED"
             fulfilledCheckBox.addActionListener(e -> {
                 if (fulfilledCheckBox.isSelected()) {
-                    order.setAsFulfilled();
-                    // Update the status in the backend
-                    manageOrderController.updateOrderStatus(order);
-                    // Display a message and close the dialog
-                    JOptionPane.showMessageDialog(this, "The order is now fulfilled");
-                    dispose(); // Close the dialog
-                    manageOrderController.repopulateTable();
-                    //Refresh the UI
-                    manageOrderController.onNavigateTo();
+                    manageOrderController.fulfillOrder(order, this);
+//                    order.setAsFulfilled();
+//
+//                    // Update the status in the backend
+//                    manageOrderController.updateOrderStatus(order);
+//                    // Display a message and close the dialog
+//                    JOptionPane.showMessageDialog(this, "The order is now fulfilled");
+//                    dispose(); // Close the dialog
+//                    manageOrderController.repopulateTable();
+//                    //Refresh the UI
+//                    manageOrderController.onNavigateTo();
                 }
             });
         }
@@ -126,6 +129,10 @@ public class OrderLineModal extends JDialog {
         setResizable(false);
         setLocationRelativeTo(parentFrame);
 
+    }
+
+    public void unselectFulfilledCheckbox() {
+        fulfilledCheckBox.setSelected(false);
     }
 
 }

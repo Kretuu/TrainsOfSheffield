@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.model.domain.managers;
 import uk.ac.sheffield.com2008.exceptions.*;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
@@ -130,11 +131,23 @@ public class OrderManager {
     }
 
     /**
-     * Set an order as confirmed
-     * @param order order to confirm
+     * Set an order as fulfilled
+     * @param order order to fulfill
      */
-    public static void fulfilOrder(Order order){
+    public static void fulfilOrder(Order order) throws InvalidOrderStateException, SQLException,
+            OrderHasNoOwnerException, BankDetailsNotValidException, OrderQuantitiesInvalidException,
+            OrderOutdatedException {
+        if(!order.getStatus().equals(Order.Status.CONFIRMED))
+            throw new InvalidOrderStateException("Order is not confirmed, so cannot be fulfilled");
+
+        User user = UserDAO.getUserByUuid(order.getUserUUID());
+        if(user == null) throw new OrderHasNoOwnerException();
+
+        if(!UserManager.validateUserBankingCard(user))
+            throw new BankDetailsNotValidException();
+
+        validateOrder(order);
         order.setAsFulfilled();
-        //TODO: OrderDAO UPDATE status FOR ORDER
+        saveFullOrderState(order);
     }
 }

@@ -4,7 +4,6 @@ import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
 import uk.ac.sheffield.com2008.exceptions.UserHasNoBankDetailsException;
 import uk.ac.sheffield.com2008.model.dao.BankingDetailsDAO;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
-import uk.ac.sheffield.com2008.model.entities.Address;
 import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.EncryptionManager;
@@ -39,7 +38,7 @@ public class UserManager {
 
     public static BankingCard fetchUserBankDetails(User user, char[] password)
             throws UserHasNoBankDetailsException, SQLException, BankDetailsEncryptionException {
-        BankingCard bankingCard = BankingDetailsDAO.getUserBankingCard(user);
+        BankingCard bankingCard = BankingDetailsDAO.getUserBankingCardByUuid(user.getUuid());
         if(bankingCard == null)
             throw new UserHasNoBankDetailsException();
 
@@ -62,7 +61,7 @@ public class UserManager {
     }
 
     public static boolean validateUserBankingCard(User user) throws SQLException {
-        BankingCard bankingCard = BankingDetailsDAO.getUserBankingCard(user);
+        BankingCard bankingCard = BankingDetailsDAO.getUserBankingCardByUuid(user.getUuid());
         return bankingCard != null && bankingCard.checkValidity();
     }
 }

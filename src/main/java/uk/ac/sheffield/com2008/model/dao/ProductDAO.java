@@ -9,7 +9,6 @@ import uk.ac.sheffield.com2008.model.mappers.ProductSetItemMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProductDAO {
@@ -32,6 +31,8 @@ public class ProductDAO {
     }
 
     public static List<Product> getProductsByCodes(String... productCodes) {
+        if(productCodes.length < 1) return new ArrayList<>();
+
         StringBuilder stringBuilder = new StringBuilder("SELECT * FROM Products WHERE productCode IN (");
         for (int i = 0; i < productCodes.length; i++) {
             stringBuilder.append("?, ");
