@@ -1,20 +1,17 @@
 package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.modals.EditProductStockModal;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 
 public class ManageStockView extends StaffView {
 
@@ -24,13 +21,8 @@ public class ManageStockView extends StaffView {
     public ManageStockView(StaffController staffController) {
         super();
         this.staffController = staffController;
-    }
 
-    public void onRefresh() {
-        removeAll();
-        initializeUI(); //Reinitialize UI
-        revalidate();
-        repaint();
+        initializeUI();
     }
 
     public void initializeUI() {
@@ -99,22 +91,6 @@ public class ManageStockView extends StaffView {
             }
         };
 
-        // Get products from the DAO
-        List<Product> products = new ArrayList<>();
-        try {
-            products = ProductDAO.getAllProducts();
-        } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Product list was not loaded");
-        }
-
-        // Add each product to the tableModel
-        for (Product product : staffController.getAllProducts()) {
-            // Customize the category based on the productCode
-            Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-            tableModel.addRow(rowData);
-        }
-
         table = new JTable(tableModel);
         table.setEnabled(false);
 
@@ -136,7 +112,7 @@ public class ManageStockView extends StaffView {
         manageOrderButton.addActionListener(e -> {
             staffController.getNavigation().navigate(Navigation.MANAGE_ORDER);
             // Repopulate the table upon returning to the ManageStockView
-            staffController.repopulateTable();
+            staffController.onNavigateTo();
         });
 
         // Add an ActionListener to the filter combo box
@@ -145,12 +121,12 @@ public class ManageStockView extends StaffView {
             // Get the initial letter based on the selected category
             String initialLetter = getInitialLetter(selectedCategory);
             // Call the filter method based on the selected starting letter
-            filterTableByCategory(tableModel, initialLetter);
+            staffController.setCurrentFilter(initialLetter);
+//            filterTableByCategory(tableModel, initialLetter);
         });
 
         // Disable column dragging
         table.getTableHeader().setReorderingAllowed(false);
-
 
         // Create a custom renderer for the view hyperlink column
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
@@ -175,7 +151,6 @@ public class ManageStockView extends StaffView {
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         // Add a mouse listener to the "Edit" label
-        List<Product> finalProducts = products;
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -184,14 +159,34 @@ public class ManageStockView extends StaffView {
 
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
-                    Product product = finalProducts.get(row); // Retrieve the order from the list
+                    Product product = staffController.getCurrentDisplayedProducts().get(row); // Retrieve the order from the list
                     // Create an instance of the OrderLineModal class
-                    EditProductStockModal modal = new EditProductStockModal(staffController, (JFrame) SwingUtilities.getWindowAncestor(productPanel), product, ManageStockView.this);
+                    EditProductStockModal modal = new EditProductStockModal(
+                            staffController, staffController.getNavigation().getFrame(),
+                            product, ManageStockView.this
+                    );
                     // Show the dialog
                     modal.setVisible(true);
                 }
             }
         });
+    }
+
+    public void populateTable(List<Product> products) {
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        if (tableModel != null) {
+
+            // Clear existing rows in the table model
+            tableModel.setRowCount(0);
+
+            // Update the table with the fetched data
+            for (Product product : products) {
+                Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
+                tableModel.addRow(rowData);
+            }
+
+        }
     }
 
     // Method to get the initial letter based on the selected category
@@ -212,43 +207,5 @@ public class ManageStockView extends StaffView {
             return "";
         }
     }
-
-
-    private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
-        try {
-            // Clear the existing rows in the table
-            tableModel.setRowCount(0);
-
-            // Get products based on the selected category from the DAO
-            List<Product> filteredProducts;
-            if ("All".equals(initialLetter)) {
-                // If "All" is selected, get all products
-                filteredProducts = staffController.getAllProducts();
-            } else {
-                // Otherwise, get products for the selected category
-                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
-            }
-
-            // Add each filtered product to the tableModel
-            for (Product product : filteredProducts) {
-
-                Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-                tableModel.addRow(rowData);
-                //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
-            }
-        } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Product list was not filtered");
-        }
-
-
-    }
-
-    // Getter method to access the table model
-    public DefaultTableModel getTableModel() {
-        return (DefaultTableModel) table.getModel();
-    }
-
-
 }
 

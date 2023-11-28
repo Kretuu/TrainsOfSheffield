@@ -99,9 +99,9 @@ public class BasketViewController extends ViewController {
         try {
             OrderManager.saveFullOrderState(userBasket);
         } catch (SQLException e) {
-            //TODO Handle the message somewhere
-            System.out.println("Basket could not be saved");
+            navigation.setLayoutMessage("Basket error", "Basket could not be saved", true);
         }
+        navigation.setLayoutMessage("Basket", "Basket could not be saved", true);
     }
 
     public BankingCard getBankingCard(char[] password) throws SQLException, BankDetailsEncryptionException {

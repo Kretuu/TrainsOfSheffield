@@ -31,8 +31,8 @@ public class BrowseItemsController extends ViewController {
             allProducts = ProductDAO.getAllProducts();
         } catch (SQLException e) {
             allProducts = new ArrayList<>();
-            //TODO Display error message
-            System.out.println("Cannot load list of products from database");
+            navigation.setLayoutMessage(
+                    "Browse Items Error", "Cannot load list of products from database", true);
         }
         browseItemsView.onRefresh();
     }
@@ -65,8 +65,9 @@ public class BrowseItemsController extends ViewController {
             }
             userBasket.PrintFullOrder();
         } catch (SQLException e) {
-            //TODO Create error message
-            System.out.println("Cannot connect to database");
+            navigation.setLayoutMessage(
+                    "Browse Items Error",
+                    "Could not connect to database. Product was not added to the basket", true);
         }
 
     }

@@ -8,13 +8,14 @@ import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.FulfilledOrdersView;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FulfilledOrdersController extends ViewController {
 
     public FulfilledOrdersView fulfilledOrdersView;
 
-    private List<Order> allOrders;
+    private List<Order> fulfilledOrders = new ArrayList<>();
 
     public FulfilledOrdersController(NavigationManager navigationManager, Navigation id){
         super(navigationManager, id);
@@ -24,12 +25,16 @@ public class FulfilledOrdersController extends ViewController {
 
     public void onNavigateTo(){
         try {
-            allOrders = OrderDAO.getFulfilledOrders();
-            fulfilledOrdersView.onRefresh();
+            fulfilledOrders = OrderDAO.getFulfilledOrders();
         } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Fulfilled orders were not fetched.");
+            navigation.setLayoutMessage(
+                    "Fulfilled Orders Error",
+                    "Could not connect to database. Fulfilled orders were not fetched.", true);
         }
+        fulfilledOrdersView.populateOrdersInTable();
+    }
 
+    public List<Order> getFulfilledOrders() {
+        return fulfilledOrders;
     }
 }

@@ -18,7 +18,6 @@ import uk.ac.sheffield.com2008.view.components.MainLayout;
 import uk.ac.sheffield.com2008.view.customer.CustomerView;
 import uk.ac.sheffield.com2008.view.manager.ManagerView;
 import uk.ac.sheffield.com2008.view.staff.StaffView;
-import uk.ac.sheffield.com2008.view.user.UserView;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -118,5 +117,9 @@ public class NavigationManager {
 
     public ViewController getCurrentController() {
         return controllers.get(currentView);
+    }
+
+    public void setLayoutMessage(String header, String message, boolean isError) {
+        layout.updateMessage(header, message, isError);
     }
 }
