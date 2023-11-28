@@ -32,7 +32,8 @@ public class ProductSetModal extends JDialog {
         ButtonGroup buttonGroup = new ButtonGroup();
 
         // Create a panel to hold the radio buttons
-        JPanel radioButtonsPanel = new JPanel(new GridLayout(filteredProducts.size(), 1));
+        JPanel radioButtonsPanel = new JPanel();
+        radioButtonsPanel.setLayout(new BoxLayout(radioButtonsPanel, BoxLayout.Y_AXIS));
 
         // Create and add radio buttons for each product
         for (Product product : filteredProducts) {
@@ -50,6 +51,7 @@ public class ProductSetModal extends JDialog {
             buttonGroup.add(radioButton);
             radioButtonsPanel.add(radioButton);
         }
+
 
         itemsPanel.add(new JScrollPane(radioButtonsPanel), BorderLayout.CENTER);
         panel.add(itemsPanel, BorderLayout.CENTER);

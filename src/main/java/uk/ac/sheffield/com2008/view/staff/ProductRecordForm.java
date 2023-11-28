@@ -33,11 +33,9 @@ public class ProductRecordForm extends StaffView {
     private final FormController formController;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-    private JLabel itemSelected = new JLabel();
     private final JButton submitButton;
 
-    private JPanel getInSetPanel;
-    private JScrollPane scrollPane;
+
     private Map<Product, Integer> selectedProductsMap = new HashMap<>();
 
 
@@ -306,7 +304,7 @@ public class ProductRecordForm extends StaffView {
         } else if ("Track Pack".equals(category)){
             return trackPackPanel;
         }else{
-            throw new RuntimeException("cant get category panel that doesnt exist: " + category);
+            throw new RuntimeException("cant get category panel that doesn't exist: " + category);
         }
     }
 
@@ -485,11 +483,40 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel trackPackPanel() {
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JCheckBox starterOval = new JCheckBox("Starter Oval Track Pack");
-        JCheckBox extension = new JCheckBox("Extension Track Pack");
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel trackLabel = new JLabel("Track");
+        JPanel radioButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JRadioButton starterOval = new JRadioButton("Starter Oval Track Pack");
+        JRadioButton extension = new JRadioButton("Extension Track Pack");
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(starterOval);
+        buttonGroup.add(extension);
+        radioButtonsPanel.add(starterOval);
+        radioButtonsPanel.add(extension);
+        panel.add(radioButtonsPanel);
+
+        //Items in set panel
+        JPanel inPackPanel = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(inPackPanel, BoxLayout.Y_AXIS);
+        inPackPanel.setLayout(boxLayout);
+        inPackPanel.setPreferredSize(new Dimension(500, 200));
+
+
+        JScrollPane scrollPane = new JScrollPane(inPackPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        panel.add(scrollPane);
+
+        //when any radio button is clicked it should open a modal and add it inside the panel
+        starterOval.addActionListener(e -> {
+
+        });
+
+        extension.addActionListener(e -> {
+
+        });
+
+        /*JLabel trackLabel = new JLabel("Track");
         JSpinner extensionSpinner = createSpinner();
         extensionSpinner.setEnabled(false);
         extension.addItemListener(e -> {
@@ -507,10 +534,7 @@ public class ProductRecordForm extends StaffView {
 
             panel.revalidate();
             panel.repaint();
-        });
-
-        panel.add(starterOval);
-        panel.add(extension);
+        });*/
 
 
         return panel;
@@ -520,13 +544,13 @@ public class ProductRecordForm extends StaffView {
     private JPanel trainSetsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // HEADER panel
+        // Header panel
         JPanel headerPanel = new JPanel(new GridLayout(2, 1));
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel title = new JLabel("Add products to set: ");
         row1.add(title);
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller", "Train Set", "Track Pack"};
+        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller", "Starter Oval Track Pack", "Extension Track Pack"};
         JComboBox<String> itemTypesComboBox = new JComboBox<>(itemTypes);
         row2.add(itemTypesComboBox);
         JButton findButton = new JButton("Find");
@@ -546,24 +570,25 @@ public class ProductRecordForm extends StaffView {
         // Selected panel
         JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
-        JLabel itemSelected = new JLabel();
+        JLabel itemSelected = new JLabel(); //it doesnt pass here
         JButton addButton = new JButton("Add");
 
         //Items in set panel
         JPanel inSetPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(inSetPanel, BoxLayout.Y_AXIS);
         inSetPanel.setLayout(boxLayout);
-        inSetPanel.setPreferredSize(new Dimension(200, 200));
-        scrollPane = new JScrollPane(inSetPanel);
+        inSetPanel.setPreferredSize(new Dimension(500, 300));
+
+
+        JScrollPane scrollPane = new JScrollPane(inSetPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         panel.add(scrollPane, BorderLayout.SOUTH);
 
-
+        //Add heading panel to inset panel
         JPanel inSetHeadingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel displayItemsLabel = new JLabel("Items in set:  ");
         inSetHeadingPanel.add(displayItemsLabel);
-
-        inSetPanel.add(inSetHeadingPanel, BorderLayout.NORTH);
+        inSetPanel.add(inSetHeadingPanel);
 
 
         addButton.addActionListener(e -> {
@@ -575,7 +600,10 @@ public class ProductRecordForm extends StaffView {
                 Product product = entry.getKey();
                 int quantity = entry.getValue();
 
-                JPanel subItemsPanel = new JPanel(new GridBagLayout());
+                JPanel subItemsPanel = new JPanel();
+                GridBagLayout gridBagLayout = new GridBagLayout();
+                subItemsPanel.setLayout(gridBagLayout);
+
 
                 gbc.gridx = 0;
                 gbc.anchor = GridBagConstraints.NORTHWEST;
