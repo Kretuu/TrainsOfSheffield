@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
@@ -10,8 +9,6 @@ import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -21,16 +18,12 @@ public class ProductRecordView extends StaffView {
     ProductRecordController productRecordController;
 
     private JTable table;
+    private JComboBox<String> filterComboBox;
 
     public ProductRecordView(ProductRecordController productRecordController) {
         this.productRecordController = productRecordController;
-    }
 
-    public void onRefresh(){
-        removeAll();
         initializeUI();
-        revalidate();
-        repaint();
     }
 
     public void initializeUI() {
@@ -49,7 +42,7 @@ public class ProductRecordView extends StaffView {
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
-        JComboBox<String> filterComboBox = new JComboBox<>(categories);
+        filterComboBox = new JComboBox<>(categories);
         JButton addRecordButton = new JButton("Create New Record");
         addRecordButton.addActionListener(new AuthorisationActionListener(this) {
             @Override
@@ -75,26 +68,6 @@ public class ProductRecordView extends StaffView {
 
         // Create a DefaultTableModel with column names and no data initially
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-
-        // Fetch all products from ProductDAO
-        List<Product> products = new ArrayList<>();
-        try {
-            products = ProductDAO.getAllProducts();
-        } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Cannot connect to database. Product list is not loaded");
-        }
-
-        // Add each product to the tableModel
-        for (Product product : products) {
-            Object[] rowData = {
-                    product.getProductCode(),
-                    product.getName(),
-                    productRecordController.determineCustomCategory(product.getProductCode()),
-                    product.getStock(),
-                    "Edit"};
-            tableModel.addRow(rowData);
-        }
 
         table = new JTable(tableModel); // Assigning to the class-level variable
         table.setEnabled(false);
@@ -126,7 +99,8 @@ public class ProductRecordView extends StaffView {
             // Get the initial letter based on the selected category
             String initialLetter = getInitialLetter(selectedCategory);
             // Call the filter method based on the selected starting letter
-            filterTableByCategory(tableModel, initialLetter);
+            productRecordController.setCurrentFilter(initialLetter);
+//            filterTableByCategory(tableModel, initialLetter);
         });
 
         //custom renderer to edit records
@@ -149,9 +123,7 @@ public class ProductRecordView extends StaffView {
             }
         });
 
-
         // Add a mouse listener to the "Edit" label
-        List<Product> finalProducts = products;
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -161,11 +133,28 @@ public class ProductRecordView extends StaffView {
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
                     // Define the action to take when the link is clicked
-                    Product product = finalProducts.get(row);
+                    Product product = productRecordController.getDisplayedProducts().get(row);
                     productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
+                    //TODO action when edit is clicked
                 }
             }
         });
+    }
+
+    public void populateTable(List<Product> products) {
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        tableModel.setRowCount(0);
+        // Add each product to the tableModel
+        for (Product product : products) {
+            Object[] rowData = {
+                    product.getProductCode(),
+                    product.getName(),
+                    productRecordController.determineCustomCategory(product.getProductCode()),
+                    product.getStock(),
+                    "Edit"};
+            tableModel.addRow(rowData);
+        }
 
     }
 
@@ -187,34 +176,4 @@ public class ProductRecordView extends StaffView {
             return "";
         }
     }
-
-    private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
-        try {
-            // Clear the existing rows in the table
-            tableModel.setRowCount(0);
-
-            // Get products based on the selected category from the DAO
-            List<Product> filteredProducts;
-            if ("All".equals(initialLetter)) {
-                // If "All" is selected, get all products
-                filteredProducts = ProductDAO.getAllProducts();
-            } else {
-                // Otherwise, get products for the selected category
-                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
-            }
-
-            // Add each filtered product to the tableModel
-            for (Product product : filteredProducts) {
-
-                Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-                tableModel.addRow(rowData);
-            }
-        } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Cannot connect to database. Product list was not filtered.");
-        }
-
-
-    }
-
 }

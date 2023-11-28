@@ -69,4 +69,12 @@ public class MainLayout extends JPanel {
         });
         navigation.add(logoutButton);
     }
+
+    public void updateMessage(String header, String text, boolean isError) {
+        if(isError){
+            JOptionPane.showMessageDialog(this, text, header, JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, text, header, JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 }

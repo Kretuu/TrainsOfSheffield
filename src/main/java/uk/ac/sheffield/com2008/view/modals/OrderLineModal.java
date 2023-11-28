@@ -2,22 +2,18 @@ package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
-import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class OrderLineModal extends JDialog {
     //private JTextArea orderLinesTextArea;
     private final JCheckBox fulfilledCheckBox;
 
-    public OrderLineModal (ManageOrderController manageOrderController, JFrame parentFrame, Order order) {
+    public OrderLineModal(ManageOrderController manageOrderController, JFrame parentFrame, Order order) {
 
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
 
@@ -39,45 +35,27 @@ public class OrderLineModal extends JDialog {
 
         panel.add(topPanel, BorderLayout.NORTH); // Add topPanel to the main pane
 
-        // Display order line based on order number
-        LinkedHashMap<String, String> fieldsMap = new LinkedHashMap<>();
-        fieldsMap.put("Orders.orderNumber", String.valueOf(orderNum)); // Filter by order number
-
-        List<Order> orders = new ArrayList<>();
-        try {
-            orders = OrderDAO.getOrderListByFields(fieldsMap);
-        } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Order list were not loaded");
-        }
-
         JTextArea orderLinesTextArea = new JTextArea(10, 30);
         orderLinesTextArea.setEditable(false);
 
 
-        if (!orders.isEmpty()) {
-            StringBuilder orderLinesText = new StringBuilder();
-            for (Order fetchedOrder : orders) {
-                orderLinesText.append("Order Number: ").append(fetchedOrder.getOrderNumber()).append("\n");
-                orderLinesText.append("Date Ordered: ").append(fetchedOrder.getDateOrdered()).append("\n");
-                orderLinesText.append("Status: ").append(fetchedOrder.getStatus()).append("\n\n");
+        StringBuilder orderLinesText = new StringBuilder();
+        orderLinesText.append("Order Number: ").append(order.getOrderNumber()).append("\n");
+        orderLinesText.append("Date Ordered: ").append(order.getDateOrdered()).append("\n");
+        orderLinesText.append("Status: ").append(order.getStatus()).append("\n\n");
 
-                List<OrderLine> orderLines = fetchedOrder.getOrderLines();
-                if (!orderLines.isEmpty()) {
-                    orderLinesText.append("Items Ordered: \n");
-                    for (OrderLine orderLine : orderLines) {
-                        orderLinesText.append("Product: ").append(orderLine.getProduct().getName())
-                                .append(", Quantity: ").append(orderLine.getQuantity())
-                                .append(", Price: ").append(orderLine.getPrice()).append("\n");
-                    }
-                } else {
-                    orderLinesText.append("No order lines available for this order");
-                }
+        List<OrderLine> orderLines = order.getOrderLines();
+        if (!orderLines.isEmpty()) {
+            orderLinesText.append("Items Ordered: \n");
+            for (OrderLine orderLine : orderLines) {
+                orderLinesText.append("Product: ").append(orderLine.getProduct().getName())
+                        .append(", Quantity: ").append(orderLine.getQuantity())
+                        .append(", Price: ").append(orderLine.getPrice()).append("\n");
             }
-            orderLinesTextArea.setText(orderLinesText.toString());
         } else {
-            orderLinesTextArea.setText("No order found for this order number");
+            orderLinesText.append("No order lines available for this order");
         }
+        orderLinesTextArea.setText(orderLinesText.toString());
 
         // Add orderLinesTextArea to the main panel
         panel.add(new JScrollPane(orderLinesTextArea), BorderLayout.CENTER);
@@ -99,32 +77,19 @@ public class OrderLineModal extends JDialog {
                 // Display a message and close the dialog
                 JOptionPane.showMessageDialog(this, "The order has been deleted");
                 dispose(); // Close the dialog
-                manageOrderController.repopulateTable();
                 //Refresh the UI
                 manageOrderController.onNavigateTo();
             }
         });
 
         fulfilledCheckBox = new JCheckBox("Fulfill");
-       // Check if the order status is CONFIRMED to display the Fulfill checkbox
+        // Check if the order status is CONFIRMED to display the Fulfill checkbox
         if (order.getStatus() == Order.Status.CONFIRMED) {
             bottomPanel.add(fulfilledCheckBox);
 
             // When checkbox is ticked, update the order status to "FULFILLED"
             fulfilledCheckBox.addActionListener(e -> {
-                if (fulfilledCheckBox.isSelected()) {
-                    manageOrderController.fulfillOrder(order, this);
-//                    order.setAsFulfilled();
-//
-//                    // Update the status in the backend
-//                    manageOrderController.updateOrderStatus(order);
-//                    // Display a message and close the dialog
-//                    JOptionPane.showMessageDialog(this, "The order is now fulfilled");
-//                    dispose(); // Close the dialog
-//                    manageOrderController.repopulateTable();
-//                    //Refresh the UI
-//                    manageOrderController.onNavigateTo();
-                }
+                if (fulfilledCheckBox.isSelected()) manageOrderController.fulfillOrder(order, this);
             });
         }
 

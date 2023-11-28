@@ -1,23 +1,13 @@
 package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.staff.SalesController;
-import uk.ac.sheffield.com2008.model.dao.OrderDAO;
-import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SalesView extends StaffView{
     SalesController salesController;
-
-    private float totalOrders = 0.0f;
-
-    float totalSales = 0.0f;
-
 
     public SalesView(SalesController salesController){
         this.salesController = salesController;
@@ -57,23 +47,8 @@ public class SalesView extends StaffView{
         monthlyOrdersPanel.setBorder(createBorder("Total Orders", 20));
         monthlyOrdersPanel.setPreferredSize(new Dimension(400, 300));
 
-        // Fetch all orders using OrderDAO
-        List<Order> orders = new ArrayList<>();
-        try {
-            orders = OrderDAO.getAllOrders();
-        } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Order list was not loaded");
-        }
-
-        // Loop through each order and sum up the order prices to get totalSales
-        for (Order order : orders) {
-            totalSales +=  order.getTotalPrice();
-        }
-
-
         // Sample label in the left panel (replace with your data)
-        JLabel monthlyOrdersLabel = new JLabel("Total Orders: " + orders.size());
+        JLabel monthlyOrdersLabel = new JLabel("Total Orders: " + salesController.getNumberOfSales());
         monthlyOrdersPanel.add(monthlyOrdersLabel);
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -89,7 +64,7 @@ public class SalesView extends StaffView{
 
 
         // Sample label in the right panel (replace with your data)
-        JLabel totalSalesLabel = new JLabel("Total Sales Amount: " + totalSales);
+        JLabel totalSalesLabel = new JLabel("Total Sales Amount: " + salesController.getTotalSales());
         totalSalesPanel.add(totalSalesLabel);
 
         gbc.gridx = 1;

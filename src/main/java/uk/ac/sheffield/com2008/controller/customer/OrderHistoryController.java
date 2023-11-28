@@ -32,8 +32,9 @@ public class OrderHistoryController extends ViewController {
             List<Order> orders = OrderDAO.getUserOrdersHistory(currentUser);
             orderHistoryView.populateList(orders);
         } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Latest order history was not loaded.");
+            navigation.setLayoutMessage(
+                    "Order History Error",
+                    "Could not connect to database. Latest order history was not loaded.", true);
         }
     }
 }

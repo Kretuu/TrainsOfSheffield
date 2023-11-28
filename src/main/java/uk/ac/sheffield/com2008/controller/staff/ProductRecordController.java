@@ -14,29 +14,46 @@ import java.util.List;
 public class ProductRecordController extends ViewController {
     private final ProductRecordView productRecordView;
 
-    private List<Product> allProducts;
+    private List<Product> allProducts = new ArrayList<>();
+    private List<Product> filteredProducts = new ArrayList<>();
 
     public ProductRecordController(NavigationManager navigationManager, Navigation id){
         super(navigationManager, id);
         view = new ProductRecordView(this);
         productRecordView = (ProductRecordView) view;
+        onNavigateTo();
+        setCurrentFilter("All");
     }
 
     public void onNavigateTo(){
         try {
             allProducts = ProductDAO.getAllProducts();
-            productRecordView.onRefresh();
         } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Latest products list was not fetched");
+            navigation.setLayoutMessage(
+                    "Product Record Error",
+                    "Could not connect to database. Latest products list was not fetched", true);
         }
+        productRecordView.populateTable(filteredProducts);
+//        productRecordView.resetFilterState();
     }
 
-    public List<Product> getAllProducts(){
-        if(allProducts != null){
-            return allProducts;
+    public void setCurrentFilter(String initialLetter) {
+        if(initialLetter.isEmpty() || initialLetter.equals("All")) {
+            filteredProducts = allProducts;
+        } else {
+            try {
+                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            } catch (SQLException e) {
+                navigation.setLayoutMessage(
+                        "Product Record Error",
+                        "Cannot connect to database. Product list was not filtered.", true);
+            }
         }
-        return new ArrayList<>();
+        productRecordView.populateTable(filteredProducts);
+    }
+
+    public List<Product> getDisplayedProducts() {
+        return filteredProducts;
     }
 
     public String determineCustomCategory(String productCode) {

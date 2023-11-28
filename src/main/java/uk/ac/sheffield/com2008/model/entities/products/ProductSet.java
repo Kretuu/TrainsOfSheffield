@@ -66,7 +66,7 @@ public abstract class ProductSet extends Product {
     /**
      * Prints the contents of this product set
      */
-    public void PrintFullSet(){
+    public void PrintFullSet() {
         System.out.println(setName + "CONTAINS: ");
         setSetItems(fetchContainedItems());
         setItems.forEach(setItem -> {
@@ -75,13 +75,13 @@ public abstract class ProductSet extends Product {
         });
     }
 
-    public List<ProductSetItem> fetchContainedItems(){
-        List<ProductSetItem> setItems = new ArrayList<>();
+    public List<ProductSetItem> fetchContainedItems() {
+        List<ProductSetItem> setItems = null;
         try {
             setItems = ProductManager.fetchProductSetItems(this);
         } catch (SQLException e) {
-            //TODO Error message
-            System.out.println("Could not connect to database. Product set items were not fetched");
+            //TODO
+            throw new RuntimeException(e);
         }
         if(this.setItems.isEmpty()){
             setSetItems(setItems);
@@ -93,7 +93,7 @@ public abstract class ProductSet extends Product {
         this.setItems = setItems;
     }
 
-    public List<ProductSetItem> getSetItems(){
+    public List<ProductSetItem> getSetItems() {
         if(this.setItems.isEmpty()){
             return fetchContainedItems();
         }
