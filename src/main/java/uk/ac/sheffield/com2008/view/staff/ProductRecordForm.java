@@ -4,10 +4,7 @@ import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.products.Controller;
-import uk.ac.sheffield.com2008.model.entities.products.Locomotive;
-import uk.ac.sheffield.com2008.model.entities.products.RollingStock;
-import uk.ac.sheffield.com2008.model.entities.products.Track;
+import uk.ac.sheffield.com2008.model.entities.products.*;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
@@ -34,12 +31,7 @@ public class ProductRecordForm extends StaffView {
     private JPanel cardPanel;
     private CardLayout cardLayout;
     private final JButton submitButton;
-
-
-    private Map<Product, Integer> selectedProductsMap = new HashMap<>();
-
-
-    List<Product> filteredProducts;
+    private Map<String, Class<?>> classMap = new HashMap<>();
     JComboBox<String> gaugesComboBox;
 
     JLabel gaugeLabel;
@@ -541,8 +533,18 @@ public class ProductRecordForm extends StaffView {
 
     }
 
+    public void setProductSetModal(ProductSetModal productSetModal) {
+        this.productSetModal = productSetModal;
+    }
+    private ProductSetModal productSetModal;
+    JLabel itemSelected = new JLabel();
+
     private JPanel trainSetsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
+        classMap.put("Locomotive", Locomotive.class);
+        classMap.put("Rolling Stock", RollingStock.class);
+        classMap.put("Controller", Controller.class);
+        classMap.put("Track Pack", TrackPack.class);
 
         // Header panel
         JPanel headerPanel = new JPanel(new GridLayout(2, 1));
@@ -553,13 +555,18 @@ public class ProductRecordForm extends StaffView {
         String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller", "Starter Oval Track Pack", "Extension Track Pack"};
         JComboBox<String> itemTypesComboBox = new JComboBox<>(itemTypes);
         row2.add(itemTypesComboBox);
+        List<Product> allProducts = formController.getAllProducts();
+
         JButton findButton = new JButton("Find");
         findButton.addActionListener(e -> {
-            String selectedCategory = (String) itemTypesComboBox.getSelectedItem();
-            String initialLetter = getInitialLetter(selectedCategory);
-            filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
-            ProductSetModal modal = new ProductSetModal(formController, (JFrame)
-                    SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
+            String className = (String) itemTypesComboBox.getSelectedItem();
+            Class<?> classType = classMap.get(className);
+
+
+            List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
+
+            // Pass the correct list of filtered products to the modal
+            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
             modal.setVisible(true);
         });
         row2.add(findButton);
@@ -570,7 +577,7 @@ public class ProductRecordForm extends StaffView {
         // Selected panel
         JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
-        JLabel itemSelected = new JLabel(); //it doesnt pass here
+
         JButton addButton = new JButton("Add");
 
         //Items in set panel
@@ -593,28 +600,26 @@ public class ProductRecordForm extends StaffView {
 
         addButton.addActionListener(e -> {
             // Add a new subItemsPanel for each selected product in the map
-            inSetPanel.removeAll();
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridy = 0;
-            for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
-                Product product = entry.getKey();
-                int quantity = entry.getValue();
+            /*for (Map.Entry<String, String> entry : selectedProductsMap.entrySet()) {
+                String selectedProductName = entry.getKey();
+                String selectedProductCode = entry.getValue();
 
                 JPanel subItemsPanel = new JPanel();
                 GridBagLayout gridBagLayout = new GridBagLayout();
                 subItemsPanel.setLayout(gridBagLayout);
-
 
                 gbc.gridx = 0;
                 gbc.anchor = GridBagConstraints.NORTHWEST;
                 gbc.insets = new Insets(5, 5, 5, 5);
 
                 Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-                subItemsPanel.setBorder((emptyBorder));
+                subItemsPanel.setBorder(emptyBorder);
 
-                JLabel itemCodeLabel = new JLabel(product.getProductCode());
-                JLabel itemNameLabel = new JLabel(product.getName());
-                JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel(quantity, 0, Integer.MAX_VALUE, 1));
+                JLabel itemCodeLabel = new JLabel(selectedProductCode);
+                JLabel itemNameLabel = new JLabel(selectedProductName);
+                JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
                 Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
                 spinnerPreferredSize.width = 40; // Adjust the width as needed
                 quantitySpinner.setPreferredSize(spinnerPreferredSize);
@@ -644,57 +649,34 @@ public class ProductRecordForm extends StaffView {
                 gbc.gridx = 0;
                 gbc.gridy++;
                 gbc.weightx = 0.0;
-            }
+            }*/
             // Revalidate and repaint the panel to reflect the changes
             inSetPanel.revalidate();
             inSetPanel.repaint();
         });
+
 
         selectedPanel.add(selected);
         selectedPanel.add(itemSelected);
         selectedPanel.add(addButton);
         panel.add(selectedPanel, BorderLayout.CENTER);
 
-
-
         return panel;
     }
 
-    public void updateItemSelectedLabel(String selectedProductName, String selectedProductCode) {
-        // Find the selected product
-        Product selectedProduct = findProductByCode(filteredProducts, selectedProductCode);
 
-        if (selectedProduct != null) {
-            // Add the selected product to the map with an initial quantity of 1
-            selectedProductsMap.put(selectedProduct, selectedProductsMap.getOrDefault(selectedProduct, 0) + 1);
 
-            // Update the itemSelected label with the map of selected products
-            updateItemSelectedLabel();
-        }
-    }
-
-    private Product findProductByCode(List<Product> products, String productCode) {
-        for (Product product : products) {
-            if (product.getProductCode().equals(productCode)) {
-                return product;
-            }
-        }
-        return null;
-    }
-
-    private void updateItemSelectedLabel() {
-        StringBuilder labelText = new StringBuilder("Items Selected: ");
-        for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
-            Product product = entry.getKey();
-            int quantity = entry.getValue();
-            labelText.append(product.getName()).append(" (").append(product.getProductCode()).append(") x ").append(quantity).append(", ");
-        }
-
-    }
 
     private JSpinner createSpinner() {
         SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
         return new JSpinner(model);
+    }
+
+    public void updateItemSelectedLabel(String selectedProductName, String selectedProductCode) {
+        // Do something with the selected product information
+        // For example, update a JLabel with the selected product name and code
+        itemSelected.setText(selectedProductName );
+
     }
 
     private void validateSharedFields(){

@@ -23,7 +23,9 @@ public class FormController extends ViewController {
 
     }
 
+
     public List<Product> getAllProducts(){
+        allProducts = ProductDAO.getAllProducts();
         if(allProducts != null){
             return allProducts;
         }
