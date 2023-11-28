@@ -53,6 +53,7 @@ public class ProductRecordForm extends StaffView {
 
     JFormattedTextField quantityField;
     Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
+    private Map<Product, Integer> selectedProductsMap = new HashMap<>();
 
     //Locomotive
     private final Map<String, CustomInputField> locomotiveInputFields = new HashMap<>();
@@ -474,6 +475,9 @@ public class ProductRecordForm extends StaffView {
     }
 
     private JPanel trackPackPanel() {
+        List<Product> allProducts = formController.getAllProducts();
+        classMap.put("Starter Oval Track Pack", Track.class);
+        classMap.put("Extension Track Pack", Track.class);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -501,10 +505,30 @@ public class ProductRecordForm extends StaffView {
 
         //when any radio button is clicked it should open a modal and add it inside the panel
         starterOval.addActionListener(e -> {
+            String className = "Starter Oval Track Pack";
+            Class<?> classType = classMap.get(className);
+
+
+            List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
+
+            // Pass the correct list of filtered products to the modal
+            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(radioButtonsPanel), ProductRecordForm.this, filteredProducts);
+            modal.setVisible(true);
+
+
 
         });
 
         extension.addActionListener(e -> {
+            String className = "Extension Track Pack";
+            Class<?> classType = classMap.get(className);
+
+
+            List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
+
+            // Pass the correct list of filtered products to the modal
+            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(radioButtonsPanel), ProductRecordForm.this, filteredProducts);
+            modal.setVisible(true);
 
         });
 
@@ -533,16 +557,14 @@ public class ProductRecordForm extends StaffView {
 
     }
 
-    public void setProductSetModal(ProductSetModal productSetModal) {
-        this.productSetModal = productSetModal;
-    }
-    private ProductSetModal productSetModal;
+
     JLabel itemSelected = new JLabel();
 
     private JPanel trainSetsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         classMap.put("Locomotive", Locomotive.class);
         classMap.put("Rolling Stock", RollingStock.class);
+        classMap.put("Track", Track.class);
         classMap.put("Controller", Controller.class);
         classMap.put("Track Pack", TrackPack.class);
 
@@ -552,7 +574,7 @@ public class ProductRecordForm extends StaffView {
         JLabel title = new JLabel("Add products to set: ");
         row1.add(title);
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller", "Starter Oval Track Pack", "Extension Track Pack"};
+        String[] itemTypes = {"Locomotive", "Rolling Stock", "Track", "Controller", "Track Pack"};
         JComboBox<String> itemTypesComboBox = new JComboBox<>(itemTypes);
         row2.add(itemTypesComboBox);
         List<Product> allProducts = formController.getAllProducts();
@@ -673,8 +695,7 @@ public class ProductRecordForm extends StaffView {
     }
 
     public void updateItemSelectedLabel(String selectedProductName, String selectedProductCode) {
-        // Do something with the selected product information
-        // For example, update a JLabel with the selected product name and code
+
         itemSelected.setText(selectedProductName );
 
     }
