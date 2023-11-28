@@ -54,7 +54,7 @@ public class FulfilledOrdersView extends StaffView{
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
-        // Create a home button
+        /*// Create a home button
         JButton navigationButton = new JButton("Home");
         bottomPanel.add(navigationButton);
 
@@ -65,7 +65,7 @@ public class FulfilledOrdersView extends StaffView{
 
         // Add the bottom panel to the bottom of the frame
         add(bottomPanel, BorderLayout.SOUTH);
-        navigationButton.addActionListener(e -> fulfilledOrdersController.getNavigation().navigate(Navigation.STAFF));
+        navigationButton.addActionListener(e -> fulfilledOrdersController.getNavigation().navigate(Navigation.STAFF));*/
 
 
         // Create a JPanel for the scroll panel with table

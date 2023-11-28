@@ -44,10 +44,8 @@ public class ManageStockView extends StaffView {
         topPanel.add(row1);
 
 
-        JPanel bottomPanel = new JPanel();
+        /*JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        JButton productRecordButton = new JButton("Product Record");
-        bottomPanel.add(productRecordButton);
 
         // Create a Manage Order button
         JButton manageOrderButton = new JButton("Manage Order");
@@ -56,7 +54,7 @@ public class ManageStockView extends StaffView {
 
         // Add indentation between buttons using EmptyBorder
         int buttonIndentation = 10;
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));*/
 
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -77,8 +75,8 @@ public class ManageStockView extends StaffView {
 
 
         // Add the bottom panel to the bottom of the frame
-        add(bottomPanel, BorderLayout.SOUTH);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+       /* add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));*/
 
 
         // Create a JPanel for the scroll panel with product labels
@@ -123,13 +121,12 @@ public class ManageStockView extends StaffView {
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
 
-        manageOrderButton.addActionListener(e -> {
+        /*manageOrderButton.addActionListener(e -> {
             staffController.getNavigation().navigate(Navigation.MANAGE_ORDER);
             // Repopulate the table upon returning to the ManageStockView
             staffController.repopulateTable();
-        });
+        });*/
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
