@@ -10,6 +10,8 @@ import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -75,7 +77,13 @@ public class ProductRecordView extends StaffView {
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
 
         // Fetch all products from ProductDAO
-        List<Product> products = ProductDAO.getAllProducts();
+        List<Product> products = new ArrayList<>();
+        try {
+            products = ProductDAO.getAllProducts();
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Cannot connect to database. Product list is not loaded");
+        }
 
         // Add each product to the tableModel
         for (Product product : products) {
@@ -143,6 +151,7 @@ public class ProductRecordView extends StaffView {
 
 
         // Add a mouse listener to the "Edit" label
+        List<Product> finalProducts = products;
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -152,7 +161,7 @@ public class ProductRecordView extends StaffView {
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
                     // Define the action to take when the link is clicked
-                    Product product = products.get(row);
+                    Product product = finalProducts.get(row);
                     productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
                 }
             }
@@ -180,25 +189,31 @@ public class ProductRecordView extends StaffView {
     }
 
     private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
-        // Clear the existing rows in the table
-        tableModel.setRowCount(0);
+        try {
+            // Clear the existing rows in the table
+            tableModel.setRowCount(0);
 
-        // Get products based on the selected category from the DAO
-        List<Product> filteredProducts;
-        if ("All".equals(initialLetter)) {
-            // If "All" is selected, get all products
-            filteredProducts = ProductDAO.getAllProducts();
-        } else {
-            // Otherwise, get products for the selected category
-            filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            // Get products based on the selected category from the DAO
+            List<Product> filteredProducts;
+            if ("All".equals(initialLetter)) {
+                // If "All" is selected, get all products
+                filteredProducts = ProductDAO.getAllProducts();
+            } else {
+                // Otherwise, get products for the selected category
+                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            }
+
+            // Add each filtered product to the tableModel
+            for (Product product : filteredProducts) {
+
+                Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
+                tableModel.addRow(rowData);
+            }
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Cannot connect to database. Product list was not filtered.");
         }
 
-        // Add each filtered product to the tableModel
-        for (Product product : filteredProducts) {
-
-            Object[] rowData = {product.getProductCode(), product.getName(), productRecordController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-            tableModel.addRow(rowData);
-        }
 
     }
 

@@ -9,6 +9,7 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.customer.OrderHistoryView;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class OrderHistoryController extends ViewController {
@@ -27,7 +28,12 @@ public class OrderHistoryController extends ViewController {
 
     private void updateOrderHistory() {
         User currentUser = AppSessionCache.getInstance().getUserLoggedIn();
-        List<Order> orders = OrderDAO.getUserOrdersHistory(currentUser);
-        orderHistoryView.populateList(orders);
+        try {
+            List<Order> orders = OrderDAO.getUserOrdersHistory(currentUser);
+            orderHistoryView.populateList(orders);
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Latest order history was not loaded.");
+        }
     }
 }

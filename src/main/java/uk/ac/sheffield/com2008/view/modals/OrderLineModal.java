@@ -8,6 +8,8 @@ import uk.ac.sheffield.com2008.model.entities.Order;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -41,7 +43,13 @@ public class OrderLineModal extends JDialog {
         LinkedHashMap<String, String> fieldsMap = new LinkedHashMap<>();
         fieldsMap.put("Orders.orderNumber", String.valueOf(orderNum)); // Filter by order number
 
-        List<Order> orders = OrderDAO.getOrderListByFields(fieldsMap);
+        List<Order> orders = new ArrayList<>();
+        try {
+            orders = OrderDAO.getOrderListByFields(fieldsMap);
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Order list were not loaded");
+        }
 
         JTextArea orderLinesTextArea = new JTextArea(10, 30);
         orderLinesTextArea.setEditable(false);

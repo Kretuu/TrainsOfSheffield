@@ -1,13 +1,14 @@
 package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.staff.SalesController;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
-import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SalesView extends StaffView{
@@ -57,7 +58,13 @@ public class SalesView extends StaffView{
         monthlyOrdersPanel.setPreferredSize(new Dimension(400, 300));
 
         // Fetch all orders using OrderDAO
-        List<Order> orders = OrderDAO.getAllOrders();
+        List<Order> orders = new ArrayList<>();
+        try {
+            orders = OrderDAO.getAllOrders();
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Order list was not loaded");
+        }
 
         // Loop through each order and sum up the order prices to get totalSales
         for (Order order : orders) {

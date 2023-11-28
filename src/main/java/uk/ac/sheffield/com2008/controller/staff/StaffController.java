@@ -8,6 +8,7 @@ import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.ManageStockView;
 
 import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,13 @@ public class StaffController extends ViewController {
     }
 
     public void onNavigateTo(){
-        allProducts = ProductDAO.getAllProducts();
+        allProducts = new ArrayList<>();
+        try {
+            allProducts = ProductDAO.getAllProducts();
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Cannot connect to database. Product list was not updated");
+        }
         manageStockView.onRefresh();
     }
 
@@ -39,31 +46,42 @@ public class StaffController extends ViewController {
     public void updateProductQuantity (Product product, int quantity){
         product.setStock(quantity);
         // Update the product in the database
-        ProductDAO.updateProductStocks(product, quantity);
+        try {
+            ProductDAO.updateProductStocks(product, quantity);
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Cannot connect to database. Product quantity was not updated.");
+        }
     }
 
     // Method to repopulate the table with updated data
     public List<Product> repopulateTable() {
-        DefaultTableModel tableModel = manageStockView.getTableModel();
+        try {
+            DefaultTableModel tableModel = manageStockView.getTableModel();
 
-        if (tableModel != null) {
-            List<Product> updatedProducts = ProductDAO.getAllProducts(); // Fetch updated data from the database
+            if (tableModel != null) {
+                List<Product> updatedProducts = ProductDAO.getAllProducts();
 
-            // Clear existing rows in the table model
-            tableModel.setRowCount(0);
 
-            // Update the table with the fetched data
-            for (Product product : updatedProducts) {
-                Object[] rowData = {product.getProductCode(), product.getName(), determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-                tableModel.addRow(rowData);
+                // Clear existing rows in the table model
+                tableModel.setRowCount(0);
+
+                // Update the table with the fetched data
+                for (Product product : updatedProducts) {
+                    Object[] rowData = {product.getProductCode(), product.getName(), determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
+                    tableModel.addRow(rowData);
+                }
+                return updatedProducts; // Return the updated product list if needed
+            } else {
+                // Handle the case where tableModel is null
+                // Possibly throw an exception or log an error
+                return new ArrayList<>(); // Return an empty list or handle as needed
             }
-            return updatedProducts; // Return the updated product list if needed
-        } else {
-            // Handle the case where tableModel is null
-            // Possibly throw an exception or log an error
-            return new ArrayList<>(); // Return an empty list or handle as needed
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Cannot connect to database. Product list was not updated");
         }
-
+        return new ArrayList<>();
     }
 
     public String determineCustomCategory(String productCode) {
