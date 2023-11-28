@@ -51,10 +51,13 @@ public class OrderDAO {
         StringBuilder orderQueryBuilder = new StringBuilder();
         orderQueryBuilder.append("SELECT * FROM Orders ")
                 .append("LEFT OUTER JOIN OrderLines OL on Orders.orderNumber = OL.orderNumber ")
-                .append("LEFT OUTER JOIN Products ON OL.productCode = Products.productCode ")
-                .append("WHERE ");
-        fieldsMap.forEach((key, value) -> orderQueryBuilder.append(key).append(" = ? AND "));
-        orderQueryBuilder.setLength(orderQueryBuilder.length() - 5);
+                .append("LEFT OUTER JOIN Products ON OL.productCode = Products.productCode ");
+        if(fieldsMap.size() > 0) {
+            orderQueryBuilder.append("WHERE ");
+            fieldsMap.forEach((key, value) -> orderQueryBuilder.append(key).append(" = ? AND "));
+            orderQueryBuilder.setLength(orderQueryBuilder.length() - 5);
+        }
+
 
         String query = orderQueryBuilder.toString();
         String[] parameters = fieldsMap.values().toArray(new String[0]);
@@ -205,17 +208,19 @@ public class OrderDAO {
     }
 
     public static List<Order> getAllOrders() {
-        String query = "SELECT * FROM Orders";
-        List<Order> orders;
+        return getOrderListByFields(new LinkedHashMap<>());
 
-        try {
-            OrderMapper mapper = new OrderMapper();
-            orders = DatabaseConnectionHandler.select(mapper, query);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return orders;
+//        String query = "SELECT * FROM Orders";
+//        List<Order> orders;
+//
+//        try {
+//            OrderMapper mapper = new OrderMapper();
+//            orders = DatabaseConnectionHandler.select(mapper, query);
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return orders;
     }
 
     public static void updateOrderStatus(Order order) {

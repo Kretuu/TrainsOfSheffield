@@ -27,18 +27,17 @@ public class BankingDetailsDAO {
     }
 
     public static boolean hasUserBankingDetails(User user) throws SQLException {
-        return getUserBankingCard(user) != null;
+        return getUserBankingCardByUuid(user.getUuid()) != null;
     }
 
-
-    public static BankingCard getUserBankingCard(User user) throws SQLException {
+    public static BankingCard getUserBankingCardByUuid(String uuid) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM BankingDetails BD INNER JOIN Users U ON U.cardNumber = BD.cardNumber ");
         queryBuilder.append("WHERE U.uuid = ?");
         String query = queryBuilder.toString();
 
         BankingCardMapper mapper = new BankingCardMapper();
-        List<BankingCard> bankingCards = DatabaseConnectionHandler.select(mapper, query, user.getUuid());
+        List<BankingCard> bankingCards = DatabaseConnectionHandler.select(mapper, query, uuid);
 
         if (bankingCards.isEmpty()) return null;
         return bankingCards.get(0);
