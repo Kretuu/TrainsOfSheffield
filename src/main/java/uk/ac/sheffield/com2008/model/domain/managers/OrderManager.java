@@ -25,7 +25,7 @@ public class OrderManager {
      * Creates a new blank, pending order
      * @return fresh order
      */
-    public static Order createNewOrder(User user){
+    public static Order createNewOrder(User user) throws SQLException {
         OrderDAO.createOrder(user);
         return OrderDAO.getUsersBasket(user);
     }
@@ -36,7 +36,7 @@ public class OrderManager {
      * @param product the product object
      * @param quantity the quantity
      */
-    public static void addProductToOrder(Order order, Product product, int quantity){
+    public static void addProductToOrder(Order order, Product product, int quantity) throws SQLException {
         order.addProduct(product, quantity);
         OrderDAO.createOrderLine(order, product);
         OrderDAO.updateOrderTotalPrice(order);
@@ -48,7 +48,7 @@ public class OrderManager {
      * @param product product to modify quantity of
      * @param newQuantity new quantity of product
      */
-    public static void modifyProductQuantity(Order order, Product product, int newQuantity){
+    public static void modifyProductQuantity(Order order, Product product, int newQuantity) throws SQLException {
         OrderLine modifiedOrderLine = order.getOrderLineFromProduct(product);
         if(modifiedOrderLine == null) {
             throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
@@ -64,7 +64,7 @@ public class OrderManager {
      * @param order order in question
      * @param orderLine orderline to remove
      */
-    public static void deleteOrderline(Order order, OrderLine orderLine){
+    public static void deleteOrderline(Order order, OrderLine orderLine) throws SQLException {
         order.removeOrderline(orderLine);
         OrderDAO.deleteOrderline(order, orderLine);
         OrderDAO.updateOrderTotalPrice(order);
@@ -74,13 +74,13 @@ public class OrderManager {
      * Takes the entire order and updates it in the database.
      * Takes each associated orderline and does the same.
      */
-    public static void saveFullOrderState(Order order){
+    public static void saveFullOrderState(Order order) throws SQLException {
         order.calculateTotalPrice();
         OrderDAO.updateAllOrderlinesEntirely(order);
         OrderDAO.updateOrderEntirely(order);
     }
 
-    public static void updateUserBasket(User user) {
+    public static void updateUserBasket(User user) throws SQLException {
         Order usersBasket = OrderDAO.getUsersBasket(user);
         if(usersBasket == null) usersBasket = OrderManager.createNewOrder(user);
         user.setBasket(usersBasket);
@@ -109,7 +109,7 @@ public class OrderManager {
     }
 
     public static void validateOrder(Order order)
-            throws OrderQuantitiesInvalidException, OrderOutdatedException {
+            throws OrderQuantitiesInvalidException, OrderOutdatedException, SQLException {
         List<OrderLine> orderLines = order.getOrderLines();
 
         String[] productCodes = order.getOrderLines().stream()

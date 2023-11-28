@@ -9,6 +9,7 @@ import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -102,68 +103,74 @@ public class ManageOrdersView extends StaffView {
     }
 
     private void populateOrdersInTable(JPanel panelReference) {
-        // Fetch all orders using OrderDAO
-        List<Order> orders = OrderDAO.getAllOrders();
+        try {
+            // Fetch all orders using OrderDAO
+            List<Order> orders = OrderDAO.getAllOrders();
 
-        // Populate orders and order lines into the JTable
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+            // Populate orders and order lines into the JTable
+            DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
-        // Populate orders into the JTable
-        for (Order order : orders) {
-            Object[] rowData = {
-                    order.getOrderNumber(),
-                    order.getDateOrdered(),
-                    order.getStatus(),
-                    order.getTotalPrice(),
-                    "View"
-            };
-            tableModel.addRow(rowData);
+            // Populate orders into the JTable
+            for (Order order : orders) {
+                Object[] rowData = {
+                        order.getOrderNumber(),
+                        order.getDateOrdered(),
+                        order.getStatus(),
+                        order.getTotalPrice(),
+                        "View"
+                };
+                tableModel.addRow(rowData);
+            }
+
+            // Create a custom renderer for the fourth column (Action) - Set the text color to blue
+            table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    setOpaque(true);  // Ensure opaque is set to true
+                    if (value instanceof Component) {
+                        return (Component) value;
+                    }
+                    if (value instanceof String) {
+                        JLabel label = new JLabel((String) value);
+                        label.setHorizontalAlignment(SwingConstants.CENTER);
+                        label.setForeground(Color.BLUE); // Set the text color to blue
+                        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        return label;
+                    }
+                    return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                }
+            });
+
+            // Set the column alignment to center
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+            centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+            table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+
+            // Add a mouse listener to the "Edit" label
+            table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    int col = table.columnAtPoint(e.getPoint());
+
+                    // Check if the click is in the "Edit" column
+                    if (col == 4) {
+                        // Define the action to take when the label is clicked
+                        Order order = orders.get(row); // Retrieve the order from the list
+                        // Create an instance of the OrderLineModal class
+                        OrderLineModal modal = new OrderLineModal(manageOrderController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
+                        modal.setVisible(true); // Show the modal dialog
+                    }
+                }
+            });
+
+            // Disable column dragging
+            table.getTableHeader().setReorderingAllowed(false);
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Latest order list was not loaded");
         }
 
-        // Create a custom renderer for the fourth column (Action) - Set the text color to blue
-        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                setOpaque(true);  // Ensure opaque is set to true
-                if (value instanceof Component) {
-                    return (Component) value;
-                }
-                if (value instanceof String) {
-                    JLabel label = new JLabel((String) value);
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setForeground(Color.BLUE); // Set the text color to blue
-                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    return label;
-                }
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            }
-        });
-
-        // Set the column alignment to center
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-
-        // Add a mouse listener to the "Edit" label
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = table.rowAtPoint(e.getPoint());
-                int col = table.columnAtPoint(e.getPoint());
-
-                // Check if the click is in the "Edit" column
-                if (col == 4) {
-                    // Define the action to take when the label is clicked
-                    Order order = orders.get(row); // Retrieve the order from the list
-                    // Create an instance of the OrderLineModal class
-                    OrderLineModal modal = new OrderLineModal(manageOrderController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
-                    modal.setVisible(true); // Show the modal dialog
-                }
-            }
-        });
-
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
 
     }
 

@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -98,7 +100,13 @@ public class ManageStockView extends StaffView {
         };
 
         // Get products from the DAO
-        List<Product> products = ProductDAO.getAllProducts();
+        List<Product> products = new ArrayList<>();
+        try {
+            products = ProductDAO.getAllProducts();
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Product list was not loaded");
+        }
 
         // Add each product to the tableModel
         for (Product product : staffController.getAllProducts()) {
@@ -167,6 +175,7 @@ public class ManageStockView extends StaffView {
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         // Add a mouse listener to the "Edit" label
+        List<Product> finalProducts = products;
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -175,7 +184,7 @@ public class ManageStockView extends StaffView {
 
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
-                    Product product = products.get(row); // Retrieve the order from the list
+                    Product product = finalProducts.get(row); // Retrieve the order from the list
                     // Create an instance of the OrderLineModal class
                     EditProductStockModal modal = new EditProductStockModal(staffController, (JFrame) SwingUtilities.getWindowAncestor(productPanel), product, ManageStockView.this);
                     // Show the dialog
@@ -206,26 +215,32 @@ public class ManageStockView extends StaffView {
 
 
     private void filterTableByCategory(DefaultTableModel tableModel, String initialLetter) {
-        // Clear the existing rows in the table
-        tableModel.setRowCount(0);
+        try {
+            // Clear the existing rows in the table
+            tableModel.setRowCount(0);
 
-        // Get products based on the selected category from the DAO
-        List<Product> filteredProducts;
-        if ("All".equals(initialLetter)) {
-            // If "All" is selected, get all products
-            filteredProducts = staffController.getAllProducts();
-        } else {
-            // Otherwise, get products for the selected category
-            filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            // Get products based on the selected category from the DAO
+            List<Product> filteredProducts;
+            if ("All".equals(initialLetter)) {
+                // If "All" is selected, get all products
+                filteredProducts = staffController.getAllProducts();
+            } else {
+                // Otherwise, get products for the selected category
+                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            }
+
+            // Add each filtered product to the tableModel
+            for (Product product : filteredProducts) {
+
+                Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
+                tableModel.addRow(rowData);
+                //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
+            }
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Product list was not filtered");
         }
 
-        // Add each filtered product to the tableModel
-        for (Product product : filteredProducts) {
-
-            Object[] rowData = {product.getProductCode(), product.getName(), staffController.determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-            tableModel.addRow(rowData);
-            //System.out.println("Number of Rows in Table Model: " + tableModel.getRowCount());
-        }
 
     }
 

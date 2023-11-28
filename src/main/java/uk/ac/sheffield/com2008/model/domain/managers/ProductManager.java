@@ -6,8 +6,9 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.model.entities.products.Track;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class ProductManager {
     /**
@@ -92,7 +93,7 @@ public class ProductManager {
 
     }
 
-    public static ArrayList<ProductSetItem> fetchProductSetItems(ProductSet productSet){
-        return (ArrayList<ProductSetItem>) ProductDAO.getProductSetItems(productSet);
+    public static List<ProductSetItem> fetchProductSetItems(ProductSet productSet) throws SQLException {
+        return ProductDAO.getProductSetItems(productSet);
     }
 }

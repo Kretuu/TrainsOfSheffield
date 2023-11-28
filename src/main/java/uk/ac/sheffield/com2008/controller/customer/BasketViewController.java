@@ -36,6 +36,14 @@ public class BasketViewController extends ViewController {
         basketView.onRefresh();
     }
 
+    public void synchroniseDataWithDatabase() {
+        try {
+            OrderManager.updateUserBasket(user);
+        } catch (SQLException e) {
+            basketView.updateErrorMessage("Cannot connect to database");
+        }
+    }
+
     public Order getBasket(){
         return userBasket;
     }
@@ -47,8 +55,12 @@ public class BasketViewController extends ViewController {
 
     public void deleteOrderline(OrderLine orderline){
         System.out.println("deleting: " + orderline.getProduct().getName());
-        OrderManager.deleteOrderline(userBasket, orderline);
-        basketView.onRefresh();
+        try {
+            OrderManager.deleteOrderline(userBasket, orderline);
+            basketView.onRefresh();
+        } catch (SQLException e) {
+            basketView.updateErrorMessage("Cannot connect to database");
+        }
     }
 
     /**
@@ -75,7 +87,7 @@ public class BasketViewController extends ViewController {
             errorMessage = e.getMessage();
             basketView.onRefresh();
         } catch (OrderOutdatedException e) {
-            OrderManager.updateUserBasket(user);
+            synchroniseDataWithDatabase();
             errorMessage = e.getMessage();
             onNavigateTo();
         } finally {
@@ -84,7 +96,12 @@ public class BasketViewController extends ViewController {
     }
 
     public void onNavigateLeave(){
-        OrderManager.saveFullOrderState(userBasket);
+        try {
+            OrderManager.saveFullOrderState(userBasket);
+        } catch (SQLException e) {
+            //TODO Handle the message somewhere
+            System.out.println("Basket could not be saved");
+        }
     }
 
     public BankingCard getBankingCard(char[] password) throws SQLException, BankDetailsEncryptionException {

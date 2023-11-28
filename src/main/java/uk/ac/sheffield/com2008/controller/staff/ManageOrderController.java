@@ -13,7 +13,6 @@ import uk.ac.sheffield.com2008.view.staff.ManageOrdersView;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,29 +42,38 @@ public class ManageOrderController extends ViewController {
 
     public void deleteOrder (Order order){
         // Delete the order and the orderlines associated with the order number in the database
-        OrderDAO.deleteOrder(order);
+        try {
+            OrderDAO.deleteOrder(order);
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Order was not deleted");
+        }
     }
 
-    public List<Order> repopulateTable() {
-        DefaultTableModel tableModel = manageOrdersView.getTableModel();
+    public void repopulateTable() {
+        try {
+            DefaultTableModel tableModel = manageOrdersView.getTableModel();
 
-        if (tableModel != null) {
-            // Fetch updated data from the database
-            List<Order> updatedOrder = OrderDAO.getAllOrders();
+            if (tableModel != null) {
+                // Fetch updated data from the database
+                List<Order> updatedOrder = OrderDAO.getAllOrders();
 
-            // Clear existing rows in the table model
-            tableModel.setRowCount(0);
+                // Clear existing rows in the table model
+                tableModel.setRowCount(0);
 
-            // Update the table with the fetched data
-            for (Order order : updatedOrder) {
-                Object[] rowData = {order.getOrderNumber(),order.getDateOrdered(), order.getStatus(),order.getTotalPrice(),"View"};
-                tableModel.addRow(rowData);
+                // Update the table with the fetched data
+                for (Order order : updatedOrder) {
+                    Object[] rowData = {order.getOrderNumber(),order.getDateOrdered(), order.getStatus(),order.getTotalPrice(),"View"};
+                    tableModel.addRow(rowData);
+                }
+            } else {
+                // Handle the case where tableModel is null
+                // Possibly throw an exception or log an error
             }
-            return updatedOrder; // Return the updated product list if needed
-        } else {
-            // Handle the case where tableModel is null
-            // Possibly throw an exception or log an error
-            return new ArrayList<>(); // Return an empty list or handle as needed
+
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Latest order list was not loaded");
         }
 
     }

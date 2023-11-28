@@ -7,6 +7,7 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.ProductRecordView;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,13 @@ public class ProductRecordController extends ViewController {
     }
 
     public void onNavigateTo(){
-        allProducts = ProductDAO.getAllProducts();
-        productRecordView.onRefresh();
+        try {
+            allProducts = ProductDAO.getAllProducts();
+            productRecordView.onRefresh();
+        } catch (SQLException e) {
+            //TODO Error message
+            System.out.println("Could not connect to database. Latest products list was not fetched");
+        }
     }
 
     public List<Product> getAllProducts(){
