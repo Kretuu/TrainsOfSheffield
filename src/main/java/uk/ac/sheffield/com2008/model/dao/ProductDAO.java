@@ -1,17 +1,15 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
-import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
-import uk.ac.sheffield.com2008.model.entities.products.TrainSet;
 import uk.ac.sheffield.com2008.model.mappers.ProductMapper;
-import uk.ac.sheffield.com2008.model.mappers.ProductSetItemMapper;
+import uk.ac.sheffield.com2008.model.mappers.ProductSetMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProductDAO {
@@ -30,9 +28,7 @@ public class ProductDAO {
         if (productCodes.length < 1) return new ArrayList<>();
 
         StringBuilder stringBuilder = new StringBuilder("SELECT * FROM Products WHERE productCode IN (");
-        for (int i = 0; i < productCodes.length; i++) {
-            stringBuilder.append("?, ");
-        }
+        stringBuilder.append("?, ".repeat(productCodes.length));
         stringBuilder.setLength(stringBuilder.length() - 2);
         stringBuilder.append(")");
         String query = stringBuilder.toString();
@@ -68,18 +64,40 @@ public class ProductDAO {
 
 
     //TODO: Creating a new product that is "isSet" means also creating a new ProductSet db row
+    public static List<ProductSet> fetchProductSetItems(List<ProductSet> productSets) throws SQLException {
+        StringBuilder queryBuilder = new StringBuilder()
+                .append("SELECT * FROM ProductSets PS LEFT OUTER JOIN ProductSetItems PSI ON ")
+                .append("PS.setId = PSI.setId LEFT OUTER JOIN Products ON PSI.productCode = Products.productCode ")
+                .append("WHERE PS.productCode IN (");
 
-    public static List<ProductSetItem> getProductSetItems(ProductSet productSet) throws SQLException {
-        StringBuilder setItemsQueryBuilder = new StringBuilder();
-        setItemsQueryBuilder.append("SELECT * FROM ProductSets ")
-                .append("LEFT OUTER JOIN ProductSetItems PSI on ProductSets.setId = PSI.setId ")
-                .append("LEFT OUTER JOIN Products ON PSI.productCode = Products.productCode ")
-                .append("WHERE ProductSets.productCode = ?");
+        String[] productCodes = productSets.stream().map(ProductSet::getProductCode).toArray(String[]::new);
+        queryBuilder.append("?, ".repeat(productSets.size()));
+        queryBuilder.setLength(queryBuilder.length() - 2);
+        queryBuilder.append(")");
+        String query = queryBuilder.toString();
 
-        String query = setItemsQueryBuilder.toString();
+        ProductSetMapper mapper = new ProductSetMapper();
+        List<ProductSet> productSetItems = DatabaseConnectionHandler.select(mapper, query, (Object[]) productCodes);
 
-        ProductSetItemMapper mapper = new ProductSetItemMapper();
-        return DatabaseConnectionHandler.select(mapper, query, productSet.getProductCode());
+        if (productSetItems.isEmpty()) return productSets;
+        Map<String, ProductSet> productSetMap = productSets.stream()
+                .collect(Collectors.toMap(ProductSet::getProductCode, p -> p));
+
+        ProductSet currentSet = null;
+        String currentProductCode = "";
+        List<ProductSet> parsedProductSets = new ArrayList<>();
+        for (ProductSet productSet : productSetItems) {
+            if (currentSet != null && productSet.getProductCode().equals(currentProductCode)) {
+                currentSet.getSetItems().addAll(productSet.getSetItems());
+                continue;
+            }
+            currentProductCode = productSet.getProductCode();
+            currentSet = productSetMap.get(currentProductCode);
+            currentSet.setSetItems(productSet.getSetItems());
+            parsedProductSets.add(currentSet);
+        }
+
+        return parsedProductSets;
     }
 
     public static void updateProductStocks(Product product, int quantity) throws SQLException {
@@ -145,5 +163,3 @@ public class ProductDAO {
 
 
 }
-
-

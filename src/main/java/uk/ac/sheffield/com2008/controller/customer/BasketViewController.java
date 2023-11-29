@@ -101,7 +101,6 @@ public class BasketViewController extends ViewController {
         } catch (SQLException e) {
             navigation.setLayoutMessage("Basket error", "Basket could not be saved", true);
         }
-        navigation.setLayoutMessage("Basket", "Basket could not be saved", true);
     }
 
     public BankingCard getBankingCard(char[] password) throws SQLException, BankDetailsEncryptionException {

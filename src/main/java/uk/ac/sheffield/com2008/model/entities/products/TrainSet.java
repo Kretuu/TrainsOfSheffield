@@ -18,7 +18,11 @@ public class TrainSet extends ProductSet {
             ArrayList<ProductSetItem> setItems) {
         super(productCode, name, price, gauge, brand, isSet, stock, setName, setItems);
     }
-
+  
+    public TrainSet(String productCode, ProductSetItem productSetItem) {
+        super(productCode, productSetItem);
+    }
+  
     public String validateSet() {
         String errMsg = "<html><p>A Train Set must contain:</p>\n" +
                 "<ul>\n" +
@@ -66,5 +70,4 @@ public class TrainSet extends ProductSet {
         }
 
         return null;
-    }
 }

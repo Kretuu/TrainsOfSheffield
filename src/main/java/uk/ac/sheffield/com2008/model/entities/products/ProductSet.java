@@ -1,10 +1,8 @@
 package uk.ac.sheffield.com2008.model.entities.products;
 
 import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
-import uk.ac.sheffield.com2008.model.domain.managers.ProductManager;
 import uk.ac.sheffield.com2008.model.entities.Product;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +29,11 @@ public abstract class ProductSet extends Product {
         super(productCode, name, price, gauge, brand, isSet, stock);
         this.setName = setName;
         this.setItems = setItems;
+    }
+
+    protected ProductSet(String productCode, ProductSetItem productSetItem) {
+        super(productCode);
+        this.setItems = new ArrayList<>() {{ add(productSetItem); }};
     }
 
     /**
@@ -68,35 +71,18 @@ public abstract class ProductSet extends Product {
      */
     public void PrintFullSet() {
         System.out.println(setName + "CONTAINS: ");
-        setSetItems(fetchContainedItems());
         setItems.forEach(setItem -> {
             Product product = setItem.getProduct();
             System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + setItem.getQuantity());
         });
     }
 
-    public List<ProductSetItem> fetchContainedItems() {
-        List<ProductSetItem> setItems = null;
-        try {
-            setItems = ProductManager.fetchProductSetItems(this);
-        } catch (SQLException e) {
-            //TODO
-            throw new RuntimeException(e);
-        }
-        if(this.setItems.isEmpty()){
-            setSetItems(setItems);
-        }
-        return setItems;
-    }
 
     public void setSetItems(List<ProductSetItem> setItems){
         this.setItems = setItems;
     }
 
     public List<ProductSetItem> getSetItems() {
-        if(this.setItems.isEmpty()){
-            return fetchContainedItems();
-        }
         PrintFullSet();
         return this.setItems;
     }

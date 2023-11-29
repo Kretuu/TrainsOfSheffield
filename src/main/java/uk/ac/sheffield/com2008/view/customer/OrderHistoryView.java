@@ -5,7 +5,9 @@ import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.OrderTableMapper;
+import uk.ac.sheffield.com2008.view.modals.OrderModal;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +19,12 @@ public class OrderHistoryView extends CustomerView {
 
     public OrderHistoryView(OrderHistoryController controller) {
         this.controller = controller;
-        mapper = new OrderTableMapper();
+        mapper = new OrderTableMapper() {
+            @Override
+            public void onClick(Order order) {
+                new OrderModal(controller.getNavigation().getFrame(), order, "Order details").setVisible(true);
+            }
+        };
 
         initialiseUI();
     }
@@ -33,7 +40,12 @@ public class OrderHistoryView extends CustomerView {
            add(new CustomColumn(0.1, null));
         }};
         customTable = new CustomTable<>(columns);
-        add(customTable);
+
+        JScrollPane scrollPane = new JScrollPane(customTable,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(1300, 700));
+        add(scrollPane);
     }
 
 

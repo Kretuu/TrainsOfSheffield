@@ -21,6 +21,10 @@ public abstract class Product {
         this.isSet = isSet;
         this.stock = stock;
     }
+  
+    public Product(String productCode) {
+        this.productCode = productCode;
+    }
 
     @Override
     public String toString(){

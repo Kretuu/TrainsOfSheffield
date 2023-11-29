@@ -1,6 +1,8 @@
 package uk.ac.sheffield.com2008.model.domain.managers;
 
+import uk.ac.sheffield.com2008.exceptions.InvalidProductQuantityException;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
@@ -9,6 +11,8 @@ import uk.ac.sheffield.com2008.model.entities.products.Track;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProductManager {
     /**
@@ -93,9 +97,30 @@ public class ProductManager {
 
     }
 
-    public static List<ProductSetItem> fetchProductSetItems(ProductSet productSet) throws SQLException {
-        return ProductDAO.getProductSetItems(productSet);
+    public static List<Product> getAllProducts() throws SQLException {
+        List<Product> allProducts = ProductDAO.getAllProducts();
+        List<ProductSet> productSets = allProducts.stream()
+                .filter(product -> product instanceof ProductSet).map(product -> (ProductSet) product).toList();
+        List<ProductSet> filledProductSets = ProductDAO.fetchProductSetItems(productSets);
+
+        allProducts.removeAll(productSets);
+        allProducts.addAll(filledProductSets);
+        return allProducts;
     }
 
+    public static void updateStock(List<OrderLine> orderLines) throws SQLException, InvalidProductQuantityException {
+        String[] productCodes = orderLines.stream()
+                .map(orderLine -> orderLine.getProduct().getProductCode()).toArray(String[]::new);
+        Map<String, OrderLine> productMap = orderLines.stream()
+                .collect(Collectors.toMap(o -> o.getProduct().getProductCode(), o -> o));
+        List<Product> databaseProducts = ProductDAO.getProductsByCodes(productCodes);
+
+        for(Product dbProduct : databaseProducts) {
+            int currentStock = dbProduct.getStock() - productMap.get(dbProduct.getProductCode()).getQuantity();
+            if(currentStock < 0) throw new InvalidProductQuantityException();
+            ProductDAO.updateProductStocks(dbProduct, currentStock);
+        }
+
+    }
 
 }
