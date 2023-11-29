@@ -97,8 +97,15 @@ public class ProductManager {
 
     }
 
-    public static List<ProductSetItem> fetchProductSetItems(ProductSet productSet) throws SQLException {
-        return ProductDAO.getProductSetItems(productSet);
+    public static List<Product> getAllProducts() throws SQLException {
+        List<Product> allProducts = ProductDAO.getAllProducts();
+        List<ProductSet> productSets = allProducts.stream()
+                .filter(product -> product instanceof ProductSet).map(product -> (ProductSet) product).toList();
+        List<ProductSet> filledProductSets = ProductDAO.fetchProductSetItems(productSets);
+
+        allProducts.removeAll(productSets);
+        allProducts.addAll(filledProductSets);
+        return allProducts;
     }
 
     public static void updateStock(List<OrderLine> orderLines) throws SQLException, InvalidProductQuantityException {

@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductTableMapper;
@@ -26,9 +25,9 @@ public class ManageStockView extends StaffView {
             @Override
             public void onClick(Product product) {
                 new EditProductStockModal(
-                            staffController, staffController.getNavigation().getFrame(),
-                            product, ManageStockView.this
-                    ).setVisible(true);
+                        staffController, staffController.getNavigation().getFrame(),
+                        product, ManageStockView.this
+                ).setVisible(true);
             }
         };
 
@@ -88,11 +87,10 @@ public class ManageStockView extends StaffView {
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
 
         LinkedList<CustomColumn> columns = new LinkedList<>() {{
-            add(new CustomColumn(0.2, "Product Code"));
-            add(new CustomColumn(0.2, "Product Name"));
+            add(new CustomColumn(0.4, "Product Name"));
             add(new CustomColumn(0.2, "Category"));
             add(new CustomColumn(0.2, "Quantity"));
-            add(new CustomColumn(0.1, null));
+            add(new CustomColumn(0.2, null));
         }};
         customTable = new CustomTable<>(columns);
 

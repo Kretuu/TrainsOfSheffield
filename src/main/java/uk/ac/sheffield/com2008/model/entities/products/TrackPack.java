@@ -1,10 +1,8 @@
 package uk.ac.sheffield.com2008.model.entities.products;
 
 import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
-import uk.ac.sheffield.com2008.model.entities.Product;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,7 +13,7 @@ import java.util.List;
  */
 public class TrackPack extends ProductSet {
 
-    public enum TrackPackType {STARTER,EXTENSION};
+    public enum TrackPackType {STARTER,EXTENSION}
     protected TrackPackType trackPackType;
     public TrackPack(
             String productCode,
@@ -30,6 +28,10 @@ public class TrackPack extends ProductSet {
             ArrayList<ProductSetItem> setItems) {
         super(productCode, name, price, gauge, brand, isSet, stock, setName, setItems);
         this.trackPackType = type;
+    }
+
+    public TrackPack(String productCode, ProductSetItem productSetItem) {
+        super(productCode, productSetItem);
     }
 
     public String deriveName(){
