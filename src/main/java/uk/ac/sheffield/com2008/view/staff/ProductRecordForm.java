@@ -88,7 +88,7 @@ public class ProductRecordForm extends StaffView {
             "Track Pack", 'P'
     );
 
-    private final Map<JPanel, Map<String, CustomInputField>> categorySpecificFields = new HashMap<>();
+    private Map<JPanel, Map<String, CustomInputField>> categorySpecificFields = new HashMap<>();
 
     public ProductRecordForm(FormController formController) {
         this.formController = formController;
@@ -110,6 +110,20 @@ public class ProductRecordForm extends StaffView {
         itemSelectedTP = new JLabel("None");
         itemSelectedTS = new JLabel("None");
 
+        setPanels();
+
+        initializeUI();
+    }
+
+    public void onRefresh(){
+        removeAll();
+        setPanels();
+        initializeUI();
+        revalidate();
+        repaint();
+    }
+
+    private void setPanels(){
         locomotivePanel = locomotivePanel();
         rollingStockPanel = rollingStocksPanel();
         trackPanel = trackPanel();
@@ -117,20 +131,13 @@ public class ProductRecordForm extends StaffView {
         trainSetPanel = trainSetsPanel();
         trackPackPanel = trackPackPanel();
         currentPanel = locomotivePanel;
-
+        categorySpecificFields = new HashMap<>();
         categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
         categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
         categorySpecificFields.put(trackPanel, trackInputFields);
         categorySpecificFields.put(controllerPanel, controllerInputFields);
         categorySpecificFields.put(trainSetPanel, trainSetInputFields);
         categorySpecificFields.put(trackPackPanel, trackPackInputFields);
-
-        initializeUI();
-    }
-
-    public void onRefresh(){
-        removeAll();
-        initializeUI();
     }
 
     private void initializeUI() {

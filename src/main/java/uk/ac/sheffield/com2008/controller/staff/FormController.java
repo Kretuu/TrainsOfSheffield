@@ -16,7 +16,7 @@ import java.util.List;
 
 public class FormController extends ViewController {
 
-    private List<Product> allProducts;
+    private List<Product> allProducts = new ArrayList<>();
     ProductRecordForm productRecordForm;
 
     public FormController(NavigationManager navigationManager, Navigation id){
@@ -26,21 +26,17 @@ public class FormController extends ViewController {
     }
 
     public void onNavigateTo(){
-        allProducts = getAllProducts();
-        productRecordForm.onRefresh();
-    }
-
-
-    public List<Product> getAllProducts(){
         try {
             allProducts = ProductDAO.getAllProducts();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if(allProducts != null){
-            return allProducts;
-        }
-        return new ArrayList<>();
+        productRecordForm.onRefresh();
+    }
+
+
+    public List<Product> getAllProducts(){
+        return allProducts;
     }
 
 
