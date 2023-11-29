@@ -48,10 +48,8 @@ public class ManageStockView extends StaffView {
         topPanel.add(row1);
 
 
-        JPanel bottomPanel = new JPanel();
+        /*JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        JButton productRecordButton = new JButton("Product Record");
-        bottomPanel.add(productRecordButton);
 
         // Create a Manage Order button
         JButton manageOrderButton = new JButton("Manage Order");
@@ -60,7 +58,7 @@ public class ManageStockView extends StaffView {
 
         // Add indentation between buttons using EmptyBorder
         int buttonIndentation = 10;
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));*/
 
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -81,8 +79,8 @@ public class ManageStockView extends StaffView {
 
 
         // Add the bottom panel to the bottom of the frame
-        add(bottomPanel, BorderLayout.SOUTH);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+       /* add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));*/
 
 
         // Create a JPanel for the scroll panel with product labels
@@ -106,13 +104,12 @@ public class ManageStockView extends StaffView {
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         add(productPanel);
 
-        productRecordButton.addActionListener(e -> staffController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
-
+        /*
         manageOrderButton.addActionListener(e -> {
             staffController.getNavigation().navigate(Navigation.MANAGE_ORDER);
             // Repopulate the table upon returning to the ManageStockView
             staffController.onNavigateTo();
-        });
+        });*/
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
@@ -136,11 +133,11 @@ public class ManageStockView extends StaffView {
             return "C";
         } else if ("Track".equals(selectedCategory)) {
             return "R";
-        } else if ("Rolling Stocks".equals(selectedCategory)) {
+        } else if ("Rolling Stock".equals(selectedCategory)) {
             return "S";
-        } else if ("Train Sets".equals(selectedCategory)) {
+        } else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        } else if ("Train Packs".equals(selectedCategory)) {
+        } else if ("Train Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";

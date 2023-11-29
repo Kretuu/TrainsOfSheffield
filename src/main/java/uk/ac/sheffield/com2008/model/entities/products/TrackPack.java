@@ -32,6 +32,10 @@ public class TrackPack extends ProductSet {
         this.trackPackType = type;
     }
 
+    public String deriveName(){
+        return setName + "," + trackPackType.toString();
+    }
+
     /**
      * Takes the database name
      * @param name name in database format (e.g "Mega Cool Track Pack,EXTENSION")

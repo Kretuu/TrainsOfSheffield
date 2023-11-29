@@ -62,20 +62,13 @@ public class ProductMapper implements RowMapper<Product> {
             case 'P':{
                 List<Object> parsedParams = TrackPack.parseName(name);
                 TrackPack.TrackPackType type = TrackPack.TrackPackType.valueOf((String) parsedParams.get(1));
-                if(type == TrackPack.TrackPackType.STARTER){
-                    return new StarterOvalTrackPack(productCode, name, price, gauge, brand, isSet, stock,
-                            (String) parsedParams.get(0),
-                            type,
-                            new ArrayList<>());
-                }else{
-                    return new ExtensionTrackPack(productCode, name, price, gauge, brand, isSet, stock,
-                            (String) parsedParams.get(0),
-                            type,
-                            new ArrayList<>());
-                }
+                return new TrackPack(productCode, name, price, gauge, brand, isSet, stock,
+                        (String) parsedParams.get(0),
+                        type,
+                        new ArrayList<>());
             }
             default:
-                return new Product(productCode, name, price, gauge, brand, isSet, stock);
+                throw new RuntimeException("Product read of invalid type (check the product codes)");
 
         }
     }

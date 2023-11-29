@@ -4,7 +4,6 @@ import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.util.ScheduledExecutorManager;
 
-
 public class Main {
     public static void main(String[] args) {
         DatabaseConnectionHandler.connectToDatabase();
