@@ -1,5 +1,7 @@
 package uk.ac.sheffield.com2008.model.entities;
 
+import java.util.Objects;
+
 public abstract class Product {
     public enum Gauge {OO, TT, N}
     private String productCode;
@@ -10,7 +12,7 @@ public abstract class Product {
     private boolean isSet;
     private int stock;
 
-    public Product(String productCode, String name, float price, Gauge gauge, String brand, boolean isSet, int stock) {
+    public Product(String productCode, String name, float price, Gauge gauge, String brand, boolean isSet, int stock){
         this.productCode = productCode;
         this.name = name;
         this.price = price;
@@ -19,19 +21,18 @@ public abstract class Product {
         this.isSet = isSet;
         this.stock = stock;
     }
-
+  
     public Product(String productCode) {
         this.productCode = productCode;
     }
 
     @Override
-    public String toString() {
+    public String toString(){
         return productCode + " '" + name + "' " + gauge.toString() + " Gauge - " + brand + " " + price + " QTY: " + stock;
     }
 
     /**
      * Returns the products presentable name, not how the name is in the database
-     *
      * @return
      */
     public String printName() {
@@ -96,7 +97,7 @@ public abstract class Product {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Product)) return false;
+        if(!(obj instanceof Product)) return false;
         Product object = (Product) obj;
         return this.name.equals(object.getName())
                 && this.isSet == object.isSet()

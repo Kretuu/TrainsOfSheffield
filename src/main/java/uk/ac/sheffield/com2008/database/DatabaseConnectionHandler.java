@@ -54,6 +54,7 @@ public class DatabaseConnectionHandler {
             }
 
             return statement.execute();
+
         }
     }
 

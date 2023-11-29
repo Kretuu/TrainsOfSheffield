@@ -73,4 +73,8 @@ public class Track extends Product {
         output.add(TrackType.valueOf(nameAttributes[1]));
         return output;
     }
+
+    public TrackType getTrackType(){
+        return trackType;
+    }
 }

@@ -110,26 +110,56 @@ public class ProductDAO {
      * Insert product into database
      * @param product said product
      */
-    public static void createProduct(Product product){
+    public static void createProduct(Product product) throws SQLException{
+
         String insertQuery = "INSERT INTO Products (productCode, name, price, gauge, brand, isSet, stock)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
+                " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        DatabaseConnectionHandler.insert(
+                insertQuery,
+                product.getProductCode(),
+                product.getName(),
+                product.getPrice(),
+                product.getGauge().toString(),
+                product.getBrand(),
+                product.isSet(),
+                product.getStock()
+        );
+
+        /*
+        if(product.isSet() && product instanceof ProductSet){
+            ProductSet set = (ProductSet) product;
+
+            // create a new set linking to this product code
+            String newSetQuery = "INSERT INTO ProductSets (productCode)" +
+                    " VALUES (?)";
+            int setId;
             DatabaseConnectionHandler.insert(
-                    insertQuery,
-                    product.getProductCode(),
-                    product.getName(),
-                    product.getPrice(),
-                    product.getGauge().toString(),
-                    product.getBrand(),
-                    product.isSet(),
-                    product.getStock()
+                    newSetQuery,
+                    product.getProductCode());
+
+            String reselectSetQuery = "SELECT * FROM ProductSets WHERE productCode = (?)";
+            DatabaseConnectionHandler.select()
+
+            //create new set items that link to this set id
+            ArrayList<ProductSetItem> setItems = (ArrayList<ProductSetItem>) set.getSetItems();
+            StringBuilder newSetItemQuery = new StringBuilder()
+                    .append("INSERT INTO ProductSetItems (setId, productCode, quantity) VALUES ");
+            LinkedList<Object> params = new LinkedList<>();
+            for(ProductSetItem setItem : setItems){
+                newSetItemQuery.append("(?, ?, ?), ");
+                params.add(setId);
+                params.add(setItem.getProduct().getProductCode());
+                params.add(setItem.getQuantity());
+            }
+            newSetItemQuery.setLength(newSetItemQuery.length() - 2);
+
+            DatabaseConnectionHandler.insert(
+                    newSetItemQuery.toString(), params.toArray()
             );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
         }
+         */
     }
 
 
 }
-
-

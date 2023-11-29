@@ -86,4 +86,10 @@ public abstract class ProductSet extends Product {
         PrintFullSet();
         return this.setItems;
     }
+
+    public String getSetName(){
+        return setName;
+    }
+
+    public abstract String validateSet();
 }
