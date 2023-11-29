@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.model.entities.products;
 
 import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
+import uk.ac.sheffield.com2008.model.entities.Product;
 
 import java.util.ArrayList;
 import java.util.List;
