@@ -20,7 +20,7 @@ public class ScheduledExecutorManager {
                 try {
                     User refreshedUser = UserDAO.getUserByUuid(user.getUuid());
                     if(refreshedUser != null) AppSessionCache.getInstance().setUserLoggedIn(refreshedUser);
-                    OrderManager.updateUserBasket(user);
+                    OrderManager.updateUserBasket(refreshedUser);
                 } catch (SQLException e) {
                     System.out.println("Could not connect to database. User session was not updated");
                 }
