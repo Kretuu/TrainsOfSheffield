@@ -64,4 +64,49 @@ public class FieldsValidationManager {
         if(ValidationManager.isBankingCardValid(cardNumber)) return null;
         return "Banking card number is not valid";
     }
+
+    public static String validatePrice(String text){
+        if(PatternMatcher.matchRegex("^\\d+(\\.\\d{2})?$", text)){
+            Float price = Float.parseFloat(text);
+            if(price == 0){
+                return "Cannot set price to 0";
+            }
+            return null;
+        }
+        return "Not a valid price";
+    }
+
+    public static String validateProductCode(String text, Character c){
+
+
+        if (text.length() > 0 && text.charAt(0) == c) {
+
+            String regex = "^\\d{3,5}$";
+            String remainingString = text.substring(1);
+
+            if (remainingString.matches(regex)) {
+               return null;
+            } else {
+                return "Invalid Product Code. Must be: {character} + 3-5 numbers";
+            }
+        } else {
+            return "First character must be '" + c + "'";
+        }
+    }
+
+    public static String validateForLength(String text, Integer minLength){
+        if(text.length() >= minLength){
+            return null;
+        }
+        return "Must be at least " + minLength + " characters";
+    }
+
+    public static String validateEra(String text){
+        String regex = "^(1[0-1]|[1-9])$";
+        if(text.matches(regex)){
+            return null;
+        }
+        return "Era must be between 1 and 11";
+
+    }
 }

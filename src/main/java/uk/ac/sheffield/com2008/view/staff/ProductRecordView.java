@@ -84,14 +84,6 @@ public class ProductRecordView extends StaffView {
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
-        // Create a JPanel for the bottom section with BoxLayout in Y_AXIS
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        JButton navigationButton = new JButton("Home");
-        bottomPanel.add(navigationButton);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
-        navigationButton.addActionListener(e -> productRecordController.getNavigation().navigate(Navigation.STAFF));
-        add(bottomPanel, BorderLayout.SOUTH);
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {

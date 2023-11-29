@@ -9,7 +9,29 @@ public class RollingStock extends Product {
 
     private String mark; //company or standard, (GWR,LNER, BR Mk1, BR Mk2, BR Mk3)
     private String kind; //Corridor, Open, Mail Van, Shisha Lounge
-    public enum Class_{THIRD, SECOND, FIRST, STANDARD, NULL};
+    public enum Class_{
+        THIRD("Third"),
+        SECOND("Second"),
+        FIRST("First"),
+        STANDARD("Standard");
+
+        private final String name;
+        Class_(String name){
+            this.name = name;
+        }
+
+        public String deriveName(){
+            return this.name;
+        }
+        public static RollingStock.Class_ deriveType(String name){
+            for(RollingStock.Class_ d : RollingStock.Class_.values()){
+                if(d.deriveName().equals(name)){
+                    return d;
+                }
+            }
+            return null;
+        }
+    };
     private Class_ class_;
     private int era; //1-11
 
@@ -63,6 +85,13 @@ public class RollingStock extends Product {
      */
     public String deriveName(){
         String output = mark + ",";
+
+        if(kind != null){
+            output += kind + ",";
+        }
+        else{
+            output += "NULL,";
+        }
         if(class_ != null){
             output += class_ + ",";
         }else{
@@ -83,7 +112,7 @@ public class RollingStock extends Product {
 
         output.add(nameAttributes[0]);
         output.add(nameAttributes[1].equals("NULL") ? null : nameAttributes[1]);
-        output.add(Class_.valueOf(nameAttributes[2]));
+        output.add(nameAttributes[2].equals("NULL") ? null : Class_.valueOf(nameAttributes[2]));
         output.add(Integer.parseInt(nameAttributes[3]));
         return output;
     }

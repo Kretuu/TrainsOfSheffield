@@ -2,7 +2,7 @@ package uk.ac.sheffield.com2008.model.entities;
 
 import java.util.Objects;
 
-public class Product {
+public abstract class Product {
     public enum Gauge {OO, TT, N}
     private String productCode;
     private String name;
@@ -103,7 +103,5 @@ public class Product {
                 && this.productCode.equals(object.getProductCode());
     }
 
-    public String deriveName(){
-        return name;
-    }
+    public abstract String deriveName();
 }

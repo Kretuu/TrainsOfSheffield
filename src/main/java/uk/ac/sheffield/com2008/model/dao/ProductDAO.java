@@ -83,6 +83,32 @@ public class ProductDAO {
         String updateQuery = "UPDATE Products SET stock = ? WHERE productCode = ?";
         DatabaseConnectionHandler.update(updateQuery, quantity, product.getProductCode());
     }
+
+
+    /**
+     * Insert product into database
+     * @param product said product
+     */
+    public static void createProduct(Product product){
+        String insertQuery = "INSERT INTO Products (productCode, name, price, gauge, brand, isSet, stock)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            DatabaseConnectionHandler.insert(
+                    insertQuery,
+                    product.getProductCode(),
+                    product.getName(),
+                    product.getPrice(),
+                    product.getGauge().toString(),
+                    product.getBrand(),
+                    product.isSet(),
+                    product.getStock()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
 
 

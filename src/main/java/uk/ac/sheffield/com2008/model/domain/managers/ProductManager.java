@@ -96,4 +96,6 @@ public class ProductManager {
     public static List<ProductSetItem> fetchProductSetItems(ProductSet productSet) throws SQLException {
         return ProductDAO.getProductSetItems(productSet);
     }
+
+
 }

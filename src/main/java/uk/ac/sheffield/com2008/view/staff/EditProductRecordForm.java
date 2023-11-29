@@ -10,13 +10,12 @@ public class EditProductRecordForm extends StaffView{
     private final EditFormController editFormController;
 
     public EditProductRecordForm(EditFormController editFormController) {
+        super();
         this.editFormController = editFormController;
         initializeUI();
     }
-
     private void initializeUI() {
         setLayout(new GridBagLayout());
-
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
@@ -95,16 +94,6 @@ public class EditProductRecordForm extends StaffView{
         JTextField priceField = new JTextField();
         add(priceField, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.gridwidth = 1;
-        add(new JLabel("Quantity: "), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 6;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        JTextField QuantityField = new JTextField();
-        add(QuantityField, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 7;

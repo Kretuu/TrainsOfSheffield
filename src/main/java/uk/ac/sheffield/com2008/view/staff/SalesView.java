@@ -70,11 +70,7 @@ public class SalesView extends StaffView{
         gbc.gridx = 1;
         add(totalSalesPanel, gbc);
 
-        // Create the bottom panel for navigation to Home
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Align the button to the right
-        JButton navigationButton = new JButton("Home");
-        bottomPanel.add(navigationButton);
+
 
         GridBagConstraints gbcBottom = new GridBagConstraints();
         gbcBottom.gridx = 0;
@@ -83,10 +79,6 @@ public class SalesView extends StaffView{
         gbcBottom.anchor = GridBagConstraints.WEST;
         gbcBottom.insets = new Insets(90, 10, 10, 10); // Add padding
 
-        // Add the bottom panel to the main frame using GridBagLayout constraints
-        add(bottomPanel, gbcBottom);
-        // Action listener for home button
-        navigationButton.addActionListener(e -> salesController.getNavigation().navigate(Navigation.STAFF));
 
     }
 

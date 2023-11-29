@@ -41,18 +41,11 @@ public class ManageOrdersView extends StaffView {
         topPanel.add(row1);
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel bottomPanel = new JPanel();
+        /*JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         // Create a Fulfilled Orders button
         JButton fulfilledOrdersButton = new JButton("Fulfilled Orders");
         bottomPanel.add(fulfilledOrdersButton);
-
-        // Create a Sales button
-        JButton salesButton = new JButton("Sales");
-        bottomPanel.add(salesButton);
-
-        JButton navigationButton = new JButton("Home");
-        bottomPanel.add(navigationButton);
 
 
         // Add indentation between buttons using EmptyBorder
@@ -61,9 +54,8 @@ public class ManageOrdersView extends StaffView {
 
         // Add the bottom panel to the bottom of the frame
         add(bottomPanel, BorderLayout.SOUTH);
-        fulfilledOrdersButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.FULFILLED_ORDERS));
-        salesButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.SALES));
-        navigationButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.STAFF));
+        fulfilledOrdersButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.FULFILLED_ORDERS));*/
+
 
         final JPanel panel = new JPanel(); // Making 'panel' final
 
