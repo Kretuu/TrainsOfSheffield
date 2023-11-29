@@ -17,4 +17,8 @@ public class TrainSet extends ProductSet{
             ArrayList<ProductSetItem> setItems) {
         super(productCode, name, price, gauge, brand, isSet, stock, setName, setItems);
     }
+
+    public String validateSet() {
+        return null;
+    }
 }

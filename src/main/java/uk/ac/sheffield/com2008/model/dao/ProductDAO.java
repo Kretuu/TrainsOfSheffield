@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
 import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
+import uk.ac.sheffield.com2008.model.entities.products.TrainSet;
 import uk.ac.sheffield.com2008.model.mappers.ProductMapper;
 import uk.ac.sheffield.com2008.model.mappers.ProductSetItemMapper;
 
@@ -90,6 +91,18 @@ public class ProductDAO {
      * @param product said product
      */
     public static void createProduct(Product product){
+        if(product.isSet() && product instanceof ProductSet){
+            ProductSet set = (ProductSet) product;
+            // create a new set linking to this product code
+            // with this products set name
+
+            //create new set items that link to this set id
+            System.out.println("will create trainset of name:" + set.getName());
+            System.out.println("set name:" + set.getSetName());
+            return;
+        }
+
+
         String insertQuery = "INSERT INTO Products (productCode, name, price, gauge, brand, isSet, stock)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
