@@ -15,17 +15,18 @@ public abstract class UserView extends View {
         Map<Navigation, JButton> navigationMap = new LinkedHashMap<>();
 
         User user = AppSessionCache.getInstance().getUserLoggedIn();
-        if(user != null){
-            if(user.getRoles().contains(User.Role.STAFF))
-                navigationMap.put(Navigation.STAFF, new JButton("Staff Area"));
-
-            if(user.getRoles().contains(User.Role.CUSTOMER))
-                navigationMap.put(Navigation.ORDER_HISTORY, new JButton("Order History"));
-        }
 
         navigationMap.put(Navigation.CUSTOMER, new JButton("Browse Items"));
         navigationMap.put(Navigation.BASKET, new JButton("Basket"));
         navigationMap.put(Navigation.MANAGE_PROFILE, new JButton("Manage Profile"));
+
+        if(user != null){
+            if(user.getRoles().contains(User.Role.CUSTOMER))
+                navigationMap.put(Navigation.ORDER_HISTORY, new JButton("Order History"));
+
+            if(user.getRoles().contains(User.Role.STAFF))
+                navigationMap.put(Navigation.STAFF, new JButton("Staff Area"));
+        }
 
         setNavigation(navigationMap);
     }
