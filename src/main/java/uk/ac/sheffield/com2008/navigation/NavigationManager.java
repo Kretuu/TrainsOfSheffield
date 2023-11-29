@@ -9,6 +9,7 @@ import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.controller.customer.ManageProfileController;
 import uk.ac.sheffield.com2008.controller.customer.OrderHistoryController;
+import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
 import uk.ac.sheffield.com2008.controller.staff.*;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.listeners.NavigationFrameWindowListener;
@@ -86,6 +87,7 @@ public class NavigationManager {
         new SalesController(this, Navigation.SALES);
         new ManageProfileController(this, Navigation.MANAGE_PROFILE);
         new ProvideAddressController(this, Navigation.PROVIDE_ADDRESS);
+        new ManageUserRolesController(this, Navigation.MANAGER);
     }
 
     public void registerController(Navigation id, ViewController controller) {

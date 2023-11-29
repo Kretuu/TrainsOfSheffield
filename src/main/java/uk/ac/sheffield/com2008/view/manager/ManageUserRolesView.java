@@ -1,5 +1,6 @@
 package uk.ac.sheffield.com2008.view.manager;
 
+import org.w3c.dom.css.Rect;
 import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.User;
@@ -9,6 +10,7 @@ import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ManagerUserTableMapper;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,8 +19,9 @@ public class ManageUserRolesView extends ManagerView {
     private final ManageUserRolesController controller;
     private final JPanel content;
     private final JButton promoteUserButton;
-    private final CustomTable<User> customTable;
+    private CustomTable<User> customTable;
     private CustomInputField userEmail;
+    private JPanel panel;
     private final ManagerUserTableMapper mapper;
     public ManageUserRolesView(ManageUserRolesController controller) {
         this.controller = controller;
@@ -41,21 +44,56 @@ public class ManageUserRolesView extends ManagerView {
     private void initialiseUI() {
         content.setLayout(new BorderLayout());
 
-        JPanel headerPanel = new JPanel(new GridLayout(1, 2, 30, 0));
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+
+        JLabel appointStaffTitle = new JLabel("Appoint staff");
+        appointStaffTitle.setFont(new Font(null, Font.BOLD, 16));
+        appointStaffTitle.setBorder(new EmptyBorder(15, 0, 15, 0));
+        appointStaffTitle.setAlignmentX(CENTER_ALIGNMENT);
+
+        JPanel appointStaffContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel appointStaffForm = new JPanel(new GridLayout(1, 2, 30, 0));
 
         userEmail = new CustomInputField("Email", this::updateButtonState, true);
         userEmail.setValidationFunction(() -> verifyCustomerEmail(userEmail.getjTextField().getText()));
-        userEmail.addToPanel(headerPanel);
+        userEmail.addToPanel(appointStaffForm);
 
+        JPanel buttonPanel = new JPanel();
         promoteUserButton.addActionListener(e -> controller.appointStaffRole(userEmail.getjTextField().getText()));
-        headerPanel.add(promoteUserButton);
+        buttonPanel.add(promoteUserButton);
+        appointStaffForm.add(buttonPanel);
+        appointStaffContainer.add(appointStaffForm);
 
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        centerPanel.add(customTable);
+        headerPanel.add(appointStaffTitle);
+        headerPanel.add(appointStaffContainer);
+
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        JLabel tableTitle = new JLabel("Staff users");
+        tableTitle.setFont(new Font(null, Font.BOLD, 16));
+        tableTitle.setBorder(new EmptyBorder(15, 0,  15, 0));
+        tableTitle.setAlignmentX(CENTER_ALIGNMENT);
+
+        JScrollPane scrollPane = new JScrollPane(customTable,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(1300, 500));
+
+
+        centerPanel.add(new JSeparator());
+        centerPanel.add(tableTitle);
+        centerPanel.add(scrollPane);
+
+        content.add(headerPanel, BorderLayout.NORTH);
+        content.add(centerPanel, BorderLayout.CENTER);
 
     }
 
-    public void populateTable(List<User> staffList) { customTable.populateTable(staffList, mapper); }
+    public void populateTable(List<User> staffList) {
+        customTable.populateTable(staffList, mapper);
+    }
 
     private void updateButtonState() {
         promoteUserButton.setEnabled(!userEmail.getjTextField().getText().isEmpty() && userEmail.isValid());

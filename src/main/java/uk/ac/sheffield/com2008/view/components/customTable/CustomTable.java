@@ -17,7 +17,7 @@ public class CustomTable<Type> extends JPanel {
     private final int columns;
     private final LinkedList<String> headers;
     private final LinkedList<Double> weights;
-    private final JPanel mainPanel = new JPanel(new GridBagLayout());
+    private JPanel mainPanel = new JPanel(new GridBagLayout());
     private Font defaultFont;
     private Border defaultBorder;
 
@@ -84,7 +84,9 @@ public class CustomTable<Type> extends JPanel {
      */
     public void populateTable(List<Type> objects, TableMapper<Type> mapper){
         List<LinkedList<Object>> orderColumns = objects.stream().map(mapper::constructColumns).toList();
-        mainPanel.removeAll();
+        removeAll();
+        mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(Colors.TABLE_CONTENT);
         constructHeader();
 
         GridBagConstraints c = new GridBagConstraints();
@@ -104,9 +106,10 @@ public class CustomTable<Type> extends JPanel {
                     cellElement = new JPanel();
                     cellElement.setBackground(Colors.TABLE_CONTENT);
                     component.setPreferredSize(new Dimension(component.getPreferredSize().width, 26));
+                    component.setMaximumSize(new Dimension(component.getPreferredSize().width, 26));
                     cellElement.setBorder(BorderFactory.createCompoundBorder(
                             new MatteBorder(0, 0, 1, 0, Color.BLACK),
-                            new EmptyBorder(4, 10, 4, 0)
+                            new EmptyBorder(3, 10, 3, 0)
                     ));
                     cellElement.add(component);
                 } else {
@@ -123,5 +126,8 @@ public class CustomTable<Type> extends JPanel {
         Dimension preferredDimension = mainPanel.getPreferredSize();
         preferredDimension.width = 1300;
         mainPanel.setPreferredSize(preferredDimension);
+        add(mainPanel);
+        revalidate();
+        repaint();
     }
 }

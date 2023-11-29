@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ManageUserRolesController extends ViewController {
     private final ManageUserRolesView manageUserRolesView;
-    private List<User> customerList;
-    private List<User> staffList;
+    private List<User> standardUserList = new ArrayList<>();
+    private List<User> staffList = new ArrayList<>();
 
     public ManageUserRolesController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
@@ -31,17 +31,19 @@ public class ManageUserRolesController extends ViewController {
     public void onNavigateTo() {
         List<User> allUsers = new ArrayList<>();
         try {
-            allUsers = UserDAO.getAllUsers();
+            allUsers = UserDAO.getAllUsers().stream().filter(user -> user.getAddress() != null).toList();
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Manage User Roles Error",
                     "Could not connect to database. Users list was not fetched.", true);
         }
 
+//        standardUserList = new ArrayList<>();
+//        staffList = new ArrayList<>();
         for(User user : allUsers) {
-            if(user.hasRole(User.Role.CUSTOMER) && !user.hasRole(User.Role.STAFF)) {
-                customerList.add(user);
-            } else if (user.hasRole(User.Role.STAFF) && !user.hasRole(User.Role.MANAGER)) {
+            if(!user.hasRole(User.Role.STAFF)) {
+                standardUserList.add(user);
+            } else if (!user.hasRole(User.Role.MANAGER)) {
                 staffList.add(user);
             }
         }
@@ -60,7 +62,7 @@ public class ManageUserRolesController extends ViewController {
             navigation.setLayoutMessage("Manage User Roles", messageBuilder.toString(), false);
 
             staffList.remove(user);
-            customerList.add(user);
+            standardUserList.add(user);
             manageUserRolesView.populateTable(staffList);
             return;
         } catch (SQLException e) {
@@ -83,7 +85,7 @@ public class ManageUserRolesController extends ViewController {
             navigation.setLayoutMessage("Manage User Roles", messageBuilder.toString(), false);
 
             staffList.add(user);
-            customerList.remove(user);
+            standardUserList.remove(user);
             manageUserRolesView.populateTable(staffList);
             return;
         } catch (SQLException e) {
@@ -98,6 +100,6 @@ public class ManageUserRolesController extends ViewController {
     }
 
     public boolean isCustomerEmailValid(String email) {
-        return customerList.stream().anyMatch(customer -> customer.getEmail().equals(email));
+        return standardUserList.stream().anyMatch(customer -> customer.getEmail().equals(email));
     }
 }

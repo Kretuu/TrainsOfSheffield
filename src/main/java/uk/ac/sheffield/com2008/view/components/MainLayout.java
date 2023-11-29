@@ -37,7 +37,7 @@ public class MainLayout extends JPanel {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel welcomeLabel = new JLabel("Welcome");
+        JLabel welcomeLabel = new JLabel("Welcome to Trains Of Sheffield shop ");
         topPanel.add(welcomeLabel, BorderLayout.WEST);
 
         navigation.setLayout(new BoxLayout(navigation, BoxLayout.X_AXIS));

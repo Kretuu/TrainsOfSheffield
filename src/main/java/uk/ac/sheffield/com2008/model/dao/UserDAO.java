@@ -39,6 +39,7 @@ public class UserDAO {
         String query = queryBuilder.toString();
 
         UserMapper mapper = new UserMapper();
+        if(fieldName == null) return DatabaseConnectionHandler.select(mapper, query);
         return DatabaseConnectionHandler.select(mapper, query, value);
     }
 
