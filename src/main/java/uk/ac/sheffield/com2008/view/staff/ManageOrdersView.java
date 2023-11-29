@@ -3,24 +3,33 @@ package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
+import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
+import uk.ac.sheffield.com2008.view.components.customTable.mappers.OrderTableMapper;
 import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 import java.util.List;
 
 
 public class ManageOrdersView extends StaffView {
 
     ManageOrderController manageOrderController;
-    private JTable table;
+    private CustomTable<Order> customTable;
+    private final OrderTableMapper mapper;
 
     public ManageOrdersView(ManageOrderController manageOrderController) {
         this.manageOrderController = manageOrderController;
+        this.mapper = new OrderTableMapper() {
+            @Override
+            public void onClick(Order order) {
+                new OrderLineModal(
+                            manageOrderController, manageOrderController.getNavigation().getFrame(), order
+                    ).setVisible(true);
+            }
+        };
 
         initializeUI();
     }
@@ -35,7 +44,7 @@ public class ManageOrdersView extends StaffView {
 
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         //Create a label for Manage Orders
-        JLabel viewLabel = new JLabel("Manage Orders");
+        JLabel viewLabel = new JLabel("Confirm Orders");
         // Add the top panel to the top of the frame
         row1.add(viewLabel);
         topPanel.add(row1);
@@ -71,88 +80,27 @@ public class ManageOrdersView extends StaffView {
         // Create a JPanel for the scroll panel with table
 
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        String[] columnNames = {"Order Number", "Date Ordered", "Status", "Total Price", "Action"};
 
-        // Create a DefaultTableModel with column names and no data initially
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        LinkedList<CustomColumn> columns = new LinkedList<>() {{
+            add(new CustomColumn(0.2, "ID"));
+            add(new CustomColumn(0.2, "Date"));
+            add(new CustomColumn(0.2, "Status"));
+            add(new CustomColumn(0.2, "Total price"));
+            add(new CustomColumn(0.1, null));
+        }};
+        customTable = new CustomTable<>(columns);
 
-        // Create the JTable using the DefaultTableModel
-        table = new JTable(tableModel);
-        table.setEnabled(false);
-
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(customTable,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(1300, 700));
         panel.add(scrollPane);
-        this.add(panel);
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
-
-        // Create a custom renderer for the fourth column (Action) - Set the text color to blue
-        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                setOpaque(true);  // Ensure opaque is set to true
-                if (value instanceof Component) {
-                    return (Component) value;
-                }
-                if (value instanceof String) {
-                    JLabel label = new JLabel((String) value);
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    label.setForeground(Color.BLUE); // Set the text color to blue
-                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    return label;
-                }
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            }
-        });
-
-        // Set the column alignment to center
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
-
-        // Add a mouse listener to the "Edit" label
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = table.rowAtPoint(e.getPoint());
-                int col = table.columnAtPoint(e.getPoint());
-
-                // Check if the click is in the "Edit" column
-                if (col == 4) {
-                    // Define the action to take when the label is clicked
-                    Order order = manageOrderController.getAllOrders().get(row); // Retrieve the order from the list
-                    // Create an instance of the OrderLineModal class
-                    OrderLineModal modal = new OrderLineModal(
-                            manageOrderController, manageOrderController.getNavigation().getFrame(), order
-                    );
-                    modal.setVisible(true); // Show the modal dialog
-                }
-            }
-        });
+        add(panel);
     }
 
     public void populateOrdersInTable() {
-        // Fetch all orders using OrderDAO
         List<Order> orders = manageOrderController.getAllOrders();
-
-        // Populate orders and order lines into the JTable
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        tableModel.setRowCount(0);
-
-        // Populate orders into the JTable
-        for (Order order : orders) {
-            Object[] rowData = {
-                    order.getOrderNumber(),
-                    order.getDateOrdered(),
-                    order.getStatus(),
-                    order.getTotalPrice(),
-                    "View"
-            };
-            tableModel.addRow(rowData);
-        }
+        customTable.populateTable(orders, mapper);
     }
 }

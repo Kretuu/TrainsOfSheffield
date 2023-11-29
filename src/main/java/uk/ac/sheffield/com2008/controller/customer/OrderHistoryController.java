@@ -11,6 +11,7 @@ import uk.ac.sheffield.com2008.view.customer.OrderHistoryView;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderHistoryController extends ViewController {
     private final OrderHistoryView orderHistoryView;
@@ -29,7 +30,9 @@ public class OrderHistoryController extends ViewController {
     private void updateOrderHistory() {
         User currentUser = AppSessionCache.getInstance().getUserLoggedIn();
         try {
-            List<Order> orders = OrderDAO.getUserOrdersHistory(currentUser);
+            List<Order> orders = OrderDAO.getUserOrdersHistory(currentUser)
+                    .stream().sorted((o1, o2) -> o2.getDateOrdered().compareTo(o1.getDateOrdered()))
+                    .collect(Collectors.toList());
             orderHistoryView.populateList(orders);
         } catch (SQLException e) {
             navigation.setLayoutMessage(

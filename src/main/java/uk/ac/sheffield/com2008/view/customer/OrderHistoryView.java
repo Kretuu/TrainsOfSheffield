@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.OrderTableMapper;
+import uk.ac.sheffield.com2008.view.modals.OrderModal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,12 @@ public class OrderHistoryView extends CustomerView {
 
     public OrderHistoryView(OrderHistoryController controller) {
         this.controller = controller;
-        mapper = new OrderTableMapper();
+        mapper = new OrderTableMapper() {
+            @Override
+            public void onClick(Order order) {
+                new OrderModal(controller.getNavigation().getFrame(), order, "Order details").setVisible(true);
+            }
+        };
 
         initialiseUI();
     }
