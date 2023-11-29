@@ -36,7 +36,7 @@ public class ProductSetModal extends JDialog {
 
         // Create and add radio buttons for each product
         for (Product product : filteredProducts) {
-            JRadioButton radioButton = new JRadioButton(product.getName());
+            JRadioButton radioButton = new JRadioButton(product.printName());
             radioButton.setActionCommand(product.getProductCode());
             radioButton.addActionListener(e -> {
                 // Retrieve the selected product name using the action command (product code)
@@ -45,24 +45,15 @@ public class ProductSetModal extends JDialog {
                 String selectedProductName = findProductNameByCode(filteredProducts, selectedProductCode);
                 System.out.println("Selected Product Name: " + selectedProductName);
                 // Update the itemSelected label in ProductRecordForm
-                productRecordForm.updateItemSelectedLabel(selectedProductName, selectedProductCode);
 
+                productRecordForm.setSelectedSetProduct(product);
             });
             buttonGroup.add(radioButton);
             radioButtonsPanel.add(radioButton);
         }
-
-
         itemsPanel.add(new JScrollPane(radioButtonsPanel), BorderLayout.CENTER);
         panel.add(itemsPanel, BorderLayout.CENTER);
-
-
-
         setContentPane(panel);
-
-
-
-
     }
 
 
