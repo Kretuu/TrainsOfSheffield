@@ -66,6 +66,10 @@ public class User {
         return roles.contains(role);
     }
 
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
     public PersonalDetails getPersonalDetails() {
         return personalDetails;
     }

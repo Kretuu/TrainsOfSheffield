@@ -17,27 +17,29 @@ import java.util.List;
 //related to User entity.
 public class UserDAO {
     public static User getUserByEmail(String email) throws SQLException {
-        return getUserByField("email", email);
+        List<User> users = getUsersByField("email", email);
+        return users.isEmpty() ? null : users.get(0);
     }
 
     public static User getUserByUuid(String uuid) throws SQLException {
-        return getUserByField("uuid", uuid);
+        List<User> users = getUsersByField("uuid", uuid);
+        return users.isEmpty() ? null : users.get(0);
     }
 
-    private static User getUserByField(String fieldName, Object value) throws SQLException {
+    public static List<User> getAllUsers() throws SQLException {
+        return getUsersByField(null, null);
+    }
+
+    private static List<User> getUsersByField(String fieldName, Object value) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT uuid, email, forename, surname, roles, Users.houseNumber, Users.postcode, ")
                 .append("roadName, cityName FROM Users LEFT OUTER JOIN Address A ON ")
-                .append("Users.postcode = A.postcode AND Users.houseNumber = A.houseNumber WHERE ")
-                .append(fieldName).append(" = ?");
+                .append("Users.postcode = A.postcode AND Users.houseNumber = A.houseNumber");
+        if(fieldName != null) queryBuilder.append(" WHERE ").append(fieldName).append(" = ?");
         String query = queryBuilder.toString();
 
         UserMapper mapper = new UserMapper();
-        List<User> users = DatabaseConnectionHandler.select(mapper, query, value);
-
-        if (users.isEmpty()) return null;
-
-        return users.get(0);
+        return DatabaseConnectionHandler.select(mapper, query, value);
     }
 
     public static User verifyPassword(String userEmail, char[] password) throws SQLException {
