@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.model.dao;
 
 import uk.ac.sheffield.com2008.database.DatabaseConnectionHandler;
+import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.model.mappers.ProductMapper;
@@ -8,6 +9,7 @@ import uk.ac.sheffield.com2008.model.mappers.ProductSetMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -125,27 +127,33 @@ public class ProductDAO {
                 product.getStock()
         );
 
-        /*
-        if(product.isSet() && product instanceof ProductSet){
+
+        if(product.isSet() && product instanceof ProductSet) {
             ProductSet set = (ProductSet) product;
 
             // create a new set linking to this product code
             String newSetQuery = "INSERT INTO ProductSets (productCode)" +
                     " VALUES (?)";
-            int setId;
             DatabaseConnectionHandler.insert(
                     newSetQuery,
                     product.getProductCode());
 
-            String reselectSetQuery = "SELECT * FROM ProductSets WHERE productCode = (?)";
-            DatabaseConnectionHandler.select()
+            String reselectSetQuery = "SELECT * FROM ProductSets PS WHERE productCode = (?)";
+            ProductSetMapper mapper = new ProductSetMapper();
+
+            List<ProductSet> pSet = DatabaseConnectionHandler.select(
+                    mapper,
+                    reselectSetQuery,
+                    product.getProductCode());
+            if(pSet.isEmpty()) throw new RuntimeException();
+            int setId = (int) pSet.get(0).getSetId();
 
             //create new set items that link to this set id
             ArrayList<ProductSetItem> setItems = (ArrayList<ProductSetItem>) set.getSetItems();
             StringBuilder newSetItemQuery = new StringBuilder()
                     .append("INSERT INTO ProductSetItems (setId, productCode, quantity) VALUES ");
             LinkedList<Object> params = new LinkedList<>();
-            for(ProductSetItem setItem : setItems){
+            for (ProductSetItem setItem : setItems) {
                 newSetItemQuery.append("(?, ?, ?), ");
                 params.add(setId);
                 params.add(setItem.getProduct().getProductCode());
@@ -158,7 +166,6 @@ public class ProductDAO {
             );
 
         }
-         */
     }
 
 

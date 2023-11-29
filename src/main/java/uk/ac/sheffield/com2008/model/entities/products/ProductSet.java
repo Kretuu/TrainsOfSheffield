@@ -94,4 +94,8 @@ public abstract class ProductSet extends Product {
     }
 
     public abstract String validateSet();
+
+    public long getSetId(){
+        return setId;
+    }
 }
