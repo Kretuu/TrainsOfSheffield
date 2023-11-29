@@ -13,14 +13,15 @@ public class ProductSetMapper implements RowMapper<ProductSet> {
     public ProductSet mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         ProductSetItemMapper productSetItemMapper = new ProductSetItemMapper();
         String productCode = resultSet.getString("PS.productCode");
+        long setId = resultSet.getLong("PS.setId");
 
         ProductSetItem productSetItem = productSetItemMapper.mapResultSetToEntity(resultSet);
         switch (productCode.charAt(0)) {
             case 'M' -> {
-                return new TrainSet(productCode, productSetItem);
+                return new TrainSet(productCode, setId, productSetItem);
             }
             case 'P' -> {
-                return new TrackPack(productCode, productSetItem);
+                return new TrackPack(productCode, setId, productSetItem);
             }
         }
 

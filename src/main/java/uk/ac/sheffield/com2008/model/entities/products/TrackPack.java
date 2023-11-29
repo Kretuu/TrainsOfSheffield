@@ -30,8 +30,8 @@ public class TrackPack extends ProductSet {
         this.trackPackType = type;
     }
 
-    public TrackPack(String productCode, ProductSetItem productSetItem) {
-        super(productCode, productSetItem);
+    public TrackPack(String productCode, long setId, ProductSetItem productSetItem) {
+        super(productCode, setId, productSetItem);
     }
 
     public String deriveName(){

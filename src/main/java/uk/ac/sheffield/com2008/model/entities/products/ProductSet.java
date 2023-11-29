@@ -14,6 +14,7 @@ public abstract class ProductSet extends Product {
 
     //protected int setId;
     protected String setName;
+    private long setId;
     protected List<ProductSetItem> setItems;
 
     protected ProductSet(
@@ -31,8 +32,9 @@ public abstract class ProductSet extends Product {
         this.setItems = setItems;
     }
 
-    protected ProductSet(String productCode, ProductSetItem productSetItem) {
+    protected ProductSet(String productCode, long setId, ProductSetItem productSetItem) {
         super(productCode);
+        this.setId = setId;
         this.setItems = new ArrayList<>() {{ add(productSetItem); }};
     }
 
