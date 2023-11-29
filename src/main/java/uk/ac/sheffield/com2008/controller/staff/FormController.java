@@ -7,6 +7,7 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,11 @@ public class FormController extends ViewController {
 
 
     public List<Product> getAllProducts(){
-        allProducts = ProductDAO.getAllProducts();
+        try {
+            allProducts = ProductDAO.getAllProducts();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if(allProducts != null){
             return allProducts;
         }
@@ -46,7 +51,12 @@ public class FormController extends ViewController {
             return;
         }
         //Check if product code already exists
-        Product existsProduct = ProductDAO.getProductByCode(productCode);
+        Product existsProduct = null;
+        try {
+            existsProduct = ProductDAO.getProductByCode(productCode);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if(existsProduct != null){
             productRecordForm.setErrorMessage("Error: Product of code " + productCode + " already exists");
             return;

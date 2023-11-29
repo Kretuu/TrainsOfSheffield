@@ -105,12 +105,12 @@ public class ManageStockView extends StaffView {
         this.add(productPanel);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-
+        /*
         manageOrderButton.addActionListener(e -> {
             staffController.getNavigation().navigate(Navigation.MANAGE_ORDER);
             // Repopulate the table upon returning to the ManageStockView
             staffController.onNavigateTo();
-        });
+        });*/
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
