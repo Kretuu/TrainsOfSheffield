@@ -10,6 +10,7 @@ import uk.ac.sheffield.com2008.view.staff.FulfilledOrdersView;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FulfilledOrdersController extends ViewController {
 
@@ -25,7 +26,9 @@ public class FulfilledOrdersController extends ViewController {
 
     public void onNavigateTo(){
         try {
-            fulfilledOrders = OrderDAO.getFulfilledOrders();
+            fulfilledOrders = OrderDAO.getFulfilledOrders()
+                    .stream().sorted((o1, o2) -> o2.getDateOrdered().compareTo(o1.getDateOrdered()))
+                    .collect(Collectors.toList());
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Fulfilled Orders Error",

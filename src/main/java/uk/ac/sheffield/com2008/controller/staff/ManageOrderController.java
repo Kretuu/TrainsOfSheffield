@@ -13,7 +13,9 @@ import uk.ac.sheffield.com2008.view.staff.ManageOrdersView;
 import javax.swing.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ManageOrderController extends ViewController {
@@ -30,7 +32,11 @@ public class ManageOrderController extends ViewController {
 
     public void onNavigateTo(){
         try {
-            allOrders = OrderDAO.getAllOrders();
+            LinkedHashMap<String, String> params = new LinkedHashMap<>();
+            params.put("status", "CONFIRMED");
+            allOrders = OrderDAO.getOrderListByFields(params)
+                    .stream().sorted((o1, o2) -> o2.getDateOrdered().compareTo(o1.getDateOrdered()))
+                    .collect(Collectors.toList());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

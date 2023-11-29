@@ -3,30 +3,37 @@ package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.staff.FulfilledOrdersController;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
+import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
+import uk.ac.sheffield.com2008.view.components.customTable.mappers.OrderTableMapper;
 import uk.ac.sheffield.com2008.view.modals.FulfilledOrderLineModal;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FulfilledOrdersView extends StaffView {
 
     FulfilledOrdersController fulfilledOrdersController;
-
-    private JTable table;
+    private CustomTable<Order> customTable;
+    private final OrderTableMapper mapper;
 
     public FulfilledOrdersView(FulfilledOrdersController fulfilledOrdersController) {
         this.fulfilledOrdersController = fulfilledOrdersController;
+        this.mapper = new OrderTableMapper() {
+            @Override
+            public void onClick(Order order) {
+                new FulfilledOrderLineModal(
+                            fulfilledOrdersController, fulfilledOrdersController.getNavigation().getFrame(), order
+                    ).setVisible(true);
+            }
+        };
 
         initializeUI();
     }
 
     public void initializeUI() {
-
         final JPanel panel = new JPanel(); // Making 'panel' final
 
         setLayout(new BorderLayout());
@@ -62,90 +69,29 @@ public class FulfilledOrdersView extends StaffView {
 
         // Create a JPanel for the scroll panel with table
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        String[] columnNames = {"Order Number", "Date Ordered", "Status", "Total Price", "Action"};
 
-        // Create a DefaultTableModel with column names and no data initially
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        LinkedList<CustomColumn> columns = new LinkedList<>() {{
+            add(new CustomColumn(0.2, "ID"));
+            add(new CustomColumn(0.2, "Date"));
+            add(new CustomColumn(0.2, "Status"));
+            add(new CustomColumn(0.2, "Total price"));
+            add(new CustomColumn(0.1, null));
+        }};
+        customTable = new CustomTable<>(columns);
 
-        // Create the JTable using the DefaultTableModel
-        table = new JTable(tableModel);
-        table.setEnabled(false);
-
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(customTable,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(1300, 700));
         panel.add(scrollPane);
-        this.add(panel);
+
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
-
-        // Create a custom renderer for the view hyperlink column
-        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                setOpaque(true);  // Ensure opaque is set to true
-                if (value instanceof Component) {
-                    return (Component) value;
-                }
-                if (value instanceof String) {
-                    JLabel label = new JLabel((String) value);
-                    label.setForeground(Color.BLUE.darker()); // Set the text color to blue
-                    label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    return label;
-                }
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            }
-        });
-
-        // Set the column alignment to center
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
+        add(panel);
     }
 
     public void populateOrdersInTable() {
-        // Fetch all fulfilled orders using OrderDAO
         List<Order> orders = fulfilledOrdersController.getFulfilledOrders();
-
-        // Populate orders and order lines into the JTable
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        tableModel.setRowCount(0);
-
-        // Populate orders into the JTable
-        for (Order order : orders) {
-            Object[] rowData = {
-                    order.getOrderNumber(),
-                    order.getDateOrdered(),
-                    order.getStatus(),
-                    order.getTotalPrice(),
-                    "View"
-            };
-            tableModel.addRow(rowData);
-        }
-
-        // Add a mouse listener to the "Edit" label
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = table.rowAtPoint(e.getPoint());
-                int col = table.columnAtPoint(e.getPoint());
-
-                // Check if the click is in the "Edit" column
-                if (col == 4) {
-                    // Define the action to take when the label is clicked
-                    Order order = orders.get(row); // Retrieve the order from the list
-                    // Create an instance of the FulfilledOrderLineModal class
-                    FulfilledOrderLineModal modal = new FulfilledOrderLineModal(
-                            fulfilledOrdersController, fulfilledOrdersController.getNavigation().getFrame(), order
-                    );
-                    modal.setVisible(true); // Show the modal dialog
-                }
-            }
-        });
-
+        customTable.populateTable(orders, mapper);
     }
 
 }

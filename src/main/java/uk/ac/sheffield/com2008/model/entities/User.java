@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.model.entities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class User {
     private final String uuid;
@@ -66,6 +67,10 @@ public class User {
         return roles.contains(role);
     }
 
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
     public PersonalDetails getPersonalDetails() {
         return personalDetails;
     }
@@ -79,7 +84,7 @@ public class User {
 
         public static List<Role> parseRoles(String rolesString) {
             if (rolesString == null) return new ArrayList<>();
-            return Arrays.stream(rolesString.split(";")).map(Role::valueOf).toList();
+            return Arrays.stream(rolesString.split(";")).map(Role::valueOf).collect(Collectors.toList());
         }
 
         public static String parseRolesToString(List<Role> roles) {

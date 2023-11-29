@@ -1,7 +1,6 @@
 package uk.ac.sheffield.com2008.model.domain.managers;
 
-import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
-import uk.ac.sheffield.com2008.exceptions.UserHasNoBankDetailsException;
+import uk.ac.sheffield.com2008.exceptions.*;
 import uk.ac.sheffield.com2008.model.dao.BankingDetailsDAO;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.BankingCard;
@@ -63,5 +62,28 @@ public class UserManager {
     public static boolean validateUserBankingCard(User user) throws SQLException {
         BankingCard bankingCard = BankingDetailsDAO.getUserBankingCardByUuid(user.getUuid());
         return bankingCard != null && bankingCard.checkValidity();
+    }
+
+    public static User appointStaff(String email) throws SQLException, UserNotExistsException, UserAlreadyHasRoleException {
+        User user = UserDAO.getUserByEmail(email);
+        if(user == null) throw new UserNotExistsException();
+
+        if(user.hasRole(User.Role.STAFF))
+            throw new UserAlreadyHasRoleException("User has already been staff member");
+
+        user.addRole(User.Role.STAFF);
+        UserDAO.updateUser(user);
+        return user;
+    }
+
+    public static void revokeStaff(User user) throws SQLException, BadRequestException, UserNotExistsException {
+        User refreshedUser = UserDAO.getUserByUuid(user.getUuid());
+        if(refreshedUser == null) throw new UserNotExistsException();
+
+        if(!refreshedUser.hasRole(User.Role.STAFF)) throw new BadRequestException("Given user is not a staff");
+        if(refreshedUser.hasRole(User.Role.MANAGER)) throw new BadRequestException("Manager cannot get staff role revoked");
+
+        refreshedUser.removeRole(User.Role.STAFF);
+        UserDAO.updateUser(refreshedUser);
     }
 }
