@@ -48,8 +48,7 @@ public class TrainSet extends ProductSet {
                     return errMsg;
                 }
             }
-            if (product instanceof TrackPack) {
-                TrackPack trackpack = (TrackPack) product;
+            if (product instanceof TrackPack trackpack) {
                 if (trackpack.trackPackType == TrackPack.TrackPackType.STARTER) {
                     hasStarterOval = true;
                     if (setItem.getQuantity() > 1) {

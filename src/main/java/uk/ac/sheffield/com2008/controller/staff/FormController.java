@@ -74,7 +74,14 @@ public class FormController extends ViewController {
             }
         }
 
-        ProductDAO.createProduct(loadedProduct);
+        try{
+            ProductDAO.createProduct(loadedProduct);
+        }catch(SQLException e){
+            navigation.setLayoutMessage("Insertion Error",
+                    "Could not connect to database",
+                    true);
+            e.printStackTrace();
+        }
 
         //finally navigate back
         getNavigation().navigate(Navigation.PRODUCT_RECORD);
