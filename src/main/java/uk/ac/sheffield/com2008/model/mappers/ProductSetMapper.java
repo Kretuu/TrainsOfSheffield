@@ -15,13 +15,15 @@ public class ProductSetMapper implements RowMapper<ProductSet> {
         String productCode = resultSet.getString("PS.productCode");
         long setId = resultSet.getLong("PS.setId");
 
-        ProductSetItem productSetItem = productSetItemMapper.mapResultSetToEntity(resultSet);
-        switch (productCode.charAt(0)) {
-            case 'M' -> {
-                return new TrainSet(productCode, setId, productSetItem);
-            }
-            case 'P' -> {
-                return new TrackPack(productCode, setId, productSetItem);
+        if(resultSet.getString("name") != null) {
+            ProductSetItem productSetItem = productSetItemMapper.mapResultSetToEntity(resultSet);
+            switch (productCode.charAt(0)) {
+                case 'M' -> {
+                    return new TrainSet(productCode, setId, productSetItem);
+                }
+                case 'P' -> {
+                    return new TrackPack(productCode, setId, productSetItem);
+                }
             }
         }
 
