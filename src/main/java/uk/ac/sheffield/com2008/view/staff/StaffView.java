@@ -26,7 +26,7 @@ public abstract class StaffView extends View {
                 navigationMap.put(Navigation.FULFILLED_ORDERS, new JButton("Fulfilled Orders"));
                 navigationMap.put(Navigation.SALES, new JButton("Sales"));}
 
-            else if (user.getRoles().contains(User.Role.MANAGER)) {
+            if (user.getRoles().contains(User.Role.MANAGER)) {
                 navigationMap.put(Navigation.MANAGER, new JButton("Manager Area"));
             }
 
