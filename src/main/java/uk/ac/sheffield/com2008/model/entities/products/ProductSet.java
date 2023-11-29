@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.domain.managers.ProductManager;
 import uk.ac.sheffield.com2008.model.entities.Product;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public abstract class ProductSet extends Product {
 
     //protected int setId;
     protected String setName;
-    protected ArrayList<ProductSetItem> setItems;
+    protected List<ProductSetItem> setItems;
 
     protected ProductSet(
             String productCode,
@@ -26,7 +27,7 @@ public abstract class ProductSet extends Product {
             boolean isSet,
             int stock,
             String setName,
-            ArrayList<ProductSetItem> setItems) {
+            List<ProductSetItem> setItems) {
         super(productCode, name, price, gauge, brand, isSet, stock);
         this.setName = setName;
         this.setItems = setItems;
@@ -65,7 +66,7 @@ public abstract class ProductSet extends Product {
     /**
      * Prints the contents of this product set
      */
-    public void PrintFullSet(){
+    public void PrintFullSet() {
         System.out.println(setName + "CONTAINS: ");
         setSetItems(fetchContainedItems());
         setItems.forEach(setItem -> {
@@ -74,19 +75,25 @@ public abstract class ProductSet extends Product {
         });
     }
 
-    public ArrayList<ProductSetItem> fetchContainedItems(){
-        ArrayList<ProductSetItem> setItems = ProductManager.fetchProductSetItems(this);
+    public List<ProductSetItem> fetchContainedItems() {
+        List<ProductSetItem> setItems = null;
+        try {
+            setItems = ProductManager.fetchProductSetItems(this);
+        } catch (SQLException e) {
+            //TODO
+            throw new RuntimeException(e);
+        }
         if(this.setItems.isEmpty()){
             setSetItems(setItems);
         }
         return setItems;
     }
 
-    public void setSetItems(ArrayList<ProductSetItem> setItems){
+    public void setSetItems(List<ProductSetItem> setItems){
         this.setItems = setItems;
     }
 
-    public ArrayList<ProductSetItem> getSetItems(){
+    public List<ProductSetItem> getSetItems() {
         if(this.setItems.isEmpty()){
             return fetchContainedItems();
         }

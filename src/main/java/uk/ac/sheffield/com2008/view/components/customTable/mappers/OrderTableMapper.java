@@ -1,12 +1,15 @@
 package uk.ac.sheffield.com2008.view.components.customTable.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.view.modals.OrderModal;
 
 import javax.swing.*;
 import java.util.Date;
 import java.util.LinkedList;
 
 public class OrderTableMapper implements TableMapper<Order> {
+    private JFrame frame;
+
     @Override
     public LinkedList<Object> constructColumns(Order object) {
         LinkedList<Object> list = new LinkedList<>();
@@ -19,9 +22,13 @@ public class OrderTableMapper implements TableMapper<Order> {
 
         JButton button = new JButton("View Details");
         button.addActionListener(e -> {
-            System.out.println("view details clicked: " + object.getOrderNumber());
+            new OrderModal(frame, object, "Order details").setVisible(true);
         });
         list.add(button);
         return list;
+    }
+
+    public void setFrame(JFrame frame) {
+        this.frame = frame;
     }
 }

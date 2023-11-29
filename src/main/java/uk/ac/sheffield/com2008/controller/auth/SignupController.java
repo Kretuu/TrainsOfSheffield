@@ -7,6 +7,8 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.auth.SignupView;
 
+import java.sql.SQLException;
+
 public class SignupController extends ViewController {
     private final SignupView signupView;
 
@@ -19,10 +21,12 @@ public class SignupController extends ViewController {
     public void signup(String email, char[] password, String firstname, String surname) {
         try {
             AuthenticationManager.registerUser(email, password, firstname, surname);
-            signupView.updateErrorMessage(" ");
-            navigation.navigate(Navigation.CUSTOMER);
+            signupView.updateErrorMessage(null);
+            navigation.navigate(Navigation.PROVIDE_ADDRESS);
         } catch (EmailAlreadyInUseException e) {
             signupView.updateErrorMessage(e.getMessage());
+        } catch (SQLException e) {
+            signupView.updateErrorMessage("Cannot connect to database.");
         }
     }
 

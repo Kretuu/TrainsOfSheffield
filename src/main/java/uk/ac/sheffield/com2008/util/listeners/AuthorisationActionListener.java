@@ -6,10 +6,10 @@ import uk.ac.sheffield.com2008.view.View;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public abstract class CustomActionListener implements ActionListener {
+public abstract class AuthorisationActionListener implements ActionListener {
     private final View view;
 
-    public CustomActionListener(View view) {
+    public AuthorisationActionListener(View view) {
         this.view = view;
     }
 

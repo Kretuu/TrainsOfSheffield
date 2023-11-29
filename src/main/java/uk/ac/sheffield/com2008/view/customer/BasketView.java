@@ -1,22 +1,37 @@
 package uk.ac.sheffield.com2008.view.customer;
 
+import uk.ac.sheffield.com2008.cache.AppSessionCache;
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
+import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
+import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
+import uk.ac.sheffield.com2008.model.domain.managers.UserManager;
+import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.view.modals.NotificationModal;
+import uk.ac.sheffield.com2008.view.modals.OrderModal;
+import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
+import uk.ac.sheffield.com2008.view.modals.VerifyPasswordModal;
 import uk.ac.sheffield.com2008.view.user.UserView;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 
 import static uk.ac.sheffield.com2008.util.math.Rounding.roundToDecimalPlaces;
 
 public class BasketView extends UserView {
     BasketViewController basketViewController;
     JLabel totalTextLabel;
+    private final JLabel errorMessage = new JLabel(" ");
     public BasketView(BasketViewController basketViewController){
         this.basketViewController = basketViewController;
         InitializeUI();
@@ -141,23 +156,30 @@ public class BasketView extends UserView {
         // Create empty border for inner padding
         Border emptyBorder2 = BorderFactory.createEmptyBorder(5, 0, 70, 30);
         bottomSection.setBorder(emptyBorder2);
-        bottomSection.setLayout(new BoxLayout(bottomSection, BoxLayout.Y_AXIS));
+        bottomSection.setLayout(new BorderLayout());
         totalTextLabel = new JLabel("Total: ");
         totalTextLabel.setFont(totalTextLabel.getFont().deriveFont(Font.BOLD, 24));
 
         JButton confirmButton = new JButton("Confirm & Pay");
         confirmButton.setFont(confirmButton.getFont().deriveFont(Font.BOLD, 24));
-        confirmButton.addActionListener(e -> {
-            confirmOrderButton();
-        });
+        confirmButton.addActionListener(e -> basketViewController.confirmOrder());
+
+        JPanel errorMessageHolder = new JPanel();
+        errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
+        errorMessageHolder.add(errorMessage);
+        bottomSection.add(errorMessageHolder, BorderLayout.CENTER);
 
         // Set alignments to right
         totalTextLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         confirmButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
-        bottomSection.add(totalTextLabel);
-        bottomSection.add(Box.createVerticalStrut(10));
-        bottomSection.add(confirmButton);
+        JPanel eastBottomSectionHolder = new JPanel();
+        eastBottomSectionHolder.setLayout(new BoxLayout(eastBottomSectionHolder, BoxLayout.Y_AXIS));
+        eastBottomSectionHolder.add(totalTextLabel);
+        eastBottomSectionHolder.add(Box.createVerticalStrut(10));
+        eastBottomSectionHolder.add(confirmButton);
+        bottomSection.add(eastBottomSectionHolder, BorderLayout.EAST);
+
         add(bottomSection, BorderLayout.SOUTH);
     }
 
@@ -173,7 +195,65 @@ public class BasketView extends UserView {
         basketViewController.deleteOrderline(orderLine);
     }
 
-    private void confirmOrderButton(){
-        basketViewController.confirmOrder();
+    public void updateErrorMessage(String message) {
+        if(message == null) {
+            errorMessage.setText(" ");
+            return;
+        }
+        errorMessage.setText("Error: " + message);
+    }
+
+    public void startCardUpdateProcess() {
+        String notification = "Your banking card is expired. You need to update the card in order to confirm order.";
+        try {
+            if(!basketViewController.hasUserBankingCard()) {
+                notification = "You need to provide your banking details in order to confirm order.";
+            }
+        } catch (SQLException e) {
+            updateErrorMessage("Cannot connect to database.");
+            return;
+        }
+
+        new NotificationModal(
+                basketViewController.getNavigation().getFrame(), this,
+                "Update card details", notification
+        ) {
+            @Override
+            public void onSubmit() {
+                new VerifyPasswordModal(basketViewController.getNavigation().getFrame(), basketViewController.getView()) {
+
+                    @Override
+                    public String onConfirm(char[] password) throws SQLException, BankDetailsEncryptionException {
+                        if(UserDAO.verifyPassword(basketViewController.getUser().getEmail(), password) != null) {
+                            BankingCard bankingCard = basketViewController.getBankingCard(password);
+                            CompletableFuture.runAsync(() -> openChangeBankDetailsModal(bankingCard, password));
+                            return null;
+                        }
+                        return "Incorrect password";
+                    }
+                }.setVisible(true);
+            }
+        }.setVisible(true);
+    }
+
+    private void openChangeBankDetailsModal(BankingCard bankingCard, char[] password) {
+        new UpdateCreditCardModal(
+                basketViewController.getNavigation().getFrame(), bankingCard, this) {
+            @Override
+            public void onSave(
+                    String cardNumber, Date expiryDate, String securityCode, String holderName
+            ) throws SQLException, BankDetailsEncryptionException {
+                basketViewController.updateUserBankDetails(
+                        new BankingCard(holderName, cardNumber, expiryDate, securityCode), password
+                );
+            }
+        }.setVisible(true);
+    }
+
+    public void openConfirmationScreen(Order order) {
+        new OrderModal(
+                basketViewController.getNavigation().getFrame(), order,
+                "Order details", "Your order has been confirmed. Below you can find summary."
+        ).setVisible(true);
     }
 }

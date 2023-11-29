@@ -7,7 +7,7 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.ManageStockView;
 
-import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,54 +16,57 @@ import java.util.List;
  */
 public class StaffController extends ViewController {
     private final ManageStockView manageStockView;
-    private List<Product> allProducts;
+    private List<Product> allProducts = new ArrayList<>();
+    private List<Product> filteredProducts = new ArrayList<>();
 
-    public StaffController(NavigationManager navigationManager, Navigation id){
+    public StaffController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new ManageStockView(this);
         manageStockView = (ManageStockView) view;
+        onNavigateTo();
+        setCurrentFilter("All");
     }
 
-    public void onNavigateTo(){
-        allProducts = ProductDAO.getAllProducts();
-        manageStockView.onRefresh();
-    }
-
-    public List<Product> getAllProducts(){
-        if(allProducts != null){
-            return allProducts;
+    public void onNavigateTo() {
+        try {
+            allProducts = ProductDAO.getAllProducts();
+        } catch (SQLException e) {
+            navigation.setLayoutMessage(
+                    "Product Record Error",
+                    "Cannot connect to database. Product list was not updated", true);
         }
-        return new ArrayList<>();
+        manageStockView.populateTable(filteredProducts);
     }
 
-    public void updateProductQuantity (Product product, int quantity){
+    public List<Product> getCurrentDisplayedProducts() {
+        return filteredProducts;
+    }
+
+    public void setCurrentFilter(String initialLetter) {
+        if(initialLetter.isEmpty() || initialLetter.equals("All")) {
+            filteredProducts = allProducts;
+        } else {
+            try {
+                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
+            } catch (SQLException e) {
+                navigation.setLayoutMessage(
+                        "Product Record Error",
+                        "Cannot connect to database. Product list was not filtered.", true);
+            }
+        }
+        manageStockView.populateTable(filteredProducts);
+    }
+
+    public void updateProductQuantity(Product product, int quantity) {
         product.setStock(quantity);
         // Update the product in the database
-        ProductDAO.updateProductStocks(product, quantity);
-    }
-
-    // Method to repopulate the table with updated data
-    public List<Product> repopulateTable() {
-        DefaultTableModel tableModel = manageStockView.getTableModel();
-
-        if (tableModel != null) {
-            List<Product> updatedProducts = ProductDAO.getAllProducts(); // Fetch updated data from the database
-
-            // Clear existing rows in the table model
-            tableModel.setRowCount(0);
-
-            // Update the table with the fetched data
-            for (Product product : updatedProducts) {
-                Object[] rowData = {product.getProductCode(), product.getName(), determineCustomCategory(product.getProductCode()), product.getStock(), "Edit"};
-                tableModel.addRow(rowData);
-            }
-            return updatedProducts; // Return the updated product list if needed
-        } else {
-            // Handle the case where tableModel is null
-            // Possibly throw an exception or log an error
-            return new ArrayList<>(); // Return an empty list or handle as needed
+        try {
+            ProductDAO.updateProductStocks(product, quantity);
+        } catch (SQLException e) {
+            navigation.setLayoutMessage(
+                    "Product Record Error",
+                    "Could not connect to database. Product quantity was not updated.", true);
         }
-
     }
 
     public String determineCustomCategory(String productCode) {

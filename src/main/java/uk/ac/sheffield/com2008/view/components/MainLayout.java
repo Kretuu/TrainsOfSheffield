@@ -60,7 +60,7 @@ public class MainLayout extends JPanel {
         }
     }
 
-    private void setNavigationBar(View v) {
+    public void setNavigationBar(View v) {
         navigation.removeAll();
         v.getNavigation().forEach((key, value) -> {
             value.addActionListener(e -> navigationManager.navigate(key));
@@ -68,5 +68,13 @@ public class MainLayout extends JPanel {
             navigation.add(Box.createRigidArea(new Dimension(20, 0)));
         });
         navigation.add(logoutButton);
+    }
+
+    public void updateMessage(String header, String text, boolean isError) {
+        if(isError){
+            JOptionPane.showMessageDialog(this, text, header, JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, text, header, JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }

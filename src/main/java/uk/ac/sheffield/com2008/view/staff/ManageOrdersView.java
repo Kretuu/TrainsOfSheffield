@@ -1,34 +1,28 @@
 package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
-import uk.ac.sheffield.com2008.model.dao.OrderDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 
 
 public class ManageOrdersView extends StaffView {
 
-    private JTable table;
-
     ManageOrderController manageOrderController;
+    private JTable table;
 
     public ManageOrdersView(ManageOrderController manageOrderController) {
         this.manageOrderController = manageOrderController;
-    }
 
-    public void onRefresh() {
-        removeAll();
-        initializeUI(); //Reinitialize UI
-        revalidate();
-        repaint();
+        initializeUI();
     }
 
     public void initializeUI() {
@@ -47,18 +41,11 @@ public class ManageOrdersView extends StaffView {
         topPanel.add(row1);
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel bottomPanel = new JPanel();
+        /*JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         // Create a Fulfilled Orders button
         JButton fulfilledOrdersButton = new JButton("Fulfilled Orders");
         bottomPanel.add(fulfilledOrdersButton);
-
-        // Create a Sales button
-        JButton salesButton = new JButton("Sales");
-        bottomPanel.add(salesButton);
-
-        JButton navigationButton = new JButton("Home");
-        bottomPanel.add(navigationButton);
 
 
         // Add indentation between buttons using EmptyBorder
@@ -67,9 +54,8 @@ public class ManageOrdersView extends StaffView {
 
         // Add the bottom panel to the bottom of the frame
         add(bottomPanel, BorderLayout.SOUTH);
-        fulfilledOrdersButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.FULFILLED_ORDERS));
-        salesButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.SALES));
-        navigationButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.STAFF));
+        fulfilledOrdersButton.addActionListener(e -> manageOrderController.getNavigation().navigate(Navigation.FULFILLED_ORDERS));*/
+
 
         final JPanel panel = new JPanel(); // Making 'panel' final
 
@@ -91,34 +77,6 @@ public class ManageOrdersView extends StaffView {
         panel.add(scrollPane);
         this.add(panel);
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
-
-        // Create a final reference to 'panel' for access inside the mouse listener
-        final JPanel panelReference;
-        panelReference = panel;
-
-        // Populate orders into the table
-        populateOrdersInTable(panelReference);
-
-    }
-
-    private void populateOrdersInTable(JPanel panelReference) {
-        // Fetch all orders using OrderDAO
-        List<Order> orders = OrderDAO.getAllOrders();
-
-        // Populate orders and order lines into the JTable
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        // Populate orders into the JTable
-        for (Order order : orders) {
-            Object[] rowData = {
-                    order.getOrderNumber(),
-                    order.getDateOrdered(),
-                    order.getStatus(),
-                    order.getTotalPrice(),
-                    "View"
-            };
-            tableModel.addRow(rowData);
-        }
 
         // Create a custom renderer for the fourth column (Action) - Set the text color to blue
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
@@ -144,6 +102,9 @@ public class ManageOrdersView extends StaffView {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
+        // Disable column dragging
+        table.getTableHeader().setReorderingAllowed(false);
+
         // Add a mouse listener to the "Edit" label
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -154,22 +115,36 @@ public class ManageOrdersView extends StaffView {
                 // Check if the click is in the "Edit" column
                 if (col == 4) {
                     // Define the action to take when the label is clicked
-                    Order order = orders.get(row); // Retrieve the order from the list
+                    Order order = manageOrderController.getAllOrders().get(row); // Retrieve the order from the list
                     // Create an instance of the OrderLineModal class
-                    OrderLineModal modal = new OrderLineModal(manageOrderController, (JFrame) SwingUtilities.getWindowAncestor(panelReference), order);
+                    OrderLineModal modal = new OrderLineModal(
+                            manageOrderController, manageOrderController.getNavigation().getFrame(), order
+                    );
                     modal.setVisible(true); // Show the modal dialog
                 }
             }
         });
-
-        // Disable column dragging
-        table.getTableHeader().setReorderingAllowed(false);
-
     }
 
-    // Getter method to access the table model
-    public DefaultTableModel getTableModel() {
-        return (DefaultTableModel) table.getModel();
-    }
+    public void populateOrdersInTable() {
+        // Fetch all orders using OrderDAO
+        List<Order> orders = manageOrderController.getAllOrders();
 
+        // Populate orders and order lines into the JTable
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+
+        tableModel.setRowCount(0);
+
+        // Populate orders into the JTable
+        for (Order order : orders) {
+            Object[] rowData = {
+                    order.getOrderNumber(),
+                    order.getDateOrdered(),
+                    order.getStatus(),
+                    order.getTotalPrice(),
+                    "View"
+            };
+            tableModel.addRow(rowData);
+        }
+    }
 }

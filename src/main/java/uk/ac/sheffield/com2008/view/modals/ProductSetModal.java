@@ -11,7 +11,6 @@ import java.util.List;
 
 public class ProductSetModal extends JDialog {
 
-
     public ProductSetModal(FormController formController, JFrame parentFrame, ProductRecordForm productRecordForm, List<Product> filteredProducts){
         super(parentFrame, "", true);
         setSize(500, 400);
@@ -32,7 +31,8 @@ public class ProductSetModal extends JDialog {
         ButtonGroup buttonGroup = new ButtonGroup();
 
         // Create a panel to hold the radio buttons
-        JPanel radioButtonsPanel = new JPanel(new GridLayout(filteredProducts.size(), 1));
+        JPanel radioButtonsPanel = new JPanel();
+        radioButtonsPanel.setLayout(new BoxLayout(radioButtonsPanel, BoxLayout.Y_AXIS));
 
         // Create and add radio buttons for each product
         for (Product product : filteredProducts) {
@@ -46,10 +46,12 @@ public class ProductSetModal extends JDialog {
                 System.out.println("Selected Product Name: " + selectedProductName);
                 // Update the itemSelected label in ProductRecordForm
                 productRecordForm.updateItemSelectedLabel(selectedProductName, selectedProductCode);
+
             });
             buttonGroup.add(radioButton);
             radioButtonsPanel.add(radioButton);
         }
+
 
         itemsPanel.add(new JScrollPane(radioButtonsPanel), BorderLayout.CENTER);
         panel.add(itemsPanel, BorderLayout.CENTER);
@@ -62,6 +64,7 @@ public class ProductSetModal extends JDialog {
 
 
     }
+
 
     private String findProductNameByCode(List<Product> products, String productCode) {
         for (Product product : products) {

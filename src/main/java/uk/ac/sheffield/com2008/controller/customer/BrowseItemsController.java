@@ -10,6 +10,7 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.customer.BrowseItemsView;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,13 @@ public class BrowseItemsController extends ViewController {
     }
 
     public void onNavigateTo(){
-        allProducts = ProductDAO.getAllProducts();
+        try {
+            allProducts = ProductDAO.getAllProducts();
+        } catch (SQLException e) {
+            allProducts = new ArrayList<>();
+            navigation.setLayoutMessage(
+                    "Browse Items Error", "Cannot load list of products from database", true);
+        }
         browseItemsView.onRefresh();
     }
 
@@ -45,17 +52,24 @@ public class BrowseItemsController extends ViewController {
      */
     public void addProductToBasket(Product product, int quantity){
         Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
-        //if product already exists
-        if(!userBasket.hasProduct(product)){
-            System.out.println("Adding " + product.getProductCode() + " to order");
+        try {
+            //if product already exists
+            if(!userBasket.hasProduct(product)){
+                System.out.println("Adding " + product.getProductCode() + " to order");
 
 //            OrderLine newOrderLine = new OrderLine()
-            OrderManager.addProductToOrder(userBasket, product, quantity);
-        }else{
-            System.out.println("Modifying " + product.getProductCode() + " quantity in order");
-            OrderManager.modifyProductQuantity(userBasket, product, quantity);
+                OrderManager.addProductToOrder(userBasket, product, quantity);
+            }else{
+                System.out.println("Modifying " + product.getProductCode() + " quantity in order");
+                OrderManager.modifyProductQuantity(userBasket, product, quantity);
+            }
+            userBasket.PrintFullOrder();
+        } catch (SQLException e) {
+            navigation.setLayoutMessage(
+                    "Browse Items Error",
+                    "Could not connect to database. Product was not added to the basket", true);
         }
-        userBasket.PrintFullOrder();
+
     }
 
 }
