@@ -25,6 +25,11 @@ public class FormController extends ViewController {
         productRecordForm = (ProductRecordForm) view;
     }
 
+    public void onNavigateTo(){
+        allProducts = getAllProducts();
+        productRecordForm.onRefresh();
+    }
+
 
     public List<Product> getAllProducts(){
         try {

@@ -128,6 +128,11 @@ public class ProductRecordForm extends StaffView {
         initializeUI();
     }
 
+    public void onRefresh(){
+        removeAll();
+        initializeUI();
+    }
+
     private void initializeUI() {
         JPanel content = new JPanel();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
