@@ -73,11 +73,10 @@ public class ProductRecordView extends StaffView {
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
 
         LinkedList<CustomColumn> columns = new LinkedList<>() {{
-            add(new CustomColumn(0.2, "Product Code"));
-            add(new CustomColumn(0.2, "Product Name"));
+            add(new CustomColumn(0.4, "Product Name"));
             add(new CustomColumn(0.2, "Category"));
             add(new CustomColumn(0.2, "Quantity"));
-            add(new CustomColumn(0.1, null));
+            add(new CustomColumn(0.2, null));
         }};
         customTable = new CustomTable<>(columns);
 

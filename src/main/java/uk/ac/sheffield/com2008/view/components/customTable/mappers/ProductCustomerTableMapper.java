@@ -5,22 +5,17 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import javax.swing.*;
 import java.util.LinkedList;
 
-
-public abstract class ProductTableMapper implements TableMapper<Product> {
-    private final String actionName;
-    public ProductTableMapper(String actionName) {
-        this.actionName = actionName;
-    }
+public abstract class ProductCustomerTableMapper implements TableMapper<Product> {
     @Override
     public LinkedList<Object> constructColumns(Product object) {
         LinkedList<Object> list = new LinkedList<>();
         list.add(object.printName());
         list.add(deriveCategory(object.getProductCode()));
-        list.add(object.getStock());
 
-        JButton editButton = new JButton(actionName);
-        editButton.addActionListener(e -> onClick(object));
-        list.add(editButton);
+        JButton viewButton = new JButton("Add to Cart");
+        viewButton.addActionListener(e -> onClick(object));
+        list.add(viewButton);
+
         return list;
     }
 
