@@ -105,6 +105,8 @@ public class ProductRecordForm extends StaffView {
         gaugesComboBox = new JComboBox<>(gauges.keySet().toArray(new String[0]));
         gaugeLabel = new JLabel("Gauge: ");
 
+        inSetPanel = new JPanel();
+        inPackPanel = new JPanel();
         itemSelected = new JLabel("None");
 
         locomotivePanel = locomotivePanel();
@@ -126,6 +128,9 @@ public class ProductRecordForm extends StaffView {
     }
 
     private void initializeUI() {
+        selectedProductsMap = new HashMap<>();
+        inSetPanel.removeAll();
+        inPackPanel.removeAll();
         submitButton.setEnabled(false);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -174,7 +179,9 @@ public class ProductRecordForm extends StaffView {
             cardLayout.show(cardPanel, selectedCategory);
             validateSharedFields();
             updateButtonState();
-            populateInSetPanel(selectedProductsMap, inSetPanel);
+            selectedProductsMap = new HashMap<>();
+            inSetPanel.removeAll();
+            inPackPanel.removeAll();
             revalidate();  // Ensure the layout manager updates the container
 
             selectedProductsMap = new HashMap<>();
@@ -506,72 +513,60 @@ public class ProductRecordForm extends StaffView {
         radioButtonsPanel.add(extension);
         panel.add(radioButtonsPanel);
 
-        //Items in set panel
-        JPanel inPackPanel = new JPanel();
-        BoxLayout boxLayout = new BoxLayout(inPackPanel, BoxLayout.Y_AXIS);
-        inPackPanel.setLayout(boxLayout);
-        inPackPanel.setPreferredSize(new Dimension(500, 200));
+        // Header panel
+        JPanel headerPanel = new JPanel(new GridLayout(2, 1));
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel title = new JLabel("Add products to Track Pack: ");
+        row1.add(title);
+        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
+        JButton findButton = new JButton("Add a Track:");
+        findButton.addActionListener(e -> {
+            String className = "Track";
+            Class<?> classType = classMap.get(className);
+            List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
+            // Pass the correct list of filtered products to the modal
+            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
+            modal.setVisible(true);
+        });
+        row2.add(findButton);
+        headerPanel.add(row1);
+        headerPanel.add(row2);
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Selected panel
+        JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel selected = new JLabel("Item Selected: ");
+
+        JButton addButton = new JButton("Add");
+
+        selectedPanel.add(selected);
+        selectedPanel.add(itemSelected);
+        selectedPanel.add(addButton);
+        panel.add(selectedPanel);
+
+        //Items in set pane;
+        inPackPanel.setLayout(new BoxLayout(inPackPanel, BoxLayout.Y_AXIS));
+        inPackPanel.setPreferredSize(new Dimension(500, 200));
 
         JScrollPane scrollPane = new JScrollPane(inPackPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        Dimension preferredSize = inPackPanel.getPreferredSize();
+        scrollPane.setMinimumSize(preferredSize);
         panel.add(scrollPane);
 
-        //when any radio button is clicked it should open a modal and add it inside the panel
-        starterOval.addActionListener(e -> {
-            String className = "Starter Oval Track Pack";
-            Class<?> classType = classMap.get(className);
-
-
-            List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
-
-            // Pass the correct list of filtered products to the modal
-            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(radioButtonsPanel), ProductRecordForm.this, filteredProducts);
-            modal.setVisible(true);
-
-
-
-        });
-
-        extension.addActionListener(e -> {
-            String className = "Extension Track Pack";
-            Class<?> classType = classMap.get(className);
-
-
-            List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
-
-            // Pass the correct list of filtered products to the modal
-            ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(radioButtonsPanel), ProductRecordForm.this, filteredProducts);
-            modal.setVisible(true);
-
-        });
-
-        /*JLabel trackLabel = new JLabel("Track");
-        JSpinner extensionSpinner = createSpinner();
-        extensionSpinner.setEnabled(false);
-        extension.addItemListener(e -> {
-            if (extension.isSelected()) {
-
-                panel.add(trackLabel);
-                panel.add(extensionSpinner);
-                extensionSpinner.setEnabled(true);
-
-            } else {
-                panel.remove(extensionSpinner);
-                extensionSpinner.setEnabled(false);
-                panel.remove(trackLabel);
+        addButton.addActionListener(e -> {
+            if(selectedSetProduct != null && !selectedProductsMap.containsKey(selectedSetProduct)){
+                selectedProductsMap.put(selectedSetProduct, 1);
             }
-
-            panel.revalidate();
-            panel.repaint();
-        });*/
-
-
+            populateInSetPanel(selectedProductsMap, inPackPanel);
+        });
         return panel;
 
     }
     JLabel itemSelected;
     JPanel inSetPanel;
+    JPanel inPackPanel;
     Product selectedSetProduct;
 
     private JPanel trainSetsPanel() {
