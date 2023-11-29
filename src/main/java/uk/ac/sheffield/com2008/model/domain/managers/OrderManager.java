@@ -136,7 +136,7 @@ public class OrderManager {
      */
     public static void fulfilOrder(Order order) throws InvalidOrderStateException, SQLException,
             OrderHasNoOwnerException, BankDetailsNotValidException, OrderQuantitiesInvalidException,
-            OrderOutdatedException {
+            OrderOutdatedException, InvalidProductQuantityException {
         if(!order.getStatus().equals(Order.Status.CONFIRMED))
             throw new InvalidOrderStateException("Order is not confirmed, so cannot be fulfilled");
 
@@ -146,7 +146,10 @@ public class OrderManager {
         if(!UserManager.validateUserBankingCard(user))
             throw new BankDetailsNotValidException();
 
+
+
         validateOrder(order);
+        ProductManager.updateStock(order.getOrderLines());
         order.setAsFulfilled();
         saveFullOrderState(order);
     }

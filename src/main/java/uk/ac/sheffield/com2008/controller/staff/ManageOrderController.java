@@ -66,7 +66,7 @@ public class ManageOrderController extends ViewController {
             JOptionPane.showMessageDialog(modal, "Order has been fulfilled");
             modal.dispose();
         } catch (InvalidOrderStateException | OrderQuantitiesInvalidException | BankDetailsNotValidException |
-                 OrderHasNoOwnerException e) {
+                 OrderHasNoOwnerException | InvalidProductQuantityException e) {
             errorMessage = e.getMessage();
         } catch (SQLException e) {
             errorMessage = "Cannot connect to database.";
