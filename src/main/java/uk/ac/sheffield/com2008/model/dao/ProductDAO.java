@@ -9,29 +9,23 @@ import uk.ac.sheffield.com2008.model.mappers.ProductSetItemMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProductDAO {
-    public static Product getProductByCode(String code) {
+    public static Product getProductByCode(String code) throws SQLException {
         return getProductByField("productCode", code);
     }
 
-    public static List<Product> getAllProducts() {
+    public static List<Product> getAllProducts() throws SQLException {
         String query = "SELECT * FROM Products";
-        List<Product> products;
 
-        try {
-            ProductMapper mapper = new ProductMapper();
-            products = DatabaseConnectionHandler.select(mapper, query);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return products;
+        ProductMapper mapper = new ProductMapper();
+        return DatabaseConnectionHandler.select(mapper, query);
     }
 
-    public static List<Product> getProductsByCodes(String... productCodes) {
+    public static List<Product> getProductsByCodes(String... productCodes) throws SQLException {
+        if (productCodes.length < 1) return new ArrayList<>();
+
         StringBuilder stringBuilder = new StringBuilder("SELECT * FROM Products WHERE productCode IN (");
         for (int i = 0; i < productCodes.length; i++) {
             stringBuilder.append("?, ");
@@ -40,12 +34,8 @@ public class ProductDAO {
         stringBuilder.append(")");
         String query = stringBuilder.toString();
 
-        try {
-            ProductMapper mapper = new ProductMapper();
-            return DatabaseConnectionHandler.select(mapper, query, (Object[]) productCodes);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        ProductMapper mapper = new ProductMapper();
+        return DatabaseConnectionHandler.select(mapper, query, (Object[]) productCodes);
     }
 
     /**
@@ -55,67 +45,43 @@ public class ProductDAO {
      * @param value
      * @return
      */
-    private static Product getProductByField(String fieldName, Object value) {
+    private static Product getProductByField(String fieldName, Object value) throws SQLException {
         String query = "SELECT * FROM Products WHERE " + fieldName + " = ?";
 
-        List<Product> productList;
-        try {
-            ProductMapper mapper = new ProductMapper();
-            productList = DatabaseConnectionHandler.select(mapper, query, value);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        ProductMapper mapper = new ProductMapper();
+        List<Product> productList = DatabaseConnectionHandler.select(mapper, query, value);
+
         if (productList.isEmpty()) return null;
 
         return productList.get(0);
     }
 
-    public static List<Product> getProductsByCategory(String initialLetter){
+    public static List<Product> getProductsByCategory(String initialLetter) throws SQLException {
         String query = "SELECT * FROM Products WHERE productCode LIKE ?";
-        List<Product> productList;
-        try {
-            ProductMapper mapper = new ProductMapper();
-            String categoryWildcard = initialLetter + "%";
-            productList = DatabaseConnectionHandler.select(mapper, query, categoryWildcard);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        //System.out.println("Query: " + query + " | Category: " + initialLetter);
-        //System.out.println("Result: " + productList);
-        return productList;
+        ProductMapper mapper = new ProductMapper();
+        String categoryWildcard = initialLetter + "%";
+        return DatabaseConnectionHandler.select(mapper, query, categoryWildcard);
     }
 
 
     //TODO: Creating a new product that is "isSet" means also creating a new ProductSet db row
 
-    public static List<ProductSetItem> getProductSetItems(ProductSet productSet){
+    public static List<ProductSetItem> getProductSetItems(ProductSet productSet) throws SQLException {
         StringBuilder setItemsQueryBuilder = new StringBuilder();
-        String productCode = productSet.getProductCode();
         setItemsQueryBuilder.append("SELECT * FROM ProductSets ")
                 .append("LEFT OUTER JOIN ProductSetItems PSI on ProductSets.setId = PSI.setId ")
                 .append("LEFT OUTER JOIN Products ON PSI.productCode = Products.productCode ")
                 .append("WHERE ProductSets.productCode = ?");
 
-        ArrayList<ProductSetItem> productSetItems = new ArrayList<>();
         String query = setItemsQueryBuilder.toString();
 
-        try {
-            ProductSetItemMapper mapper = new ProductSetItemMapper();
-            productSetItems = (ArrayList<ProductSetItem>) DatabaseConnectionHandler.select(mapper, query, productSet.getProductCode());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return productSetItems;
+        ProductSetItemMapper mapper = new ProductSetItemMapper();
+        return DatabaseConnectionHandler.select(mapper, query, productSet.getProductCode());
     }
 
-    public static void updateProductStocks(Product product, int quantity){
+    public static void updateProductStocks(Product product, int quantity) throws SQLException {
         String updateQuery = "UPDATE Products SET stock = ? WHERE productCode = ?";
-        try {
-            DatabaseConnectionHandler.update(updateQuery, quantity, product.getProductCode());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseConnectionHandler.update(updateQuery, quantity, product.getProductCode());
     }
 
 

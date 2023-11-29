@@ -9,51 +9,37 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class BankingDetailsDAO {
-    public static void createBankingDetails(BankingCard card, User user) {
+    public static void createBankingDetails(BankingCard card, User user) throws SQLException {
         String query = "INSERT INTO BankingDetails (cardNumber, holderName, expiryDate, cvv) VALUES (?, ?, ?, ?)";
         String updateUserQuery = "UPDATE Users SET cardNumber = ? WHERE uuid = ?";
 
-        try {
-            DatabaseConnectionHandler.insert(query, card.getNumber(), card.getHolderName(), card.getExpiryDate(), card.getCvv());
-            DatabaseConnectionHandler.update(updateUserQuery, card.getNumber(), user.getUuid());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+        DatabaseConnectionHandler.insert(query, card.getNumber(), card.getHolderName(), card.getExpiryDate(), card.getCvv());
+        DatabaseConnectionHandler.update(updateUserQuery, card.getNumber(), user.getUuid());
     }
 
-    public static void updateBankingDetails(BankingCard card, User user) {
+    public static void updateBankingDetails(BankingCard card, User user) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("UPDATE BankingDetails BD INNER JOIN Users U ON U.cardNumber = BD.cardNumber ");
         queryBuilder.append("SET BD.cardNumber = ?, holderName = ?, expiryDate = ?, cvv = ? WHERE U.uuid = ?");
         String query = queryBuilder.toString();
 
-        try {
-            DatabaseConnectionHandler.update(query, card.getNumber(), card.getHolderName(), card.getExpiryDate(), card.getCvv(), user.getUuid());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseConnectionHandler.update(query, card.getNumber(), card.getHolderName(), card.getExpiryDate(), card.getCvv(), user.getUuid());
     }
 
-    public static boolean hasUserBankingDetails(User user) {
-        return getUserBankingCard(user) != null;
+    public static boolean hasUserBankingDetails(User user) throws SQLException {
+        return getUserBankingCardByUuid(user.getUuid()) != null;
     }
 
-
-    public static BankingCard getUserBankingCard(User user) {
+    public static BankingCard getUserBankingCardByUuid(String uuid) throws SQLException {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM BankingDetails BD INNER JOIN Users U ON U.cardNumber = BD.cardNumber ");
         queryBuilder.append("WHERE U.uuid = ?");
         String query = queryBuilder.toString();
 
-        List<BankingCard> bankingCards;
-        try {
-            BankingCardMapper mapper = new BankingCardMapper();
-            bankingCards = DatabaseConnectionHandler.select(mapper, query, user.getUuid());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if(bankingCards.isEmpty()) return null;
+        BankingCardMapper mapper = new BankingCardMapper();
+        List<BankingCard> bankingCards = DatabaseConnectionHandler.select(mapper, query, uuid);
+
+        if (bankingCards.isEmpty()) return null;
         return bankingCards.get(0);
     }
 }

@@ -13,6 +13,7 @@ public abstract class View extends JPanel {
     }
 
     public Map<Navigation,JButton> getNavigation() {
+        updateNavigation();
         return navigation;
     }
 

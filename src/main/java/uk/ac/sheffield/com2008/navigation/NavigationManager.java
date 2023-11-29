@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.navigation;
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.controller.auth.LoginController;
+import uk.ac.sheffield.com2008.controller.auth.ProvideAddressController;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
@@ -54,7 +55,11 @@ public class NavigationManager {
      * @return true if user can access the view or false otherwise
      */
     public static boolean permissionsValid(View view) {
-        List<User.Role> userRoles = AppSessionCache.getInstance().getUserLoggedIn().getRoles();
+        if (view instanceof AuthView) return true;
+        User user = AppSessionCache.getInstance().getUserLoggedIn();
+        if(user == null) return false;
+
+        List<User.Role> userRoles = user.getRoles();
         if (view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
         if (view instanceof ManagerView && !userRoles.contains(User.Role.MANAGER)) return false;
         if (view instanceof CustomerView && !userRoles.contains(User.Role.CUSTOMER)) return false;
@@ -80,6 +85,7 @@ public class NavigationManager {
         new FulfilledOrdersController(this,Navigation.FULFILLED_ORDERS);
         new SalesController(this, Navigation.SALES);
         new ManageProfileController(this, Navigation.MANAGE_PROFILE);
+        new ProvideAddressController(this, Navigation.PROVIDE_ADDRESS);
     }
 
     public void registerController(Navigation id, ViewController controller) {
@@ -91,7 +97,6 @@ public class NavigationManager {
 
         ViewController newController = controllers.get(id);
         View view = newController.getView();
-        view.updateNavigation();
         newController.onNavigateTo();
         //Check if View is Auth view. If it isn't, put the view into layout
         if (view instanceof AuthView) {
@@ -106,7 +111,15 @@ public class NavigationManager {
         frame.repaint();
     }
 
+    public void refreshNavigation() {
+        layout.setNavigationBar(getCurrentController().getView());
+    }
+
     public ViewController getCurrentController() {
         return controllers.get(currentView);
+    }
+
+    public void setLayoutMessage(String header, String message, boolean isError) {
+        layout.updateMessage(header, message, isError);
     }
 }

@@ -11,10 +11,17 @@ public class SalesView extends StaffView{
 
     public SalesView(SalesController salesController){
         this.salesController = salesController;
-        InitializeUI();
+        initializeUI();
     }
 
-    public void InitializeUI() {
+    public void onRefresh() {
+        removeAll();
+        initializeUI(); //Reinitialize UI
+        revalidate();
+        repaint();
+    }
+
+    public void initializeUI() {
         setLayout(new GridBagLayout());
 
         // top panel
@@ -37,11 +44,11 @@ public class SalesView extends StaffView{
 
         // Create the left panel for monthly orders
         JPanel monthlyOrdersPanel = new JPanel();
-        monthlyOrdersPanel.setBorder(createBorder("Monthly Orders", 20));
+        monthlyOrdersPanel.setBorder(createBorder("Total Orders", 20));
         monthlyOrdersPanel.setPreferredSize(new Dimension(400, 300));
 
         // Sample label in the left panel (replace with your data)
-        JLabel monthlyOrdersLabel = new JLabel("Total Monthly Orders: 100");
+        JLabel monthlyOrdersLabel = new JLabel("Total Orders: " + salesController.getNumberOfSales());
         monthlyOrdersPanel.add(monthlyOrdersLabel);
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -55,8 +62,9 @@ public class SalesView extends StaffView{
         totalSalesPanel.setBorder(createBorder("Total Sales", 20));
         totalSalesPanel.setPreferredSize(new Dimension(400, 300));
 
+
         // Sample label in the right panel (replace with your data)
-        JLabel totalSalesLabel = new JLabel("Total Sales Amount: $5000");
+        JLabel totalSalesLabel = new JLabel("Total Sales Amount: " + salesController.getTotalSales());
         totalSalesPanel.add(totalSalesLabel);
 
         gbc.gridx = 1;
