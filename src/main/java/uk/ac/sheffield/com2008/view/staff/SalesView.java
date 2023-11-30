@@ -7,6 +7,14 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
+/**
+ * The {@code SalesView} class represents the view for displaying sales
+ *
+ *
+ * @author Khaulah Mohammad Noor Azri
+ * @version 1.0
+ */
+
 public class SalesView extends StaffView {
     SalesController salesController;
 
@@ -21,6 +29,10 @@ public class SalesView extends StaffView {
         revalidate();
         repaint();
     }
+
+    /**
+     * Initializes the user interface components of the view.
+     */
 
     public void initializeUI() {
         setLayout(new GridBagLayout());
@@ -90,6 +102,10 @@ public class SalesView extends StaffView {
 
 
     }
+
+    /**
+     * Create a border to display the total order panel and total sales panel
+     */
 
     private Border createBorder(String title, int fontSize) {
         Border line = new LineBorder(Color.BLACK, 3); // Thick black border

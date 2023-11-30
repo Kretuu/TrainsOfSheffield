@@ -47,6 +47,7 @@ public class ProductRecordForm extends StaffView {
             "Train Set", 'M',
             "Track Pack", 'P'
     );
+    private final Map<String, Class<?>> classMap = new HashMap<>();
     JComboBox<String> gaugesComboBox;
     JLabel gaugeLabel;
     JLabel errorMessage;
@@ -70,7 +71,6 @@ public class ProductRecordForm extends StaffView {
     Product selectedSetProduct;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-    private Map<String, Class<?>> classMap = new HashMap<>();
     private Map<Product, Integer> selectedProductsMap = new HashMap<>();
     private JComboBox<String> powerTypeComboBox;
     private JComboBox<String> classesComboBox;
@@ -560,13 +560,15 @@ public class ProductRecordForm extends StaffView {
 
         //Items in set pane;
         inPackPanel.setLayout(new BoxLayout(inPackPanel, BoxLayout.Y_AXIS));
-        inPackPanel.setPreferredSize(new Dimension(500, 200));
+        inPackPanel.setBackground(Colors.WHITE_BACKGROUND);
 
-        JScrollPane scrollPane = new JScrollPane(inPackPanel);
+        JPanel packPanelContainer = new JPanel(new FlowLayout());
+        packPanelContainer.setBackground(Colors.WHITE_BACKGROUND);
+        packPanelContainer.add(inPackPanel);
+
+        JScrollPane scrollPane = new JScrollPane(packPanelContainer);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        Dimension preferredSize = inPackPanel.getPreferredSize();
-        preferredSize.setSize(preferredSize.getWidth() + 30, preferredSize.getHeight());
-        scrollPane.setMinimumSize(preferredSize);
+        scrollPane.setPreferredSize(new Dimension(500, 200));
         panel.add(scrollPane);
 
         addButton.addActionListener(e -> {
@@ -730,11 +732,6 @@ public class ProductRecordForm extends StaffView {
         itemSelectedTS.setText(selectedSetProduct.getName());
     }
 
-    private JSpinner createSpinner() {
-        SpinnerModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
-        return new JSpinner(model);
-    }
-
     private void validateSharedFields() {
         for (CustomInputField field : sharedInputFields.values()) {
             field.validate(field.getjTextField().getText());
@@ -782,7 +779,7 @@ public class ProductRecordForm extends StaffView {
     public Product getProductFromInputs(Character type) {
 
         switch (type) {
-            case 'L': {
+            case 'L' -> {
                 Locomotive locomotive = new Locomotive(
                         sharedInputFields.get("productCode").getjTextField().getText(),
                         "PLACEHOLDER",
@@ -798,7 +795,7 @@ public class ProductRecordForm extends StaffView {
                 locomotive.setName(locomotive.deriveName());
                 return locomotive;
             }
-            case 'S': {
+            case 'S' -> {
                 RollingStock rollingStock = new RollingStock(
                         sharedInputFields.get("productCode").getjTextField().getText(),
                         "PLACEHOLDER",
@@ -814,7 +811,7 @@ public class ProductRecordForm extends StaffView {
                 rollingStock.setName(rollingStock.deriveName());
                 return rollingStock;
             }
-            case 'R': {
+            case 'R' -> {
                 Track track = new Track(
                         sharedInputFields.get("productCode").getjTextField().getText(),
                         "PLACEHOLDER",
@@ -828,7 +825,7 @@ public class ProductRecordForm extends StaffView {
                 track.setName(track.deriveName());
                 return track;
             }
-            case 'C': {
+            case 'C' -> {
                 Controller controller = new Controller(
                         sharedInputFields.get("productCode").getjTextField().getText(),
                         "PLACEHOLDER",
@@ -842,7 +839,7 @@ public class ProductRecordForm extends StaffView {
                 controller.setName(controller.deriveName());
                 return controller;
             }
-            case 'M': {
+            case 'M' -> {
                 ArrayList<ProductSetItem> setItems = new ArrayList<>();
                 for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
                     ProductSetItem setItem = new ProductSetItem(entry.getKey(), entry.getValue());
@@ -862,7 +859,7 @@ public class ProductRecordForm extends StaffView {
                 trainSet.setName(trainSet.deriveName());
                 return trainSet;
             }
-            case 'P': {
+            case 'P' -> {
                 ArrayList<ProductSetItem> setItems = new ArrayList<>();
                 for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
                     ProductSetItem setItem = new ProductSetItem(entry.getKey(), entry.getValue());
@@ -888,28 +885,8 @@ public class ProductRecordForm extends StaffView {
                 trackPack.setName(trackPack.deriveName());
                 return trackPack;
             }
-            default:
-                throw new RuntimeException("Unknown Type: " + type);
+            default -> throw new RuntimeException("Unknown Type: " + type);
         }
     }
-
-    private String getInitialLetter(String selectedCategory) {
-        if ("Locomotive".equals(selectedCategory)) {
-            return "L";
-        } else if ("Controller".equals(selectedCategory)) {
-            return "C";
-        } else if ("Track".equals(selectedCategory)) {
-            return "R";
-        } else if ("Rolling Stock".equals(selectedCategory)) {
-            return "S";
-        } else if ("Train Set".equals(selectedCategory)) {
-            return "M";
-        } else if ("Track Pack".equals(selectedCategory)) {
-            return "P";
-        } else {
-            return "";
-        }
-    }
-
 
 }

@@ -13,6 +13,14 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The {@code ManageOrdersView} class represents the view for managing orders
+ *
+ *
+ * @author Jakub Kreczetowski and Khaulah Mohammad Noor Azri
+ * @version 1.0
+ */
+
 
 public class ManageOrdersView extends StaffView {
 
@@ -33,6 +41,10 @@ public class ManageOrdersView extends StaffView {
 
         initializeUI();
     }
+
+    /**
+     * Initializes the user interface components of the view.
+     */
 
     public void initializeUI() {
 
@@ -71,6 +83,10 @@ public class ManageOrdersView extends StaffView {
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
         add(panel);
     }
+
+    /**
+     * Populates the table with the list of orders from the controller.
+     */
 
     public void populateOrdersInTable() {
         List<Order> orders = manageOrderController.getAllOrders();

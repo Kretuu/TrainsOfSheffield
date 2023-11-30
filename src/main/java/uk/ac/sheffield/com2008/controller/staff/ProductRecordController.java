@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller responsible for Product Record screen
+ */
+
 public class ProductRecordController extends ViewController {
     private final ProductRecordView productRecordView;
     private String filterInitialLetter = "";

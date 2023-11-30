@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseConnectionHandler {
-    private static final HikariConfig config = new HikariConfig("mysql.properties");
+    private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
 
     public static Connection getConnection() throws SQLException {
@@ -20,6 +20,8 @@ public class DatabaseConnectionHandler {
     }
 
     public static void connectToDatabase() {
+        config.setJdbcUrl("jdbc:mysql://stusql.dcs.shef.ac.uk:3306/team035?user=team035&password=Sanoib1ai"
+                + "&allowPublicKeyRetrieval=false&useSSL=false");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setMaximumPoolSize(5);
         ds = new HikariDataSource(config);

@@ -13,6 +13,14 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The {@code FulfilledOrdersView} class represents the view for displaying fulfilled orders
+ *
+ *
+ * @author Jakub Kreczetowski and Khaulah Mohammad Noor Azri
+ * @version 1.0
+ */
+
 public class FulfilledOrdersView extends StaffView {
 
     private final OrderTableMapper mapper;
@@ -32,6 +40,10 @@ public class FulfilledOrdersView extends StaffView {
 
         initializeUI();
     }
+
+    /**
+     * Initializes the user interface components of the view.
+     */
 
     public void initializeUI() {
         final JPanel panel = new Panel(); // Making 'panel' final
@@ -69,6 +81,10 @@ public class FulfilledOrdersView extends StaffView {
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
         add(panel);
     }
+
+    /**
+     * Populates the table with the list of fulfilled orders from the controller.
+     */
 
     public void populateOrdersInTable() {
         List<Order> orders = fulfilledOrdersController.getFulfilledOrders();
