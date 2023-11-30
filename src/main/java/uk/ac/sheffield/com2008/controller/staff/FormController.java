@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.domain.managers.ProductManager;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.navigation.Navigation;
@@ -27,7 +28,7 @@ public class FormController extends ViewController {
 
     public void onNavigateTo(){
         try {
-            allProducts = ProductDAO.getAllProducts();
+            allProducts = ProductManager.getAllProducts();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.domain.managers.ProductManager;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
@@ -27,7 +28,7 @@ public class StaffController extends ViewController {
 
     public void onNavigateTo() {
         try {
-            allProducts = ProductDAO.getProductsByCategory(initialLetter);
+            allProducts = ProductManager.getProductsByCategory(initialLetter);
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Product Record Error",

@@ -98,8 +98,8 @@ public class ProductManager {
 
     }
 
-    public static List<Product> getAllProducts() throws SQLException {
-        List<Product> allProducts = ProductDAO.getAllProducts();
+    public static List<Product> getProductsByCategory(String initialLetter) throws SQLException {
+        List<Product> allProducts = ProductDAO.getProductsByCategory(initialLetter);
         List<ProductSet> productSets = allProducts.stream()
                 .filter(product -> product instanceof ProductSet).map(product -> (ProductSet) product).toList();
         List<ProductSet> filledProductSets = ProductDAO.fetchProductSetItems(productSets);
@@ -107,6 +107,10 @@ public class ProductManager {
         allProducts.removeAll(productSets);
         allProducts.addAll(filledProductSets);
         return allProducts;
+    }
+
+    public static List<Product> getAllProducts() throws SQLException {
+        return getProductsByCategory("");
     }
 
     public static void deleteProduct(Product product) throws SQLException, ProductNotExistException {

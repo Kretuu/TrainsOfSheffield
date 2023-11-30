@@ -27,7 +27,7 @@ public class ProductRecordController extends ViewController {
 
     public void onNavigateTo(){
         try {
-            allProducts = ProductDAO.getProductsByCategory(filterInitialLetter);
+            allProducts = ProductManager.getProductsByCategory(filterInitialLetter);
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Product Record Error",
