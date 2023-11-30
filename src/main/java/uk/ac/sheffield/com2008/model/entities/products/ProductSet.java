@@ -68,24 +68,12 @@ public abstract class ProductSet extends Product {
         return output;
     }
 
-    /**
-     * Prints the contents of this product set
-     */
-    public void PrintFullSet() {
-        System.out.println(setName + "CONTAINS: ");
-        setItems.forEach(setItem -> {
-            Product product = setItem.getProduct();
-            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + setItem.getQuantity());
-        });
-    }
-
 
     public void setSetItems(List<ProductSetItem> setItems){
         this.setItems = setItems;
     }
 
     public List<ProductSetItem> getSetItems() {
-        PrintFullSet();
         return this.setItems;
     }
 

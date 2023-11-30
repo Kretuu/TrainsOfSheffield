@@ -129,12 +129,9 @@ public class AddProductToCartModal extends JDialog {
         // Create spinner for quantity selection
         int quantityInBasket = 0;
         Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
-        userBasket.PrintFullOrder();
         if (userBasket.hasProduct(product)) {
-            System.out.println("User has this item in basket");
             quantityInBasket = userBasket.getProductQuantity(product);
         }
-        System.out.println(quantityInBasket);
         int stockAvailableToAdd = product.getStock() - quantityInBasket;
 
         SpinnerModel spinnerModel = new SpinnerNumberModel(

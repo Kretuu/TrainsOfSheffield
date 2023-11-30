@@ -27,7 +27,6 @@ public class BrowseItemsView extends UserView {
         this.mapper = new ProductCustomerTableMapper() {
             @Override
             public void onClick(Product product) {
-                System.out.println("clicked ADD for product: " + product);
                 // Create an instance of the AddProductToCartModal class
                 AddProductToCartModal modal = new AddProductToCartModal(
                         BrowseItemsView.this.browseItemsController,

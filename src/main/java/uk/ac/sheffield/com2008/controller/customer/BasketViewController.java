@@ -33,7 +33,6 @@ public class BasketViewController extends ViewController {
     public void onNavigateTo() {
         user = AppSessionCache.getInstance().getUserLoggedIn();
         userBasket = user.getBasket();
-        userBasket.PrintFullOrder();
         basketView.onRefresh();
     }
 
@@ -55,7 +54,6 @@ public class BasketViewController extends ViewController {
     }
 
     public void deleteOrderline(OrderLine orderline) {
-        System.out.println("deleting: " + orderline.getProduct().getName());
         try {
             OrderManager.deleteOrderline(userBasket, orderline);
             basketView.onRefresh();

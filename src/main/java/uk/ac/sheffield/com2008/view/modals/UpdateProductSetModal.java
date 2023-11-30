@@ -42,13 +42,6 @@ public class UpdateProductSetModal extends JDialog {
             radioButton.setBackground(Colors.BACKGROUND);
             radioButton.setActionCommand(product.getProductCode());
             radioButton.addActionListener(e -> {
-                // Retrieve the selected product name using the action command (product code)
-                String selectedProductCode = radioButton.getActionCommand();
-                System.out.println("Selected Product Code: " + selectedProductCode);
-                String selectedProductName = findProductNameByCode(filteredProducts, selectedProductCode);
-                System.out.println("Selected Product Name: " + selectedProductName);
-                // Update the itemSelected label in ProductRecordForm
-
                 editProductRecordForm.setSelectedSetProduct(product);
             });
             buttonGroup.add(radioButton);
@@ -57,16 +50,6 @@ public class UpdateProductSetModal extends JDialog {
         itemsPanel.add(new JScrollPane(radioButtonsPanel), BorderLayout.CENTER);
         panel.add(itemsPanel, BorderLayout.CENTER);
         setContentPane(panel);
-    }
-
-
-    private String findProductNameByCode(List<Product> products, String productCode) {
-        for (Product product : products) {
-            if (product.getProductCode().equals(productCode)) {
-                return product.getName();
-            }
-        }
-        return null;
     }
 
 }

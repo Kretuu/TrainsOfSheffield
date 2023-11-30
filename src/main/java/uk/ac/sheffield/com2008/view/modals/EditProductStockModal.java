@@ -88,7 +88,6 @@ public class EditProductStockModal extends JDialog {
         JButton updateButton = new Button("Update");
         updateButton.addActionListener(e -> {
             staffController.updateProductQuantity(product, selectedQuantity);
-            System.out.println("Updated quantity: " + selectedQuantity);
 
             // Show a message indicating a successful update
             JOptionPane.showMessageDialog(this, "Stocks has been updated", "Success", JOptionPane.INFORMATION_MESSAGE);

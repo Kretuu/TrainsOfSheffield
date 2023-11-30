@@ -486,9 +486,7 @@ public class EditProductRecordForm extends StaffView {
     private JPanel trackPackPanel() {
         TrackPack editingTrackPack = (TrackPack) editFormController.getProductUnderEdit();
         selectedProductsMap = getProductsInSet(editingTrackPack);
-        editingTrackPack.PrintFullSet();
-        System.out.println(selectedProductsMap.size());
-        java.util.List<Product> allProducts = editFormController.getAllProducts();
+        List<Product> allProducts = editFormController.getAllProducts();
 
         JPanel panel = new Panel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -762,18 +760,13 @@ public class EditProductRecordForm extends StaffView {
 
     private void updateButtonState() {
         if(currentPanel == null){
-            System.out.println("NO CURRENT PANEL");
             return;
         }
 
         Map<String, CustomInputField> categoryFields = categorySpecificFields.get(currentPanel);
         if(categoryFields == null){ //this is aids but it works
-            System.out.println("NO CATEGORY FIELDS");
             return;
         }
-
-        System.out.println(sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
-                && categoryFields.values().stream().allMatch(CustomInputField::isValid));
 
         submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
                 && categoryFields.values().stream().allMatch(CustomInputField::isValid)

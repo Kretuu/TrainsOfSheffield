@@ -59,13 +59,13 @@ public class BrowseItemsController extends ViewController {
         try {
             //if product already exists
             if (!userBasket.hasProduct(product)) {
-                System.out.println("Adding " + product.getProductCode() + " to order");
                 OrderManager.addProductToOrder(userBasket, product, quantity);
             } else {
-                System.out.println("Modifying " + product.getProductCode() + " quantity in order");
                 OrderManager.modifyProductQuantity(userBasket, product, quantity);
             }
-            userBasket.PrintFullOrder();
+            navigation.setLayoutMessage(
+                    "Browse Items",
+                    "Product was added to the basket", false);
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Browse Items Error",

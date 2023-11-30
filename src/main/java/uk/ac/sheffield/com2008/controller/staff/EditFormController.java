@@ -36,7 +36,6 @@ public class EditFormController extends ViewController {
 
     public void forceRefresh() {
         editProductRecordForm.onRefresh();
-        System.out.println("editing product: " + productUnderEdit.printName());
     }
 
     /**

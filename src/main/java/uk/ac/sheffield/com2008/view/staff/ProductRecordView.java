@@ -36,9 +36,7 @@ public class ProductRecordView extends StaffView {
                 productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
 
                 if (product instanceof TrackPack) {
-                    System.out.println("in record view");
                     TrackPack productSet = (TrackPack) product;
-                    productSet.PrintFullSet();
                 }
                 ViewController nextController = productRecordController.getNavigation().getCurrentController();
                 if (nextController instanceof EditFormController) {

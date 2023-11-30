@@ -175,14 +175,6 @@ public class Order {
         return "ORDERNUM:  " + orderNumber + " STATUS: " + status.toString() + " TOTAL PRICE: " + totalPrice;
     }
 
-    public void PrintFullOrder(){
-        System.out.println(this + "CONTAINS: ");
-        orderLines.forEach(orderLine -> {
-            Product product = orderLine.getProduct();
-            System.out.println("\t " + product.getProductCode() + " " + product.getName() + " Qty: " + orderLine.getQuantity());
-        });
-    }
-
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof Order o)) return false;
