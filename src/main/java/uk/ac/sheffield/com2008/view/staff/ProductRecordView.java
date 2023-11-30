@@ -1,8 +1,11 @@
 package uk.ac.sheffield.com2008.view.staff;
 
+import uk.ac.sheffield.com2008.controller.ViewController;
+import uk.ac.sheffield.com2008.controller.staff.EditFormController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.TrackPack;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.components.Button;
@@ -30,6 +33,19 @@ public class ProductRecordView extends StaffView {
             @Override
             public void onClick(Product product) {
                 productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
+
+                if(product instanceof TrackPack){
+                    System.out.println("in record view");
+                    TrackPack productSet = (TrackPack) product;
+                    productSet.PrintFullSet();
+                }
+                ViewController nextController = productRecordController.getNavigation().getCurrentController();
+                if(nextController instanceof EditFormController){
+                    EditFormController editFormController = (EditFormController) nextController;
+                    editFormController.setProductUnderEdit(product);
+                    editFormController.forceRefresh();
+                }
+
             }
 
             @Override

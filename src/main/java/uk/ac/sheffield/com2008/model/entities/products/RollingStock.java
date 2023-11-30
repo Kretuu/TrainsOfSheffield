@@ -116,4 +116,17 @@ public class RollingStock extends Product {
         output.add(Integer.parseInt(nameAttributes[3]));
         return output;
     }
+
+    public String getMark(){
+        return mark;
+    }
+    public String getKind(){
+        return kind;
+    }
+    public Class_ getClass_(){
+        return class_;
+    }
+    public int getEra(){
+        return era;
+    }
 }

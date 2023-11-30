@@ -56,6 +56,9 @@ public class AddProductToCartModal extends JDialog {
             for(ProductSetItem psi : ((ProductSet) product).getSetItems()){
                 htmlList.append("<li style='width: 100%;'> ")
                         .append(psi.getProduct().printName())
+                        .append(" ")
+                        .append("x")
+                        .append(psi.getQuantity())
                         .append("</li>");
             }
 
@@ -79,7 +82,7 @@ public class AddProductToCartModal extends JDialog {
         //gauge label
         gbcTopExtra.gridx = 0;
         gbcTopExtra.gridy = 0;
-        JLabel gaugeLabel = new JLabel("OO");
+        JLabel gaugeLabel = new JLabel(product.getGauge().toString());
         gaugeLabel.setFont(gaugeLabel.getFont().deriveFont(Font.BOLD, 12));
         gbcTopExtra.anchor = GridBagConstraints.CENTER;
         extraDetails.add(gaugeLabel, gbcTopExtra);
@@ -96,7 +99,7 @@ public class AddProductToCartModal extends JDialog {
         //brand label
         gbcTopExtra.gridx = 1;
         gbcTopExtra.gridy = 0;
-        JLabel brandLabel = new JLabel("Hornby");
+        JLabel brandLabel = new JLabel(product.getBrand());
         brandLabel.setFont(brandLabel.getFont().deriveFont(Font.BOLD, 12));
         gbcTopExtra.anchor = GridBagConstraints.CENTER;
         extraDetails.add(brandLabel, gbcTopExtra);

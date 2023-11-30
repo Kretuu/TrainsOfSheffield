@@ -77,4 +77,8 @@ public class Track extends Product {
     public TrackType getTrackType(){
         return trackType;
     }
+
+    public String getDescriptor(){
+        return descriptor;
+    }
 }

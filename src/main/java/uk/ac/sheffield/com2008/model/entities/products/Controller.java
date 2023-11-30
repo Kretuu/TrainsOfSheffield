@@ -76,4 +76,11 @@ public class Controller extends Product {
         output.add(PowerType.valueOf(nameAttributes[1]));
         return output;
     }
+
+    public String getDescriptor(){
+        return descriptor;
+    }
+    public PowerType getPowerType(){
+        return powerType;
+    }
 }
