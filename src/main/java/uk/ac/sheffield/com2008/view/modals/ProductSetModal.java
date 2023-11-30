@@ -1,5 +1,6 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.view.components.Panel;
@@ -38,6 +39,7 @@ public class ProductSetModal extends JDialog {
         // Create and add radio buttons for each product
         for (Product product : filteredProducts) {
             JRadioButton radioButton = new JRadioButton(product.printName());
+            radioButton.setBackground(Colors.BACKGROUND);
             radioButton.setActionCommand(product.getProductCode());
             radioButton.addActionListener(e -> {
                 // Retrieve the selected product name using the action command (product code)
