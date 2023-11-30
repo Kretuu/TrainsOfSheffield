@@ -525,13 +525,15 @@ public class EditProductRecordForm extends StaffView {
 
         //Items in set pane;
         inPackPanel.setLayout(new BoxLayout(inPackPanel, BoxLayout.Y_AXIS));
-        inPackPanel.setPreferredSize(new Dimension(500, 200));
+        inPackPanel.setBackground(Colors.WHITE_BACKGROUND);
 
-        JScrollPane scrollPane = new JScrollPane(inPackPanel);
+        JPanel packPanelContainer = new JPanel(new FlowLayout());
+        packPanelContainer.setBackground(Colors.WHITE_BACKGROUND);
+        packPanelContainer.add(inPackPanel);
+
+        JScrollPane scrollPane = new JScrollPane(packPanelContainer);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        Dimension preferredSize = inPackPanel.getPreferredSize();
-        preferredSize.setSize(preferredSize.getWidth() + 30, preferredSize.getHeight());
-        scrollPane.setMinimumSize(preferredSize);
+        scrollPane.setPreferredSize(new Dimension(500, 200));
         panel.add(scrollPane);
 
         populateInSetPanel(selectedProductsMap, inPackPanel);
