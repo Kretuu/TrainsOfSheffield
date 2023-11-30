@@ -1,7 +1,9 @@
 package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
+import uk.ac.sheffield.com2008.exceptions.ProductNotExistException;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
+import uk.ac.sheffield.com2008.model.domain.managers.ProductManager;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
@@ -52,26 +54,20 @@ public class ProductRecordController extends ViewController {
         productRecordView.populateTable(filteredProducts);
     }
 
-    public List<Product> getDisplayedProducts() {
-        return filteredProducts;
-    }
-
-    public String determineCustomCategory(String productCode) {
-        // Check if the productCode starts with the letter 'L'
-        if (productCode.startsWith("L")) {
-            return "Locomotive";
-        } else if (productCode.startsWith("C")) {
-            return "Controller";
-        } else if (productCode.startsWith("R")) {
-            return "Track";
-        } else if (productCode.startsWith("S")) {
-            return "Rolling Stock";
-        } else if (productCode.startsWith("M")) {
-            return "Train Set";
-        } else if (productCode.startsWith("P")) {
-            return "Track Pack";
-        } else {
-            return "Other Category";
+    public void deleteProduct(Product product) {
+        try {
+            ProductManager.deleteProduct(product);
+            navigation.setLayoutMessage(
+                    "Product Delete",
+                    "Product was deleted successfully", false);
+        } catch (SQLException e) {
+            navigation.setLayoutMessage(
+                    "Product Delete Error",
+                    "Could not connect to database. The product was not deleted", true);
+        } catch (ProductNotExistException e) {
+            navigation.setLayoutMessage(
+                    "Product Delete Error",
+                    e.getMessage(), true);
         }
     }
 }

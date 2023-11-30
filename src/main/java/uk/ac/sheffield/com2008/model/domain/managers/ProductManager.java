@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.model.domain.managers;
 
 import uk.ac.sheffield.com2008.exceptions.InvalidProductQuantityException;
+import uk.ac.sheffield.com2008.exceptions.ProductNotExistException;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
@@ -106,6 +107,18 @@ public class ProductManager {
         allProducts.removeAll(productSets);
         allProducts.addAll(filledProductSets);
         return allProducts;
+    }
+
+    public static void deleteProduct(Product product) throws SQLException, ProductNotExistException {
+        if(ProductDAO.getProductByCode(product.getProductCode()) == null)
+            throw new ProductNotExistException();
+
+        if(ProductDAO.productExistInNonPendingOrders(product)) {
+            ProductDAO.discontinueProduct(product);
+            return;
+        }
+
+        ProductDAO.deleteProduct(product);
     }
 
     public static void updateStock(List<OrderLine> orderLines) throws SQLException, InvalidProductQuantityException {

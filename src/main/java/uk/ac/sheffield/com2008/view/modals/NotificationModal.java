@@ -12,7 +12,7 @@ public abstract class NotificationModal extends JDialog {
 
     public NotificationModal(JFrame frame, View view, String modalName, String notificationMessage) {
         super(frame, modalName, true);
-        JPanel content = new JPanel(new GridLayout(2, 1, 0, 10));
+        JPanel content = new JPanel(new BorderLayout());
 
         content.setBorder(new EmptyBorder(15, 15, 15, 15));
         JPanel labelPanel = new JPanel(new BorderLayout());
@@ -35,8 +35,8 @@ public abstract class NotificationModal extends JDialog {
         buttonsPanel.add(cancelButton);
         buttonsPanel.add(submitButton);
 
-        content.add(labelPanel);
-        content.add(buttonsPanel);
+        content.add(labelPanel, BorderLayout.CENTER);
+        content.add(buttonsPanel, BorderLayout.SOUTH);
 
         setContentPane(content);
         setMinimumSize(new Dimension(300, 200));

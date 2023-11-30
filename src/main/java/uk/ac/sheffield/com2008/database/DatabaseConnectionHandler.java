@@ -44,7 +44,23 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    public static boolean insert(String query, Object... params) throws SQLException {
+    public static long count(String query, Object... params) throws SQLException {
+        try(
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)
+        ) {
+            for(int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()) return rs.getLong("COUNT(*)");
+
+        }
+        return 0L;
+    }
+
+    public static void insert(String query, Object... params) throws SQLException {
         try(
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(query)
@@ -53,8 +69,7 @@ public class DatabaseConnectionHandler {
                 statement.setObject(i + 1, params[i]);
             }
 
-            return statement.execute();
-
+            statement.execute();
         }
     }
 
