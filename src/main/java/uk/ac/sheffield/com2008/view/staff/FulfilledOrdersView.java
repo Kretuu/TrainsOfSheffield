@@ -77,20 +77,16 @@ public class FulfilledOrdersView extends StaffView {
             add(new CustomColumn(0.2, "Total price"));
             add(new CustomColumn(0.1, null));
         }};
-        customTable = new CustomTable<>(columns, fulfilledOrdersController.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 700));
-        panel.add(scrollPane);
-
+        panel.add(customTable);
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
         add(panel);
     }
 
     public void populateOrdersInTable() {
         List<Order> orders = fulfilledOrdersController.getFulfilledOrders();
+        customTable.updateDimension(fulfilledOrdersController, 700);
         customTable.populateTable(orders, mapper);
     }
 

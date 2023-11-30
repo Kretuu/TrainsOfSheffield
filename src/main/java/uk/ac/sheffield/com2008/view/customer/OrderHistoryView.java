@@ -39,17 +39,14 @@ public class OrderHistoryView extends CustomerView {
            add(new CustomColumn(0.2, "Total price"));
            add(new CustomColumn(0.1, null));
         }};
-        customTable = new CustomTable<>(columns, controller.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 700));
-        add(scrollPane);
+        add(customTable);
     }
 
 
     public void populateList(List<Order> orders) {
+        customTable.updateDimension(controller, 700);
         customTable.populateTable(orders, mapper);
     }
 }

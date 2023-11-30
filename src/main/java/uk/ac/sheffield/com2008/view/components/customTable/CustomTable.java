@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.view.components.customTable;
 
 import uk.ac.sheffield.com2008.config.Colors;
+import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.TableMapper;
 
@@ -28,15 +29,13 @@ public class CustomTable<Type> extends JPanel {
      * @param columns LinkedList of CustomColumn which includes weight and colum name. Weight
      *                determines how column widths should be weighted.
      */
-    public CustomTable(LinkedList<CustomColumn> columns, JFrame frame) {
+    public CustomTable(LinkedList<CustomColumn> columns) {
         this.weights = columns.stream().map(CustomColumn::weight).collect(Collectors.toCollection(LinkedList::new));
         this.headers = columns.stream().map(CustomColumn::columnName)
                 .collect(Collectors.toCollection(LinkedList::new));
         this.columns = columns.size();
 
-        Dimension frameSize = frame.getPreferredSize();
-        frameSize.width = frameSize.width - 100;
-        size = frameSize;
+        size = getPreferredSize();
         initialiseVariables();
     }
 
@@ -129,10 +128,32 @@ public class CustomTable<Type> extends JPanel {
             rowIndex++;
         }
         Dimension preferredDimension = mainPanel.getPreferredSize();
-        preferredDimension.width = 1300;
+        preferredDimension.width = size.width;
         mainPanel.setPreferredSize(preferredDimension);
-        add(mainPanel);
+
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.add(mainPanel);
+
+        JScrollPane scrollPane = new JScrollPane(panel,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        scrollPane.setPreferredSize(size);
+        add(scrollPane);
         revalidate();
         repaint();
+    }
+
+    /**
+     * This function updates its size based on the frame size and height which is passed
+     * @param controller Any ViewController
+     * @param height Height of the table
+     */
+    public void updateDimension(ViewController controller, int height) {
+        Dimension dimension = controller.getNavigation().getFrame().getSize();
+        System.out.println(dimension);
+        dimension.width = dimension.width - 100;
+        dimension.height = height;
+        this.size = dimension;
     }
 }

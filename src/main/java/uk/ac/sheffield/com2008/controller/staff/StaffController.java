@@ -16,45 +16,33 @@ import java.util.List;
  */
 public class StaffController extends ViewController {
     private final ManageStockView manageStockView;
+    private String initialLetter = "";
     private List<Product> allProducts = new ArrayList<>();
-    private List<Product> filteredProducts = new ArrayList<>();
 
     public StaffController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new ManageStockView(this);
         manageStockView = (ManageStockView) view;
-        onNavigateTo();
-        setCurrentFilter("All");
     }
 
     public void onNavigateTo() {
         try {
-            allProducts = ProductDAO.getAllProducts();
+            allProducts = ProductDAO.getProductsByCategory(initialLetter);
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Product Record Error",
                     "Cannot connect to database. Product list was not updated", true);
         }
-        manageStockView.populateTable(filteredProducts);
-    }
-
-    public List<Product> getCurrentDisplayedProducts() {
-        return filteredProducts;
+        manageStockView.populateTable(allProducts);
     }
 
     public void setCurrentFilter(String initialLetter) {
-        if(initialLetter.isEmpty() || initialLetter.equals("All")) {
-            filteredProducts = allProducts;
+        if(initialLetter.equals("All")) {
+            this.initialLetter = "";
         } else {
-            try {
-                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
-            } catch (SQLException e) {
-                navigation.setLayoutMessage(
-                        "Product Record Error",
-                        "Cannot connect to database. Product list was not filtered.", true);
-            }
+            this.initialLetter = initialLetter;
         }
-        manageStockView.populateTable(filteredProducts);
+        onNavigateTo();
     }
 
     public void updateProductQuantity(Product product, int quantity) {

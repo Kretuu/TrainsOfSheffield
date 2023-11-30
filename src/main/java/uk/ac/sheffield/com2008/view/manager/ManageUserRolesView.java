@@ -35,7 +35,7 @@ public class ManageUserRolesView extends ManagerView {
             add(new CustomColumn(0.3, "Surname"));
             add(new CustomColumn(0.1, null));
         }};
-        this.customTable = new CustomTable<>(columns, controller.getNavigation().getFrame());
+        this.customTable = new CustomTable<>(columns);
 
         initialiseUI();
         add(content);
@@ -76,15 +76,10 @@ public class ManageUserRolesView extends ManagerView {
         tableTitle.setBorder(new EmptyBorder(15, 0,  15, 0));
         tableTitle.setAlignmentX(CENTER_ALIGNMENT);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 500));
-
 
         centerPanel.add(new JSeparator());
         centerPanel.add(tableTitle);
-        centerPanel.add(scrollPane);
+        centerPanel.add(customTable);
 
         content.add(headerPanel, BorderLayout.NORTH);
         content.add(centerPanel, BorderLayout.CENTER);
@@ -92,6 +87,7 @@ public class ManageUserRolesView extends ManagerView {
     }
 
     public void populateTable(List<User> staffList) {
+        customTable.updateDimension(controller, 500);
         customTable.populateTable(staffList, mapper);
     }
 

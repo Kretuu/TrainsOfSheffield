@@ -93,15 +93,9 @@ public class ProductRecordView extends StaffView {
             add(new CustomColumn(0.2, "Quantity"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns, productRecordController.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        Dimension dimension = productRecordController.getNavigation().getFrame().getPreferredSize();
-        dimension.width = dimension.width - 100;
-        scrollPane.setPreferredSize(new Dimension(dimension.width, 700));
-        productPanel.add(scrollPane);
+        productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         add(productPanel);
 
@@ -117,6 +111,7 @@ public class ProductRecordView extends StaffView {
     }
 
     public void populateTable(List<Product> products) {
+        customTable.updateDimension(productRecordController, 700);
         customTable.populateTable(products, mapper);
     }
 

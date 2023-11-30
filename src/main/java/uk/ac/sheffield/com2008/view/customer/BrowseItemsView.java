@@ -70,18 +70,15 @@ public class BrowseItemsView extends UserView {
             add(new CustomColumn(0.2, "Category"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns, browseItemsController.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 700));
-        productPanel.add(scrollPane);
+        productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         add(productPanel);
     }
 
     public void refreshTable(List<Product> productList) {
+        customTable.updateDimension(browseItemsController, 700);
         customTable.populateTable(productList, mapper);
     }
 }
