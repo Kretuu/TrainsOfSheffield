@@ -37,25 +37,33 @@ public class TrainSet extends ProductSet {
         boolean hasController = false;
         boolean hasTrackPack = false;
 
+        System.out.println("validating this product set");
+
         for (ProductSetItem setItem : setItems) {
             Product product = setItem.getProduct();
             if (product instanceof Locomotive) {
+                System.out.println("has a locomo");
                 haslocomotive = true;
             }
             if (product instanceof RollingStock) {
+                System.out.println("has rolling stock");
                 hasRollingStock = true;
             }
             if (product instanceof Controller) {
+                System.out.println("has controller");
                 hasController = true;
                 if (setItem.getQuantity() > 1) {
+                    System.out.println("has too many controller");
                     return errMsg;
                 }
             }
             if(product instanceof TrackPack){
+                System.out.println("has trackpack");
                 hasTrackPack = true;
             }
 
             if (product instanceof Track) {
+                System.out.println("has track - shouldnt");
                 return errMsg;
             }
         }
@@ -63,7 +71,7 @@ public class TrainSet extends ProductSet {
         if (!(haslocomotive && hasController && hasRollingStock && hasTrackPack)) {
             return errMsg;
         }
-
+        System.out.println("validated!");
         return null;
     }
 }
