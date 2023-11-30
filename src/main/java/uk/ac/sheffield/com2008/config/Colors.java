@@ -11,6 +11,7 @@ public class Colors {
     private static final Color white = Color.decode("#FBFBFB");
     private static final Color charcoal = Color.decode("#464655");
     private static final Color black = Color.decode("#353535");
+    private static final Color gray = Color.decode("#d4d4d8");
 
 
     public static Color TEXT_FIELD_FOCUSED = black;
@@ -29,4 +30,5 @@ public class Colors {
     public static Color BUTTON_CONTENT_FOCUS = greenLight;
     public static Color BUTTON_CONTENT_CLICK = greenLight;
     public static Color BUTTON_TEXT = white;
+    public static Color BUTTON_DISABLED = gray;
 }
