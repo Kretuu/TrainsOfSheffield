@@ -61,7 +61,7 @@ public class FieldsValidationManager {
         if(!ValidationManager.isStringNumeric(normalisedText)) return "Card number can contain only numbers";
         double cardNumber = Double.parseDouble(normalisedText);
 
-        if(ValidationManager.isBankingCardValid(cardNumber)) return null;
+        if(!ValidationManager.isBankingCardValid(cardNumber)) return null;
         return "Banking card number is not valid";
     }
 
