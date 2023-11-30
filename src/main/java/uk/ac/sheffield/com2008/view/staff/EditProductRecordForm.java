@@ -410,7 +410,6 @@ public class EditProductRecordForm extends StaffView{
         java.util.List<String> classes = Arrays.stream(RollingStock.Class_.values())
                 .map(RollingStock.Class_::deriveName)
                 .collect(Collectors.toList());
-        classes.add("Null");
         classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
         gbc.anchor = GridBagConstraints.WEST;
         classesComboBox.setSelectedItem(editingRollingStock.getClass_().deriveName());
