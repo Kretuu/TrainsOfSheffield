@@ -538,7 +538,7 @@ public class EditProductRecordForm extends StaffView{
         row1.add(title);
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton findButton = new JButton("Add a Track:");
+        JButton findButton = new Button("Add a Track:");
         findButton.addActionListener(e -> {
             String className = "Track";
             Class<?> classType = classMap.get(className);
@@ -556,7 +556,7 @@ public class EditProductRecordForm extends StaffView{
         JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new Button("Add");
 
         selectedPanel.add(selected);
         selectedPanel.add(itemSelectedTP);
@@ -611,7 +611,7 @@ public class EditProductRecordForm extends StaffView{
         row2.add(itemTypesComboBox);
         List<Product> allProducts = editFormController.getAllProducts();
 
-        JButton findButton = new JButton("Find");
+        JButton findButton = new Button("Find");
         findButton.addActionListener(e -> {
             String className = (String) itemTypesComboBox.getSelectedItem();
             Class<?> classType = classMap.get(className);
@@ -629,7 +629,7 @@ public class EditProductRecordForm extends StaffView{
         JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new Button("Add");
 
         selectedPanel.add(selected);
         selectedPanel.add(itemSelectedTS);
@@ -708,7 +708,7 @@ public class EditProductRecordForm extends StaffView{
             Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
             spinnerPreferredSize.width = 40; // Adjust the width as needed
             quantitySpinner.setPreferredSize(spinnerPreferredSize);
-            JButton removeItemButton = new JButton("X");
+            JButton removeItemButton = new Button("X");
             removeItemButton.addActionListener(e -> {
                 selectedProductsMap.remove(entry.getKey());
                 populateInSetPanel(products, inSetPanel); //essentially repaint
