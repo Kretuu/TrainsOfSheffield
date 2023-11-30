@@ -15,6 +15,7 @@ import java.sql.SQLException;
 
 public class ManageProfileController extends ViewController {
     private final ManageProfileView manageProfileView;
+
     public ManageProfileController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new ManageProfileView(this);

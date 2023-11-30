@@ -4,7 +4,7 @@ import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
 import uk.ac.sheffield.com2008.view.components.Button;
-
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public abstract class ProductRecordTableMapper implements TableMapper<Product> {
         list.add(ProductCategoryHelper.deriveCategory(object.getProductCode()));
         list.add(object.getStock());
 
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel buttonsPanel = new Panel(new GridLayout(1, 2, 10, 0));
         buttonsPanel.setBackground(Colors.TABLE_CONTENT);
         JButton editButton = new Button("Edit", 25);
         editButton.addActionListener(e -> onClick(object));

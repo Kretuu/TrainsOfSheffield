@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -19,12 +20,12 @@ public class OrderLineModal extends JDialog {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
 
         // Create a panel to hold the content
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new Panel(new BorderLayout());
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         panel.setBorder(emptyBorder);
 
         // Create a panel for the top section with GridLayout to stack labels vertically
-        JPanel topPanel = new JPanel(new GridLayout(2, 1)); // 2 rows, 1 column
+        JPanel topPanel = new Panel(new GridLayout(2, 1)); // 2 rows, 1 column
 
         int orderNum = order.getOrderNumber(); // Retrieve the order number
 
@@ -63,7 +64,7 @@ public class OrderLineModal extends JDialog {
 
         // Create a panel for Delete button and Fulfill checkbox
         JButton deleteButton = new Button("Delete Order");
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel bottomPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(deleteButton);
 
         // Delete the order when click on yes button

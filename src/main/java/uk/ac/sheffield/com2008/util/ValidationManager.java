@@ -7,12 +7,12 @@ public class ValidationManager {
         int sum = 0;
         boolean alternate = false;
 
-        for(int i = cardNumberString.length() - 1; i >= 0; i--) {
+        for (int i = cardNumberString.length() - 1; i >= 0; i--) {
             int digit = Character.getNumericValue(cardNumberString.charAt(i));
 
-            if(alternate) {
+            if (alternate) {
                 digit *= 2;
-                if(digit > 9) {
+                if (digit > 9) {
                     digit = digit - 9;
                 }
             }

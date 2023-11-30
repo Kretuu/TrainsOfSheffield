@@ -15,7 +15,8 @@ public class SalesController extends ViewController {
 
     private final SalesView salesView;
     private List<Order> orders = new ArrayList<>();
-    public SalesController(NavigationManager navigationManager, Navigation id){
+
+    public SalesController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new SalesView(this);
         salesView = (SalesView) view;
@@ -35,7 +36,7 @@ public class SalesController extends ViewController {
 
     public float getTotalSales() {
         float sum = 0;
-        for(Order order : orders) {
+        for (Order order : orders) {
             sum += order.getTotalPrice();
         }
         return sum;

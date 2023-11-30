@@ -1,15 +1,16 @@
 package uk.ac.sheffield.com2008.view.staff;
+
 import uk.ac.sheffield.com2008.controller.staff.SalesController;
-import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
-public class SalesView extends StaffView{
+public class SalesView extends StaffView {
     SalesController salesController;
 
-    public SalesView(SalesController salesController){
+    public SalesView(SalesController salesController) {
         this.salesController = salesController;
         initializeUI();
     }
@@ -25,9 +26,9 @@ public class SalesView extends StaffView{
         setLayout(new GridBagLayout());
 
         // top panel
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new Panel(new GridLayout(2, 1));
 
-        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel row1 = new Panel(new FlowLayout(FlowLayout.CENTER));
         // Create a label for Manage Orders
         JLabel viewLabel = new JLabel("Sales Dashboard");
         viewLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
@@ -43,7 +44,7 @@ public class SalesView extends StaffView{
         add(topPanel, gbcTop);
 
         // Create the left panel for monthly orders
-        JPanel monthlyOrdersPanel = new JPanel();
+        JPanel monthlyOrdersPanel = new Panel();
         monthlyOrdersPanel.setBorder(createBorder("Total Orders", 20));
         monthlyOrdersPanel.setPreferredSize(new Dimension(400, 300));
 
@@ -62,7 +63,7 @@ public class SalesView extends StaffView{
         add(monthlyOrdersPanel, gbc);
 
         // Create the right panel for total sales
-        JPanel totalSalesPanel = new JPanel();
+        JPanel totalSalesPanel = new Panel();
         totalSalesPanel.setBorder(createBorder("Total Sales", 20));
         totalSalesPanel.setPreferredSize(new Dimension(400, 300));
 

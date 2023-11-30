@@ -23,6 +23,7 @@ public class OrderManager {
 
     /**
      * Creates a new blank, pending order
+     *
      * @return fresh order
      */
     public static Order createNewOrder(User user) throws SQLException {
@@ -32,8 +33,9 @@ public class OrderManager {
 
     /**
      * Add an orderline to a given order
-     * @param order order to add to
-     * @param product the product object
+     *
+     * @param order    order to add to
+     * @param product  the product object
      * @param quantity the quantity
      */
     public static void addProductToOrder(Order order, Product product, int quantity) throws SQLException {
@@ -44,13 +46,14 @@ public class OrderManager {
 
     /**
      * modify the quantity of a given order
-     * @param order order to update
-     * @param product product to modify quantity of
+     *
+     * @param order       order to update
+     * @param product     product to modify quantity of
      * @param newQuantity new quantity of product
      */
     public static void modifyProductQuantity(Order order, Product product, int newQuantity) throws SQLException {
         OrderLine modifiedOrderLine = order.getOrderLineFromProduct(product);
-        if(modifiedOrderLine == null) {
+        if (modifiedOrderLine == null) {
             throw new RuntimeException("Tried to modify the quantity of a product not in this Order. Add a new Product instead.");
         }
         order.modifyQuantity(modifiedOrderLine, newQuantity);
@@ -59,9 +62,10 @@ public class OrderManager {
     }
 
     /**
-     *  removes from given order the given orderline in the object then from
-     *  the database
-     * @param order order in question
+     * removes from given order the given orderline in the object then from
+     * the database
+     *
+     * @param order     order in question
      * @param orderLine orderline to remove
      */
     public static void deleteOrderline(Order order, OrderLine orderLine) throws SQLException {
@@ -82,24 +86,25 @@ public class OrderManager {
 
     public static void updateUserBasket(User user) throws SQLException {
         Order usersBasket = OrderDAO.getUsersBasket(user);
-        if(usersBasket == null) usersBasket = OrderManager.createNewOrder(user);
+        if (usersBasket == null) usersBasket = OrderManager.createNewOrder(user);
         user.setBasket(usersBasket);
     }
 
     /**
      * Set an order as confirmed
+     *
      * @param order order to confirm
-     * @param user the user who that order belongs to
+     * @param user  the user who that order belongs to
      */
     public static void confirmOrder(Order order, User user)
             throws SQLException, BankDetailsNotValidException, OrderQuantitiesInvalidException,
             OrderOutdatedException, InvalidOrderStateException {
-        if(order.getOrderLines().isEmpty()) throw new InvalidOrderStateException("Empty order cannot be confirmed");
+        if (order.getOrderLines().isEmpty()) throw new InvalidOrderStateException("Empty order cannot be confirmed");
 
-        if(!order.getStatus().equals(Order.Status.PENDING))
+        if (!order.getStatus().equals(Order.Status.PENDING))
             throw new InvalidOrderStateException("Order is already confirmed");
 
-        if(!UserManager.validateUserBankingCard(user))
+        if (!UserManager.validateUserBankingCard(user))
             throw new BankDetailsNotValidException();
 
         validateOrder(order);
@@ -116,36 +121,36 @@ public class OrderManager {
                 .map(orderLine -> orderLine.getProduct().getProductCode()).toArray(String[]::new);
         Map<String, Product> orderProducts = ProductDAO.getProductsByCodes(productCodes).stream()
                 .collect(Collectors.toMap(Product::getProductCode, product -> product));
-        if(orderProducts.size() != orderLines.size()) throw new OrderOutdatedException();
+        if (orderProducts.size() != orderLines.size()) throw new OrderOutdatedException();
 
         List<OrderLine> invalidOrderLines = new ArrayList<>();
-        for(OrderLine orderLine : orderLines){
+        for (OrderLine orderLine : orderLines) {
             int stockProductQty = orderProducts.get(orderLine.getProduct().getProductCode()).getStock();
-            if(stockProductQty < orderLine.getQuantity()) {
+            if (stockProductQty < orderLine.getQuantity()) {
                 orderLine.setQuantity(stockProductQty);
                 invalidOrderLines.add(orderLine);
             }
         }
 
-        if(!invalidOrderLines.isEmpty()) throw new OrderQuantitiesInvalidException(invalidOrderLines);
+        if (!invalidOrderLines.isEmpty()) throw new OrderQuantitiesInvalidException(invalidOrderLines);
     }
 
     /**
      * Set an order as fulfilled
+     *
      * @param order order to fulfill
      */
     public static void fulfilOrder(Order order) throws InvalidOrderStateException, SQLException,
             OrderHasNoOwnerException, BankDetailsNotValidException, OrderQuantitiesInvalidException,
             OrderOutdatedException, InvalidProductQuantityException {
-        if(!order.getStatus().equals(Order.Status.CONFIRMED))
+        if (!order.getStatus().equals(Order.Status.CONFIRMED))
             throw new InvalidOrderStateException("Order is not confirmed, so cannot be fulfilled");
 
         User user = UserDAO.getUserByUuid(order.getUserUUID());
-        if(user == null) throw new OrderHasNoOwnerException();
+        if (user == null) throw new OrderHasNoOwnerException();
 
-        if(!UserManager.validateUserBankingCard(user))
+        if (!UserManager.validateUserBankingCard(user))
             throw new BankDetailsNotValidException();
-
 
 
         validateOrder(order);

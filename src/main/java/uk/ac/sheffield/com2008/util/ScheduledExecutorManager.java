@@ -16,10 +16,10 @@ public class ScheduledExecutorManager {
     public static void startSessionUpdater() {
         exec.scheduleWithFixedDelay(() -> {
             User user = AppSessionCache.getInstance().getUserLoggedIn();
-            if(user != null) {
+            if (user != null) {
                 try {
                     User refreshedUser = UserDAO.getUserByUuid(user.getUuid());
-                    if(refreshedUser != null) AppSessionCache.getInstance().setUserLoggedIn(refreshedUser);
+                    if (refreshedUser != null) AppSessionCache.getInstance().setUserLoggedIn(refreshedUser);
                     OrderManager.updateUserBasket(refreshedUser);
                 } catch (SQLException e) {
                     System.out.println("Could not connect to database. User session was not updated");

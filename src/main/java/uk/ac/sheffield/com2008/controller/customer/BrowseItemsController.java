@@ -18,7 +18,7 @@ public class BrowseItemsController extends ViewController {
 
     public BrowseItemsView browseItemsView;
 
-    public BrowseItemsController(NavigationManager navigationManager, Navigation id){
+    public BrowseItemsController(NavigationManager navigationManager, Navigation id) {
         //initialise view link
         super(navigationManager, id);
         view = new BrowseItemsView(this);
@@ -26,7 +26,7 @@ public class BrowseItemsController extends ViewController {
 
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         List<Product> allProducts;
         try {
             allProducts = ProductManager.getAllProducts();
@@ -41,17 +41,18 @@ public class BrowseItemsController extends ViewController {
     /**
      * Adds an orderline consisting of a product and quantity to the order.
      * Will update the quantity if this product already exists.
+     *
      * @param product
      * @param quantity
      */
-    public void addProductToBasket(Product product, int quantity){
+    public void addProductToBasket(Product product, int quantity) {
         Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
         try {
             //if product already exists
-            if(!userBasket.hasProduct(product)){
+            if (!userBasket.hasProduct(product)) {
                 System.out.println("Adding " + product.getProductCode() + " to order");
                 OrderManager.addProductToOrder(userBasket, product, quantity);
-            }else{
+            } else {
                 System.out.println("Modifying " + product.getProductCode() + " quantity in order");
                 OrderManager.modifyProductQuantity(userBasket, product, quantity);
             }

@@ -10,9 +10,11 @@ import java.util.LinkedList;
 
 public abstract class ProductTableMapper implements TableMapper<Product> {
     private final String actionName;
+
     public ProductTableMapper(String actionName) {
         this.actionName = actionName;
     }
+
     @Override
     public LinkedList<Object> constructColumns(Product object) {
         LinkedList<Object> list = new LinkedList<>();

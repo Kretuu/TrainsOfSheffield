@@ -15,7 +15,8 @@ import java.sql.SQLException;
  */
 public class LoginController extends ViewController {
     private final LoginView loginView;
-    public LoginController(NavigationManager navigationManager, Navigation id){
+
+    public LoginController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new LoginView(this);
         loginView = (LoginView) view;
@@ -26,11 +27,11 @@ public class LoginController extends ViewController {
         loginView.purgeTextFields();
     }
 
-    public void login(String email, char[] password){
+    public void login(String email, char[] password) {
         try {
             AuthenticationManager.loginUser(email, password);
             loginView.updateErrorMessage(null);
-            if(AppSessionCache.getInstance().getUserLoggedIn().getAddress() != null) {
+            if (AppSessionCache.getInstance().getUserLoggedIn().getAddress() != null) {
                 navigation.navigate(Navigation.CUSTOMER);
             } else {
                 navigation.navigate(Navigation.PROVIDE_ADDRESS);

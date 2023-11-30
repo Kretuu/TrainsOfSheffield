@@ -1,7 +1,6 @@
 package uk.ac.sheffield.com2008.model.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Address;
-import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
 
@@ -19,7 +18,7 @@ public class UserMapper implements RowMapper<User> {
 
         String postcode = resultSet.getString("Users.postcode");
         Address address = null;
-        if(postcode != null) {
+        if (postcode != null) {
             address = new Address(
                     resultSet.getString("Users.houseNumber"),
                     resultSet.getString("roadName"),

@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.staff.EditFormController;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.view.staff.EditProductRecordForm;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class UpdateProductSetModal extends JDialog {
         setSize(500, 400);
 
         // Create a panel to hold the content
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new Panel(new BorderLayout());
 
 
         // Give the panel some padding
@@ -26,14 +27,14 @@ public class UpdateProductSetModal extends JDialog {
         panel.setBorder(emptyBorder);
 
         // Create a panel for the top section
-        JPanel itemsPanel = new JPanel(new BorderLayout());
+        JPanel itemsPanel = new Panel(new BorderLayout());
         JLabel selectLabel = new JLabel("Select Items: ");
         itemsPanel.add(selectLabel, BorderLayout.NORTH);
 
         ButtonGroup buttonGroup = new ButtonGroup();
 
         // Create a panel to hold the radio buttons
-        JPanel radioButtonsPanel = new JPanel();
+        JPanel radioButtonsPanel = new Panel();
         radioButtonsPanel.setLayout(new BoxLayout(radioButtonsPanel, BoxLayout.Y_AXIS));
 
         // Create and add radio buttons for each product

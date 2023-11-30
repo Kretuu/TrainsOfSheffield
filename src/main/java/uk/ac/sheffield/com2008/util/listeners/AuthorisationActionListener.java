@@ -15,7 +15,7 @@ public abstract class AuthorisationActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(NavigationManager.permissionsValid(view)) {
+        if (NavigationManager.permissionsValid(view)) {
             action(e);
         }
     }

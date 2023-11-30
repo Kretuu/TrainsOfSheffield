@@ -88,7 +88,7 @@ public class ProductDAO {
 
     //TODO: Creating a new product that is "isSet" means also creating a new ProductSet db row
     public static List<ProductSet> fetchProductSetItems(List<ProductSet> productSets) throws SQLException {
-        if(productSets.isEmpty()) return new ArrayList<>();
+        if (productSets.isEmpty()) return new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder()
                 .append("SELECT * FROM ProductSets PS LEFT OUTER JOIN ProductSetItems PSI ON ")
                 .append("PS.setId = PSI.setId LEFT OUTER JOIN Products ON PSI.productCode = Products.productCode ")
@@ -132,9 +132,10 @@ public class ProductDAO {
 
     /**
      * Insert product into database
+     *
      * @param product said product
      */
-    public static void createProduct(Product product) throws SQLException{
+    public static void createProduct(Product product) throws SQLException {
 
         String insertQuery = "INSERT INTO Products (productCode, name, price, gauge, brand, isSet, stock)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -150,7 +151,7 @@ public class ProductDAO {
         );
 
 
-        if(product.isSet() && product instanceof ProductSet) {
+        if (product.isSet() && product instanceof ProductSet) {
             ProductSet set = (ProductSet) product;
 
             // create a new set linking to this product code
@@ -167,7 +168,7 @@ public class ProductDAO {
                     mapper,
                     reselectSetQuery,
                     product.getProductCode());
-            if(pSet.isEmpty()) throw new RuntimeException();
+            if (pSet.isEmpty()) throw new RuntimeException();
             int setId = (int) pSet.get(0).getSetId();
 
             //create new set items that link to this set id

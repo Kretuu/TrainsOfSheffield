@@ -9,6 +9,7 @@ import uk.ac.sheffield.com2008.model.entities.products.TrackPack;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductRecordTableMapper;
@@ -72,14 +73,14 @@ public class ProductRecordView extends StaffView {
         int padding = 40;
 
         // top panel
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new Panel(new GridLayout(2, 1));
 
-        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel row1 = new Panel(new FlowLayout(FlowLayout.CENTER));
         JLabel viewLabel = new JLabel("Product Record");
         row1.add(viewLabel);
         topPanel.add(row1);
 
-        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel row2 = new Panel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         filterComboBox = new JComboBox<>(categories);
@@ -101,7 +102,7 @@ public class ProductRecordView extends StaffView {
         add(topPanel, BorderLayout.NORTH);
 
         // Create a JPanel for the scroll panel with product labels
-        JPanel productPanel = new JPanel();
+        JPanel productPanel = new Panel();
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
 
         LinkedList<CustomColumn> columns = new LinkedList<>() {{

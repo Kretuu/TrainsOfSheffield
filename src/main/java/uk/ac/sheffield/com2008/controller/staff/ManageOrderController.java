@@ -20,17 +20,17 @@ import java.util.stream.Collectors;
 
 public class ManageOrderController extends ViewController {
 
-    public ManageOrdersView manageOrdersView;
+    private final ManageOrdersView manageOrdersView;
 
     private List<Order> allOrders = new ArrayList<>();
 
-    public ManageOrderController(NavigationManager navigationManager, Navigation id){
+    public ManageOrderController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new ManageOrdersView(this);
         manageOrdersView = (ManageOrdersView) view;
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         try {
             LinkedHashMap<String, String> params = new LinkedHashMap<>();
             params.put("status", "CONFIRMED");
@@ -43,7 +43,7 @@ public class ManageOrderController extends ViewController {
         manageOrdersView.populateOrdersInTable();
     }
 
-    public void deleteOrder (Order order){
+    public void deleteOrder(Order order) {
         // Delete the order and the orderlines associated with the order number in the database
         try {
             OrderDAO.deleteOrder(order);
@@ -75,7 +75,7 @@ public class ManageOrderController extends ViewController {
             JOptionPane.showMessageDialog(modal, "Error: " + e.getMessage());
             modal.dispose();
         }
-        if(errorMessage != null) {
+        if (errorMessage != null) {
             JOptionPane.showMessageDialog(modal, "Error: " + errorMessage);
             modal.unselectFulfilledCheckbox();
         }

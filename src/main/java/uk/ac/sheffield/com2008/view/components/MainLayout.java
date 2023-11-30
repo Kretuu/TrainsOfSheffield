@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.view.components;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.View;
@@ -10,17 +11,19 @@ import java.awt.*;
 import java.lang.reflect.Type;
 
 public class MainLayout extends JPanel {
-    private final JPanel panel = new JPanel(new BorderLayout());
-    private JPanel view = new JPanel();
-    private JButton logoutButton;
-    private final JPanel navigation = new JPanel();
+    private final JPanel panel = new Panel(new BorderLayout());
+    private final JPanel navigation = new Panel();
     private final NavigationManager navigationManager;
+    private JPanel view = new Panel();
+    private JButton logoutButton;
 
     public MainLayout(NavigationManager navigationManager) {
         this.setLayout(new BorderLayout());
         this.navigationManager = navigationManager;
         createLayout();
+        setBackground(Colors.BACKGROUND);
     }
+
     public void setContent(View v) {
         updateLayout(v);
         panel.remove(view);
@@ -30,11 +33,11 @@ public class MainLayout extends JPanel {
 
     public void purgeContent() {
         panel.remove(view);
-        this.view = new JPanel();
+        this.view = new Panel();
     }
 
     private void createLayout() {
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new Panel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel welcomeLabel = new JLabel("Welcome to Trains Of Sheffield shop ");
@@ -55,7 +58,7 @@ public class MainLayout extends JPanel {
         Type oldViewType = view.getClass().getGenericSuperclass();
         Type newViewType = v.getClass().getGenericSuperclass();
 
-        if(!newViewType.equals(oldViewType)) {
+        if (!newViewType.equals(oldViewType)) {
             setNavigationBar(v);
         }
     }
@@ -71,7 +74,7 @@ public class MainLayout extends JPanel {
     }
 
     public void updateMessage(String header, String text, boolean isError) {
-        if(isError){
+        if (isError) {
             JOptionPane.showMessageDialog(this, text, header, JOptionPane.ERROR_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, text, header, JOptionPane.INFORMATION_MESSAGE);

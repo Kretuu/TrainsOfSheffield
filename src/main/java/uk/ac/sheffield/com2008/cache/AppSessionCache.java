@@ -6,10 +6,11 @@ public class AppSessionCache {
     private static AppSessionCache appSessionCache;
     private User userLoggedIn;
 
-    private AppSessionCache() {}
+    private AppSessionCache() {
+    }
 
     public static AppSessionCache getInstance() {
-        if(appSessionCache == null) {
+        if (appSessionCache == null) {
             appSessionCache = new AppSessionCache();
         }
         return appSessionCache;

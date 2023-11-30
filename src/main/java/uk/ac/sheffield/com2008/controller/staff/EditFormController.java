@@ -19,13 +19,13 @@ public class EditFormController extends ViewController {
 
     private Product productUnderEdit;
 
-    public EditFormController(NavigationManager navigationManager, Navigation id){
+    public EditFormController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new EditProductRecordForm(this);
         editProductRecordForm = (EditProductRecordForm) view;
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         try {
             allProducts = ProductDAO.getAllProducts();
         } catch (SQLException e) {
@@ -34,19 +34,21 @@ public class EditFormController extends ViewController {
 
     }
 
-    public void forceRefresh(){
+    public void forceRefresh() {
         editProductRecordForm.onRefresh();
         System.out.println("editing product: " + productUnderEdit.printName());
     }
 
     /**
      * Pass in the product
+     *
      * @param productUnderEdit
      */
+
     public void tryUpdateProduct(Product productUnderEdit) throws InvalidDatabaseDataException {
         editProductRecordForm.setErrorMessage("");
 
-        if(!editProductRecordForm.validateAllFields()){
+        if (!editProductRecordForm.validateAllFields()) {
             editProductRecordForm.setErrorMessage("Error: Invalid Fields");
             return;
         }
@@ -58,7 +60,7 @@ public class EditFormController extends ViewController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if(existsProduct == null){
+        if (existsProduct == null) {
             editProductRecordForm.setErrorMessage("Error: Product of code " +
                     productUnderEdit.getProductCode() +
                     " does not exist");
@@ -71,11 +73,10 @@ public class EditFormController extends ViewController {
         );
 
         //validate if it is a set
-        if(productUnderEdit instanceof ProductSet){
+        if (productUnderEdit instanceof ProductSet) {
             String errorMsg = ((ProductSet) productUnderEdit).validateSet();
-            if(errorMsg != null){
+            if (errorMsg != null) {
                 editProductRecordForm.setErrorMessage(errorMsg);
-                return;
             }
         }
 
@@ -93,14 +94,15 @@ public class EditFormController extends ViewController {
         getNavigation().navigate(Navigation.PRODUCT_RECORD);
     }
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return allProducts;
+    }
+
+    public Product getProductUnderEdit() {
+        return productUnderEdit;
     }
 
     public void setProductUnderEdit(Product productUnderEdit) {
         this.productUnderEdit = productUnderEdit;
-    }
-    public Product getProductUnderEdit(){
-        return productUnderEdit;
     }
 }

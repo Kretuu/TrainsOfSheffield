@@ -5,7 +5,6 @@ import uk.ac.sheffield.com2008.model.domain.managers.UserManager;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
-import uk.ac.sheffield.com2008.view.auth.LoginView;
 import uk.ac.sheffield.com2008.view.auth.ProvideAddressView;
 
 import java.sql.SQLException;
