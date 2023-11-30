@@ -19,6 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller responsible for Manage Order screen
+ */
 
 public class ManageOrderController extends ViewController {
 
