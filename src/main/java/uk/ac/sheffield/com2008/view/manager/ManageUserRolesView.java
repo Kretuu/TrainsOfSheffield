@@ -4,6 +4,7 @@ import org.w3c.dom.css.Rect;
 import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
@@ -26,7 +27,7 @@ public class ManageUserRolesView extends ManagerView {
     public ManageUserRolesView(ManageUserRolesController controller) {
         this.controller = controller;
         this.content = new JPanel();
-        this.promoteUserButton = new JButton("Appoint staff");
+        this.promoteUserButton = new Button("Appoint staff");
         this.mapper = new ManagerUserTableMapper(controller);
 
         LinkedList<CustomColumn> columns = new LinkedList<>() {{
@@ -35,7 +36,7 @@ public class ManageUserRolesView extends ManagerView {
             add(new CustomColumn(0.3, "Surname"));
             add(new CustomColumn(0.1, null));
         }};
-        this.customTable = new CustomTable<>(columns, controller.getNavigation().getFrame());
+        this.customTable = new CustomTable<>(columns);
 
         initialiseUI();
         add(content);
@@ -76,15 +77,10 @@ public class ManageUserRolesView extends ManagerView {
         tableTitle.setBorder(new EmptyBorder(15, 0,  15, 0));
         tableTitle.setAlignmentX(CENTER_ALIGNMENT);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 500));
-
 
         centerPanel.add(new JSeparator());
         centerPanel.add(tableTitle);
-        centerPanel.add(scrollPane);
+        centerPanel.add(customTable);
 
         content.add(headerPanel, BorderLayout.NORTH);
         content.add(centerPanel, BorderLayout.CENTER);
@@ -92,6 +88,7 @@ public class ManageUserRolesView extends ManagerView {
     }
 
     public void populateTable(List<User> staffList) {
+        customTable.updateDimension(controller, 500);
         customTable.populateTable(staffList, mapper);
     }
 

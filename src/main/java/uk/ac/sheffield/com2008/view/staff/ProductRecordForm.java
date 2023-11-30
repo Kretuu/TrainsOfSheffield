@@ -7,6 +7,7 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.*;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 
@@ -92,7 +93,7 @@ public class ProductRecordForm extends StaffView {
 
     public ProductRecordForm(FormController formController) {
         this.formController = formController;
-        this.submitButton = new JButton("Save");
+        this.submitButton = new Button("Save");
 
         categoryComboBox = new JComboBox<>(categories);
         this.submitButton.addActionListener(e -> {
@@ -344,7 +345,7 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel buttonPanel() {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new Button("Cancel");
         buttonsPanel.add(cancelButton);
         cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
         buttonsPanel.add(submitButton);
@@ -549,7 +550,7 @@ public class ProductRecordForm extends StaffView {
         row1.add(title);
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton findButton = new JButton("Add a Track:");
+        JButton findButton = new Button("Add a Track:");
         findButton.addActionListener(e -> {
             String className = "Track";
             Class<?> classType = classMap.get(className);
@@ -567,7 +568,7 @@ public class ProductRecordForm extends StaffView {
         JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new Button("Add");
 
         selectedPanel.add(selected);
         selectedPanel.add(itemSelectedTP);
@@ -629,7 +630,7 @@ public class ProductRecordForm extends StaffView {
         row2.add(itemTypesComboBox);
         List<Product> allProducts = formController.getAllProducts();
 
-        JButton findButton = new JButton("Find");
+        JButton findButton = new Button("Find");
         findButton.addActionListener(e -> {
             String className = (String) itemTypesComboBox.getSelectedItem();
             Class<?> classType = classMap.get(className);
@@ -647,7 +648,7 @@ public class ProductRecordForm extends StaffView {
         JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new Button("Add");
 
         selectedPanel.add(selected);
         selectedPanel.add(itemSelectedTS);
@@ -716,7 +717,7 @@ public class ProductRecordForm extends StaffView {
             Dimension spinnerPreferredSize = quantitySpinner.getPreferredSize();
             spinnerPreferredSize.width = 40; // Adjust the width as needed
             quantitySpinner.setPreferredSize(spinnerPreferredSize);
-            JButton removeItemButton = new JButton("X");
+            JButton removeItemButton = new Button("X");
             removeItemButton.addActionListener(e -> {
                 selectedProductsMap.remove(entry.getKey());
                 populateInSetPanel(products, inSetPanel); //essentially repaint

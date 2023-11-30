@@ -8,6 +8,7 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.TrackPack;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductRecordTableMapper;
@@ -82,7 +83,7 @@ public class ProductRecordView extends StaffView {
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         filterComboBox = new JComboBox<>(categories);
-        JButton addRecordButton = new JButton("Create New Record");
+        JButton addRecordButton = new Button("Create New Record");
         addRecordButton.addActionListener(new AuthorisationActionListener(this) {
             @Override
             public void action(ActionEvent e) {
@@ -109,15 +110,9 @@ public class ProductRecordView extends StaffView {
             add(new CustomColumn(0.2, "Quantity"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns, productRecordController.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        Dimension dimension = productRecordController.getNavigation().getFrame().getPreferredSize();
-        dimension.width = dimension.width - 100;
-        scrollPane.setPreferredSize(new Dimension(dimension.width, 700));
-        productPanel.add(scrollPane);
+        productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         add(productPanel);
 
@@ -133,6 +128,7 @@ public class ProductRecordView extends StaffView {
     }
 
     public void populateTable(List<Product> products) {
+        customTable.updateDimension(productRecordController, 700);
         customTable.populateTable(products, mapper);
     }
 

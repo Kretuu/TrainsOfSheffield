@@ -12,6 +12,7 @@ import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.modals.NotificationModal;
 import uk.ac.sheffield.com2008.view.modals.OrderModal;
 import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
@@ -124,7 +125,7 @@ public class BasketView extends UserView {
             basketPanel.add(orderLineTotalPrice, gbc);
 
             // Add the delete button at the end of the row
-            JButton deleteButton = new JButton("X");
+            JButton deleteButton = new Button("X");
             deleteButton.addActionListener(e -> {
                 deleteOrderline(orderLine);
             });
@@ -160,7 +161,7 @@ public class BasketView extends UserView {
         totalTextLabel = new JLabel("Total: ");
         totalTextLabel.setFont(totalTextLabel.getFont().deriveFont(Font.BOLD, 24));
 
-        JButton confirmButton = new JButton("Confirm & Pay");
+        JButton confirmButton = new Button("Confirm & Pay");
         confirmButton.setFont(confirmButton.getFont().deriveFont(Font.BOLD, 24));
         confirmButton.addActionListener(e -> basketViewController.confirmOrder());
 

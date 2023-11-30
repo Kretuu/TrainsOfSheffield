@@ -10,6 +10,8 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
+import uk.ac.sheffield.com2008.view.components.Button;
+
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -92,7 +94,7 @@ public class EditProductRecordForm extends StaffView{
 
     public EditProductRecordForm(EditFormController editFormController) {
         this.editFormController = editFormController;
-        this.submitButton = new JButton("Save");
+        this.submitButton = new Button("Save");
 
         categoryComboBox = new JComboBox<>(categories);
         this.submitButton.addActionListener(e -> {
@@ -664,7 +666,7 @@ public class EditProductRecordForm extends StaffView{
 
     private JPanel buttonPanel() {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new Button("Cancel");
         buttonsPanel.add(cancelButton);
         cancelButton.addActionListener(e -> editFormController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
         buttonsPanel.add(submitButton);

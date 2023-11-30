@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.View;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import java.util.LinkedHashMap;
@@ -16,16 +17,16 @@ public abstract class UserView extends View {
 
         User user = AppSessionCache.getInstance().getUserLoggedIn();
 
-        navigationMap.put(Navigation.CUSTOMER, new JButton("Browse Items"));
-        navigationMap.put(Navigation.BASKET, new JButton("Basket"));
-        navigationMap.put(Navigation.MANAGE_PROFILE, new JButton("Manage Profile"));
+        navigationMap.put(Navigation.CUSTOMER, new Button("Browse Items"));
+        navigationMap.put(Navigation.BASKET, new Button("Basket"));
+        navigationMap.put(Navigation.MANAGE_PROFILE, new Button("Manage Profile"));
 
         if(user != null){
             if(user.getRoles().contains(User.Role.CUSTOMER))
-                navigationMap.put(Navigation.ORDER_HISTORY, new JButton("Order History"));
+                navigationMap.put(Navigation.ORDER_HISTORY, new Button("Order History"));
 
             if(user.getRoles().contains(User.Role.STAFF))
-                navigationMap.put(Navigation.STAFF, new JButton("Staff Area"));
+                navigationMap.put(Navigation.STAFF, new Button("Staff Area"));
         }
 
         setNavigation(navigationMap);

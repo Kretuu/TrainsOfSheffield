@@ -15,44 +15,36 @@ import java.util.List;
 
 public class ProductRecordController extends ViewController {
     private final ProductRecordView productRecordView;
+    private String filterInitialLetter = "";
 
     private List<Product> allProducts = new ArrayList<>();
-    private List<Product> filteredProducts = new ArrayList<>();
 
     public ProductRecordController(NavigationManager navigationManager, Navigation id){
         super(navigationManager, id);
         view = new ProductRecordView(this);
         productRecordView = (ProductRecordView) view;
-        onNavigateTo();
-        setCurrentFilter("All");
     }
 
     public void onNavigateTo(){
         try {
-            allProducts = ProductDAO.getAllProducts();
+            allProducts = ProductManager.getProductsByCategory(filterInitialLetter);
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Product Record Error",
                     "Could not connect to database. Latest products list was not fetched", true);
         }
-        productRecordView.populateTable(filteredProducts);
-//        productRecordView.resetFilterState();
+        productRecordView.populateTable(allProducts);
     }
 
     public void setCurrentFilter(String initialLetter) {
-        if(initialLetter.isEmpty() || initialLetter.equals("All")) {
-            filteredProducts = allProducts;
+        if(initialLetter.equals("All")) {
+            this.filterInitialLetter = "";
         } else {
-            try {
-                filteredProducts = ProductDAO.getProductsByCategory(initialLetter);
-            } catch (SQLException e) {
-                navigation.setLayoutMessage(
-                        "Product Record Error",
-                        "Cannot connect to database. Product list was not filtered.", true);
-            }
+            this.filterInitialLetter = initialLetter;
         }
-        productRecordView.populateTable(filteredProducts);
+        onNavigateTo();
     }
+
 
     public void deleteProduct(Product product) {
         try {

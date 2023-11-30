@@ -7,6 +7,7 @@ import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.util.math.Rounding;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -154,7 +155,7 @@ public class AddProductToCartModal extends JDialog {
         buttonPanel.add(quantitySpinner);
 
         // Create "Add To Cart" button
-        JButton addToCartButton = new JButton("Add To Cart");
+        JButton addToCartButton = new Button("Add To Cart");
         addToCartButton.addActionListener(e -> {
             browseItemsController.addProductToBasket(product, selectedQuantity);
             // Close the modal dialog

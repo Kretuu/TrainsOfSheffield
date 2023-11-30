@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.View;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -21,7 +22,7 @@ public abstract class NotificationModal extends JDialog {
         labelPanel.add(notificationLabel);
 
         JPanel buttonsPanel = new JPanel(new GridLayout(1, 2,10,0));
-        JButton submitButton = new JButton("Confirm");
+        JButton submitButton = new Button("Confirm");
         submitButton.addActionListener(new AuthorisationActionListener(view) {
             @Override
             public void action(ActionEvent e) {
@@ -30,7 +31,7 @@ public abstract class NotificationModal extends JDialog {
             }
         });
 
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new Button("Cancel");
         cancelButton.addActionListener(e -> dispose());
         buttonsPanel.add(cancelButton);
         buttonsPanel.add(submitButton);

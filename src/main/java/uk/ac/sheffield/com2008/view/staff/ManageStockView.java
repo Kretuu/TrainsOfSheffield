@@ -92,22 +92,11 @@ public class ManageStockView extends StaffView {
             add(new CustomColumn(0.2, "Quantity"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns, staffController.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 700));
-        productPanel.add(scrollPane);
+        productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         add(productPanel);
-
-        /*
-        manageOrderButton.addActionListener(e -> {
-            staffController.getNavigation().navigate(Navigation.MANAGE_ORDER);
-            // Repopulate the table upon returning to the ManageStockView
-            staffController.onNavigateTo();
-        });*/
 
         // Add an ActionListener to the filter combo box
         filterComboBox.addActionListener(e -> {
@@ -120,6 +109,7 @@ public class ManageStockView extends StaffView {
     }
 
     public void populateTable(List<Product> products) {
+        customTable.updateDimension(staffController, 700);
         customTable.populateTable(products, mapper);
     }
 
@@ -135,7 +125,7 @@ public class ManageStockView extends StaffView {
             return "S";
         } else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        } else if ("Train Pack".equals(selectedCategory)) {
+        } else if ("Track Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";

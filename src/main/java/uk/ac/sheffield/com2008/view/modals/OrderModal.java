@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.modals;
 import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -48,7 +49,7 @@ public class OrderModal extends JDialog {
         JPanel mainContent = somefunction();
 
         JPanel bottomPanel = new JPanel();
-        JButton closeButton = new JButton("Close");
+        JButton closeButton = new Button("Close");
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
 

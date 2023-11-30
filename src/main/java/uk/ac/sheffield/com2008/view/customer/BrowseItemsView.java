@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.customer;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductCustomerTableMapper;
@@ -49,8 +50,8 @@ public class BrowseItemsView extends UserView {
 
 
         JPanel topButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton staffAreaButton = new JButton("Staff Area");
-        JButton basketButton = new JButton("Basket");
+        JButton staffAreaButton = new Button("Staff Area");
+        JButton basketButton = new Button("Basket");
         topButtonsPanel.add(basketButton);
         topButtonsPanel.add(staffAreaButton);
         // Set up the Staff Area button action
@@ -70,18 +71,15 @@ public class BrowseItemsView extends UserView {
             add(new CustomColumn(0.2, "Category"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns, browseItemsController.getNavigation().getFrame());
+        customTable = new CustomTable<>(columns);
 
-        JScrollPane scrollPane = new JScrollPane(customTable,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(1300, 700));
-        productPanel.add(scrollPane);
+        productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         add(productPanel);
     }
 
     public void refreshTable(List<Product> productList) {
+        customTable.updateDimension(browseItemsController, 700);
         customTable.populateTable(productList, mapper);
     }
 }
