@@ -88,6 +88,7 @@ public class ProductDAO {
 
     //TODO: Creating a new product that is "isSet" means also creating a new ProductSet db row
     public static List<ProductSet> fetchProductSetItems(List<ProductSet> productSets) throws SQLException {
+        if(productSets.isEmpty()) return new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder()
                 .append("SELECT * FROM ProductSets PS LEFT OUTER JOIN ProductSetItems PSI ON ")
                 .append("PS.setId = PSI.setId LEFT OUTER JOIN Products ON PSI.productCode = Products.productCode ")

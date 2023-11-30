@@ -151,7 +151,6 @@ public class CustomTable<Type> extends JPanel {
      */
     public void updateDimension(ViewController controller, int height) {
         Dimension dimension = controller.getNavigation().getFrame().getSize();
-        System.out.println(dimension);
         dimension.width = dimension.width - 100;
         dimension.height = height;
         this.size = dimension;

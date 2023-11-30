@@ -102,6 +102,7 @@ public class ProductManager {
         List<Product> allProducts = ProductDAO.getProductsByCategory(initialLetter);
         List<ProductSet> productSets = allProducts.stream()
                 .filter(product -> product instanceof ProductSet).map(product -> (ProductSet) product).toList();
+        System.out.println(productSets);
         List<ProductSet> filledProductSets = ProductDAO.fetchProductSetItems(productSets);
 
         allProducts.removeAll(productSets);

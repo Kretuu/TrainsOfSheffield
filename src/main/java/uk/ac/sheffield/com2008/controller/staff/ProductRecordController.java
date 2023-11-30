@@ -29,6 +29,7 @@ public class ProductRecordController extends ViewController {
         try {
             allProducts = ProductManager.getProductsByCategory(filterInitialLetter);
         } catch (SQLException e) {
+            e.printStackTrace();
             navigation.setLayoutMessage(
                     "Product Record Error",
                     "Could not connect to database. Latest products list was not fetched", true);
