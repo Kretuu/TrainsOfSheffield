@@ -41,7 +41,7 @@ public class MainLayout extends JPanel {
         topPanel.add(welcomeLabel, BorderLayout.WEST);
 
         navigation.setLayout(new BoxLayout(navigation, BoxLayout.X_AXIS));
-        logoutButton = new JButton("Logout");
+        logoutButton = new Button("Logout");
         logoutButton.addActionListener(e -> {
             AppSessionCache.getInstance().logoutUser();
             navigationManager.navigate(Navigation.LOGIN);
