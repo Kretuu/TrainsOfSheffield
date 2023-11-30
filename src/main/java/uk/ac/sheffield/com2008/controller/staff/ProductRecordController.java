@@ -44,7 +44,10 @@ public class ProductRecordController extends ViewController {
         onNavigateTo();
     }
 
-
+    /***
+     * remove the products from database and populate the table again without the deleted product if there is no error
+     * @param product
+     */
     public void deleteProduct(Product product) {
         try {
             ProductManager.deleteProduct(product);

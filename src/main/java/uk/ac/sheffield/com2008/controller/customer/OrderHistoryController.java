@@ -27,6 +27,15 @@ public class OrderHistoryController extends ViewController {
         updateOrderHistory();
     }
 
+    /**
+     * Retrieves the user's order history, filters out pending orders, sorts them in descending
+     * order based on the date ordered, and populates the order history view.
+     *
+     * get the user's orders from the database, filters out any orders with a status of PENDING, and then sorts the
+     * remaining orders based on the date they were ordered in descending order.
+     * Finally, it populates the order history view with the sorted list of orders.
+     *
+     */
     private void updateOrderHistory() {
         User currentUser = AppSessionCache.getInstance().getUserLoggedIn();
         try {

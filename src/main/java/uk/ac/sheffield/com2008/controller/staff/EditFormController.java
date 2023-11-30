@@ -38,12 +38,12 @@ public class EditFormController extends ViewController {
         editProductRecordForm.onRefresh();
     }
 
+
     /**
-     * Pass in the product
+     * Pass in the product into the database if there is no erroe
      *
      * @param productUnderEdit
      */
-
     public void tryUpdateProduct(Product productUnderEdit) throws InvalidDatabaseDataException {
         editProductRecordForm.setErrorMessage("");
 

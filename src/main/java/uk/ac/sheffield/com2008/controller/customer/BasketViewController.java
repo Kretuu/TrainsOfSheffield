@@ -63,8 +63,12 @@ public class BasketViewController extends ViewController {
     }
 
     /**
-     * confirm the basket order
-     * FOR NOW JUST SAVES THE ORDER
+     * confirm the basket order and clear the basket view.
+     * @throws SQLException If there is an SQL exception during the database update.
+     * @throws BankDetailsNotValidException If bank details provided are not valid.
+     * @throws InvalidOrderStateException If the order state is invalid.
+     * @throws OrderQuantitiesInvalidException if order quantity is invalid.
+     * @throws OrderOutdatedException if the order is outdated and synchronize the database.
      */
     public void confirmOrder() {
         String errorMessage = null;
@@ -114,6 +118,18 @@ public class BasketViewController extends ViewController {
         return BankingDetailsDAO.hasUserBankingDetails(user);
     }
 
+    /**
+     * Updates the user's bank details with the provided banking card and password.
+     *
+     * checks if a user has a CUSTOMER role. If not, assign them to customer role.
+     * updates user and refreshes the navigation. Then, user's bank details are updated.
+     * the provided banking card and password. If bank details are valid, order status is changed to confirmed.
+     *
+     * @param bankingCard banking card details to update.
+     * @param password password for authentication.
+     * @throws SQLException If there is an SQL exception during the database update.
+     * @throws BankDetailsEncryptionException If there is an issue with encrypting the bank details.
+     */
     public void updateUserBankDetails(BankingCard bankingCard, char[] password)
             throws SQLException, BankDetailsEncryptionException {
         if (!user.hasRole(User.Role.CUSTOMER)) {

@@ -51,6 +51,7 @@ public class ManageUserRolesController extends ViewController {
         manageUserRolesView.populateTable(staffList);
     }
 
+
     public void revokeStaffRole(User user) {
         String errorMessage;
         try {
@@ -75,6 +76,12 @@ public class ManageUserRolesController extends ViewController {
                 errorMessage, true);
     }
 
+    /***
+     * appoint a user as a staff based on the email and add them to staff list.
+     * remove the user from customer list
+     * populate a table of staff with newly appointed staff
+     * @param email
+     */
     public void appointStaffRole(String email) {
         String errorMessage;
         try {
