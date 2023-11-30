@@ -1,5 +1,7 @@
 package uk.ac.sheffield.com2008.view.staff;
 
+import uk.ac.sheffield.com2008.controller.ViewController;
+import uk.ac.sheffield.com2008.controller.staff.EditFormController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
@@ -28,6 +30,13 @@ public class ProductRecordView extends StaffView {
             @Override
             public void onClick(Product product) {
                 productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
+
+                ViewController nextController = productRecordController.getNavigation().getCurrentController();
+                if(nextController instanceof EditFormController){
+                    EditFormController editFormController = (EditFormController) nextController;
+                    editFormController.setProductUnderEdit(product);
+                    editFormController.forceRefresh();
+                }
             }
         };
 
