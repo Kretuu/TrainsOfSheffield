@@ -92,7 +92,7 @@ public class ManageStockView extends StaffView {
             add(new CustomColumn(0.2, "Quantity"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns);
+        customTable = new CustomTable<>(columns, staffController.getNavigation().getFrame());
 
         JScrollPane scrollPane = new JScrollPane(customTable,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

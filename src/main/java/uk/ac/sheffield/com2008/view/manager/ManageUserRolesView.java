@@ -35,7 +35,7 @@ public class ManageUserRolesView extends ManagerView {
             add(new CustomColumn(0.3, "Surname"));
             add(new CustomColumn(0.1, null));
         }};
-        this.customTable = new CustomTable<>(columns);
+        this.customTable = new CustomTable<>(columns, controller.getNavigation().getFrame());
 
         initialiseUI();
         add(content);

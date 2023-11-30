@@ -70,7 +70,7 @@ public class BrowseItemsView extends UserView {
             add(new CustomColumn(0.2, "Category"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns);
+        customTable = new CustomTable<>(columns, browseItemsController.getNavigation().getFrame());
 
         JScrollPane scrollPane = new JScrollPane(customTable,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

@@ -19,6 +19,7 @@ public class CustomTable<Type> extends JPanel {
     private final LinkedList<Double> weights;
     private JPanel mainPanel = new JPanel(new GridBagLayout());
     private Font defaultFont;
+    private Dimension size;
     private Border defaultBorder;
 
     /**
@@ -27,11 +28,15 @@ public class CustomTable<Type> extends JPanel {
      * @param columns LinkedList of CustomColumn which includes weight and colum name. Weight
      *                determines how column widths should be weighted.
      */
-    public CustomTable(LinkedList<CustomColumn> columns) {
+    public CustomTable(LinkedList<CustomColumn> columns, JFrame frame) {
         this.weights = columns.stream().map(CustomColumn::weight).collect(Collectors.toCollection(LinkedList::new));
         this.headers = columns.stream().map(CustomColumn::columnName)
                 .collect(Collectors.toCollection(LinkedList::new));
         this.columns = columns.size();
+
+        Dimension frameSize = frame.getPreferredSize();
+        frameSize.width = frameSize.width - 100;
+        size = frameSize;
         initialiseVariables();
     }
 

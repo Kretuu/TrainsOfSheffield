@@ -9,7 +9,8 @@ public class Colors {
 
 
     public static Color TABLE_HEADER = new Color(12, 121, 92);
-    public static Color TABLE_CONTENT = new Color(103, 169, 139);
+    public static Color TABLE_CONTENT = Color.WHITE;
+            //new Color(103, 169, 139);
 
 
     public static Color BUTTON_BORDER = new Color(12, 121, 92);

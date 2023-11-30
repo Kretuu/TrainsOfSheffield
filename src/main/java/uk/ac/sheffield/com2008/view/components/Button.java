@@ -10,7 +10,10 @@ import java.awt.event.MouseEvent;
 public class Button extends JButton {
     private boolean isFocused = false;
     private Color background = Colors.BUTTON_CONTENT;
+    private int height = 20;
     public Button(String content) {
+//        setSize(getWidth(), height);
+
 
         setContentAreaFilled(false);
         setBorderPainted(false);
@@ -44,6 +47,12 @@ public class Button extends JButton {
         });
         setForeground(Colors.BUTTON_TEXT);
         setText(content);
+        Dimension preferredSize = getMaximumSize();
+        preferredSize.height = height;
+//        setPreferredSize(preferredSize);
+        setMaximumSize(preferredSize);
+        revalidate();
+        repaint();
     }
 
     @Override
