@@ -135,7 +135,7 @@ public class ManageStockView extends StaffView {
             return "S";
         } else if ("Train Set".equals(selectedCategory)) {
             return "M";
-        } else if ("Train Pack".equals(selectedCategory)) {
+        } else if ("Track Pack".equals(selectedCategory)) {
             return "P";
         } else {
             return "";
