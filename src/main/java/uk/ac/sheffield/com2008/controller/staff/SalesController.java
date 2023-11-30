@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller responsible for Sales screen
+ */
 public class SalesController extends ViewController {
 
     private final SalesView salesView;

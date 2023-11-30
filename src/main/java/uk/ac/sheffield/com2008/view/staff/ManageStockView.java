@@ -14,6 +14,14 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The {@code ManageStockView} class represents the view for managing stock
+ *
+ *
+ * @author Jakub Kreczetowski and Khaulah Mohammad Noor Azri
+ * @version 1.0
+ */
+
 public class ManageStockView extends StaffView {
 
     private final ProductTableMapper mapper;
@@ -35,6 +43,10 @@ public class ManageStockView extends StaffView {
 
         initializeUI();
     }
+
+    /**
+     * Initializes the user interface components of the view.
+     */
 
     public void initializeUI() {
         setLayout(new BorderLayout());
@@ -90,6 +102,10 @@ public class ManageStockView extends StaffView {
             staffController.setCurrentFilter(initialLetter);
         });
     }
+
+    /**
+     * Populates the table with the list of products from the controller.
+     */
 
     public void populateTable(List<Product> products) {
         customTable.updateDimension(staffController, 700);
