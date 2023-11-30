@@ -84,7 +84,7 @@ public class BasketView extends UserView {
         for(OrderLine orderLine : orderLines){
 
             Product lineProduct = orderLine.getProduct();
-            JLabel orderLineText = new JLabel(lineProduct.getName());
+            JLabel orderLineText = new JLabel(lineProduct.printName());
             JLabel orderLineUnitPrice = new JLabel(Symbols.getChar("£") + lineProduct.getPrice() + " x ");
             orderLineUnitPrice.setForeground(new Color(117, 117, 117));
 
