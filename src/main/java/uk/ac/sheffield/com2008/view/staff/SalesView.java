@@ -51,6 +51,10 @@ public class SalesView extends StaffView{
         JLabel monthlyOrdersLabel = new JLabel("Total Orders: " + salesController.getNumberOfSales());
         monthlyOrdersPanel.add(monthlyOrdersLabel);
 
+        // Make the text larger
+        Font largerText = monthlyOrdersLabel.getFont().deriveFont(Font.BOLD, 16);
+        monthlyOrdersLabel.setFont(largerText);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -65,11 +69,15 @@ public class SalesView extends StaffView{
 
         // Sample label in the right panel (replace with your data)
         JLabel totalSalesLabel = new JLabel("Total Sales Amount: " + salesController.getTotalSales());
+
+        // Make the text larger
+        Font largerFont = totalSalesLabel.getFont().deriveFont(Font.BOLD, 16);
+        totalSalesLabel.setFont(largerFont);
+
         totalSalesPanel.add(totalSalesLabel);
 
         gbc.gridx = 1;
         add(totalSalesPanel, gbc);
-
 
 
         GridBagConstraints gbcBottom = new GridBagConstraints();
