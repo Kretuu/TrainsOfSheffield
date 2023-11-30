@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.staff.EditFormController;
 import uk.ac.sheffield.com2008.controller.staff.FormController;
+import uk.ac.sheffield.com2008.model.domain.data.ProductSetItem;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.*;
 import uk.ac.sheffield.com2008.navigation.Navigation;
@@ -112,27 +113,19 @@ public class EditProductRecordForm extends StaffView{
 
     public void onRefresh(){
         removeAll();
-        //setPanels();
+        selectedProductsMap = new HashMap<>();
         initializeUI();
         revalidate();
         repaint();
 
         // TODO: fill in fields
     }
-    private void setPanels(){
-        locomotivePanel = locomotivePanel();
-        rollingStockPanel = rollingStocksPanel();
-        trackPanel = trackPanel();
-        controllerPanel = controllersPanel();
-        trainSetPanel = trainSetsPanel();
-        trackPackPanel = trackPackPanel();
-        categorySpecificFields = new HashMap<>();
-        categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
-        categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
-        categorySpecificFields.put(trackPanel, trackInputFields);
-        categorySpecificFields.put(controllerPanel, controllerInputFields);
-        categorySpecificFields.put(trainSetPanel, trainSetInputFields);
-        categorySpecificFields.put(trackPackPanel, trackPackInputFields);
+
+    private Map<Product, Integer> getProductsInSet(ProductSet set){
+        ArrayList<ProductSetItem> setItems = (ArrayList<ProductSetItem>) set.getSetItems();
+        Map<Product, Integer> productsMap = new HashMap<>();
+        setItems.forEach(psi -> productsMap.put(psi.getProduct(), psi.getQuantity()));
+        return productsMap;
     }
 
     private void initializeUI() {
@@ -259,7 +252,6 @@ public class EditProductRecordForm extends StaffView{
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
 
-        //TODO: Load up the correct panel for editing
         categorySpecificFields = new HashMap<>();
         if(productUnderEdit instanceof Locomotive){
             locomotivePanel = locomotivePanel();
@@ -372,6 +364,7 @@ public class EditProductRecordForm extends StaffView{
 
     private JPanel rollingStocksPanel() {
 
+        RollingStock editingRollingStock = (RollingStock) editFormController.getProductUnderEdit();
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -385,6 +378,7 @@ public class EditProductRecordForm extends StaffView{
                 markField.getjTextField().getText(),
                 2));
         rollingStockInputFields.put("mark", markField);
+        markField.getjTextField().setText(editingRollingStock.getMark() == null ? "" : editingRollingStock.getMark());
         markField.addToPanel(panel, gbc);
 
         // Kind
@@ -395,6 +389,7 @@ public class EditProductRecordForm extends StaffView{
                 3));
         rollingStockInputFields.put("kind", kindField);
         gbc.anchor = GridBagConstraints.WEST;
+        kindField.getjTextField().setText(editingRollingStock.getKind() == null ? "" : editingRollingStock.getKind());
         kindField.addToPanel(panel, gbc);
 
         // Class
@@ -407,6 +402,7 @@ public class EditProductRecordForm extends StaffView{
         classes.add("Null");
         classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
         gbc.anchor = GridBagConstraints.WEST;
+        classesComboBox.setSelectedItem(editingRollingStock.getClass_().deriveName());
         panel.add(classesComboBox, gbc);
 
         // Era
@@ -416,13 +412,14 @@ public class EditProductRecordForm extends StaffView{
                 eraField.getjTextField().getText()));
         rollingStockInputFields.put("era", eraField);
         gbc.anchor = GridBagConstraints.WEST;
+        eraField.getjTextField().setText(String.valueOf(editingRollingStock.getEra()));
         eraField.addToPanel(panel, gbc);
 
         return panel;
     }
 
     private JPanel trackPanel() {
-
+        Track editingTrack = (Track) editFormController.getProductUnderEdit();
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -436,6 +433,7 @@ public class EditProductRecordForm extends StaffView{
                 descriptorField.getjTextField().getText(), 3));
         trackInputFields.put("descriptor", descriptorField);
         gbc.anchor = GridBagConstraints.WEST;
+        descriptorField.getjTextField().setText(editingTrack.getDescriptor() == null ? "" : editingTrack.getDescriptor());
         descriptorField.addToPanel(panel, gbc);
 
         // Track Type
@@ -447,13 +445,14 @@ public class EditProductRecordForm extends StaffView{
                 .toArray(String[]::new);
         trackTypeComboBox = new JComboBox<>(trackTypes);
         gbc.anchor = GridBagConstraints.WEST;
+        trackTypeComboBox.setSelectedItem(editingTrack.getTrackType().deriveName());
         panel.add(trackTypeComboBox, gbc);
 
         return panel;
     }
 
     private JPanel controllersPanel() {
-
+        Controller editingController = (Controller) editFormController.getProductUnderEdit();
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -467,6 +466,7 @@ public class EditProductRecordForm extends StaffView{
                 descriptorField.getjTextField().getText(), 3));
         controllerInputFields.put("descriptor", descriptorField);
         gbc.anchor = GridBagConstraints.WEST;
+        descriptorField.getjTextField().setText(editingController.getDescriptor());
         descriptorField.addToPanel(panel, gbc);
 
         // Power Type
@@ -478,12 +478,17 @@ public class EditProductRecordForm extends StaffView{
                 .toArray(String[]::new);
         controllerTypeComboBox = new JComboBox<>(powerTypes);
         gbc.anchor = GridBagConstraints.WEST;
+        controllerTypeComboBox.setSelectedItem(editingController.getPowerType().deriveName());
         panel.add(controllerTypeComboBox, gbc);
 
         return panel;
     }
 
     private JPanel trackPackPanel() {
+        TrackPack editingTrackPack = (TrackPack) editFormController.getProductUnderEdit();
+        selectedProductsMap = getProductsInSet(editingTrackPack);
+        editingTrackPack.PrintFullSet();
+        System.out.println(selectedProductsMap.size());
         java.util.List<Product> allProducts = editFormController.getAllProducts();
         classMap.put("Starter Oval Track Pack", Track.class);
         classMap.put("Extension Track Pack", Track.class);
@@ -497,13 +502,21 @@ public class EditProductRecordForm extends StaffView{
                 setNameField.getjTextField().getText(),
                 3));
         trackPackInputFields.put("setName", setNameField);
+        setNameField.getjTextField().setText(editingTrackPack.getSetName());
         setNameField.addToPanel(panel);
 
         JPanel radioButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         starterOval = new JRadioButton("Starter Oval Track Pack");
         extension = new JRadioButton("Extension Track Pack");
         ButtonGroup buttonGroup = new ButtonGroup();
-        extension.setSelected(true);
+
+        if(editingTrackPack.getTrackPackType() == TrackPack.TrackPackType.STARTER){
+            starterOval.setSelected(true);
+        }
+        else{
+            extension.setSelected(true);
+        }
+
         buttonGroup.add(extension);
         buttonGroup.add(starterOval);
         radioButtonsPanel.add(starterOval);
@@ -553,6 +566,7 @@ public class EditProductRecordForm extends StaffView{
         scrollPane.setMinimumSize(preferredSize);
         panel.add(scrollPane);
 
+        populateInSetPanel(selectedProductsMap, inPackPanel);
         addButton.addActionListener(e -> {
             if (selectedSetProduct != null && !selectedProductsMap.containsKey(selectedSetProduct)) {
                 selectedProductsMap.put(selectedSetProduct, 1);
@@ -563,6 +577,9 @@ public class EditProductRecordForm extends StaffView{
 
     }
     private JPanel trainSetsPanel() {
+        TrainSet editingTrainSet = (TrainSet) editFormController.getProductUnderEdit();
+        selectedProductsMap = getProductsInSet(editingTrainSet);
+
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         classMap.put("Locomotive", Locomotive.class);
@@ -577,6 +594,7 @@ public class EditProductRecordForm extends StaffView{
                 setNameField.getjTextField().getText(),
                 3));
         trainSetInputFields.put("setName", setNameField);
+        setNameField.getjTextField().setText(editingTrainSet.getSetName());
         setNameField.addToPanel(panel);
 
         // Header panel
@@ -633,7 +651,7 @@ public class EditProductRecordForm extends StaffView{
         inSetHeadingPanel.add(displayItemsLabel);
         inSetPanel.add(inSetHeadingPanel);
 
-
+        populateInSetPanel(selectedProductsMap, inSetPanel);
         addButton.addActionListener(e -> {
             if (selectedSetProduct != null && !selectedProductsMap.containsKey(selectedSetProduct)) {
                 selectedProductsMap.put(selectedSetProduct, 1);

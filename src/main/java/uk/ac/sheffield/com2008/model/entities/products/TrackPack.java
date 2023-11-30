@@ -126,4 +126,8 @@ public class TrackPack extends ProductSet {
 
         return null; //valid
     }
+
+    public TrackPackType getTrackPackType(){
+        return trackPackType;
+    }
 }
