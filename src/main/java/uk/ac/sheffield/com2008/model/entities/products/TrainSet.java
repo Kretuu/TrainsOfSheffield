@@ -29,14 +29,13 @@ public class TrainSet extends ProductSet {
                 "  <li>1+ Locomotives</li>\n" +
                 "  <li>1+ Rolling Stock</li>\n" +
                 "  <li>1 Controller</li>\n" +
-                "  <li>1 Starter Oval Track Pack</li>\n" +
-                "  <li>0+ Extension Track Packs</li>\n" +
+                "  <li>1+ Track Packs</li>\n" +
                 "</ul></html>";
 
         boolean haslocomotive = false;
         boolean hasRollingStock = false;
         boolean hasController = false;
-        boolean hasStarterOval = false;
+        boolean hasTrackPack = false;
 
         for (ProductSetItem setItem : setItems) {
             Product product = setItem.getProduct();
@@ -52,20 +51,16 @@ public class TrainSet extends ProductSet {
                     return errMsg;
                 }
             }
-            if (product instanceof TrackPack trackpack) {
-                if (trackpack.trackPackType == TrackPack.TrackPackType.STARTER) {
-                    hasStarterOval = true;
-                    if (setItem.getQuantity() > 1) {
-                        return errMsg;
-                    }
-                }
+            if(product instanceof TrackPack){
+                hasTrackPack = true;
             }
+
             if (product instanceof Track) {
                 return errMsg;
             }
         }
 
-        if (!(haslocomotive && hasController && hasRollingStock && hasStarterOval)) {
+        if (!(haslocomotive && hasController && hasRollingStock && hasTrackPack)) {
             return errMsg;
         }
 

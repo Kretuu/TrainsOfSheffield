@@ -130,4 +130,8 @@ public class TrackPack extends ProductSet {
     public TrackPackType getTrackPackType(){
         return trackPackType;
     }
+
+    public void setTrackPackType(TrackPackType trackPackType){
+        this.trackPackType = trackPackType;
+    }
 }

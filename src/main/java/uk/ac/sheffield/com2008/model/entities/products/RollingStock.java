@@ -130,4 +130,17 @@ public class RollingStock extends Product {
     public int getEra(){
         return era;
     }
+
+    public void setMark(String mark){
+        this.mark = mark;
+    }
+    public void setKind(String kind){
+        this.kind = kind;
+    }
+    public void setClass_(Class_ class_){
+        this.class_ = class_;
+    }
+    public void setEra(int era){
+        this.era = era;
+    }
 }
