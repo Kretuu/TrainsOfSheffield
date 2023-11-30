@@ -3,10 +3,10 @@ package uk.ac.sheffield.com2008.view.staff;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.controller.staff.EditFormController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
-
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.TrackPack;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.Panel;
@@ -17,15 +17,15 @@ import uk.ac.sheffield.com2008.view.modals.NotificationModal;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ProductRecordView extends StaffView {
 
-    ProductRecordController productRecordController;
-    private CustomTable<Product> customTable;
     private final ProductRecordTableMapper mapper;
+    private final ProductRecordController productRecordController;
+    private CustomTable<Product> customTable;
     private JComboBox<String> filterComboBox;
 
     public ProductRecordView(ProductRecordController productRecordController) {
@@ -35,13 +35,13 @@ public class ProductRecordView extends StaffView {
             public void onClick(Product product) {
                 productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
 
-                if(product instanceof TrackPack){
+                if (product instanceof TrackPack) {
                     System.out.println("in record view");
                     TrackPack productSet = (TrackPack) product;
                     productSet.PrintFullSet();
                 }
                 ViewController nextController = productRecordController.getNavigation().getCurrentController();
-                if(nextController instanceof EditFormController){
+                if (nextController instanceof EditFormController) {
                     EditFormController editFormController = (EditFormController) nextController;
                     editFormController.setProductUnderEdit(product);
                     editFormController.forceRefresh();
@@ -122,7 +122,7 @@ public class ProductRecordView extends StaffView {
         filterComboBox.addActionListener(e -> {
             String selectedCategory = (String) filterComboBox.getSelectedItem();
             // Get the initial letter based on the selected category
-            String initialLetter = getInitialLetter(selectedCategory);
+            String initialLetter = ProductCategoryHelper.getInitialLetter(selectedCategory);
             // Call the filter method based on the selected starting letter
             productRecordController.setCurrentFilter(initialLetter);
         });
@@ -133,22 +133,4 @@ public class ProductRecordView extends StaffView {
         customTable.populateTable(products, mapper);
     }
 
-    // Method to get the initial letter based on the selected category
-    private String getInitialLetter(String selectedCategory) {
-        if ("Locomotive".equals(selectedCategory)) {
-            return "L";
-        } else if ("Controller".equals(selectedCategory)) {
-            return "C";
-        } else if ("Rolling Stock".equals(selectedCategory)) {
-            return "S";
-        }else if ("Track".equals(selectedCategory)) {
-            return "R";
-        }else if ("Train Set".equals(selectedCategory)) {
-            return "M";
-        }else if ("Track Pack".equals(selectedCategory)) {
-            return "P";
-        } else {
-            return "";
-        }
-    }
 }

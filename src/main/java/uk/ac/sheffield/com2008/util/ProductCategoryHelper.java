@@ -19,4 +19,23 @@ public class ProductCategoryHelper {
             return "Other Category";
         }
     }
+
+    // Method to get the initial letter based on the selected category
+    public static String getInitialLetter(String selectedCategory) {
+        if ("Locomotive".equals(selectedCategory)) {
+            return "L";
+        } else if ("Controller".equals(selectedCategory)) {
+            return "C";
+        } else if ("Rolling Stock".equals(selectedCategory)) {
+            return "S";
+        }else if ("Track".equals(selectedCategory)) {
+            return "R";
+        }else if ("Train Set".equals(selectedCategory)) {
+            return "M";
+        }else if ("Track Pack".equals(selectedCategory)) {
+            return "P";
+        } else {
+            return "";
+        }
+    }
 }

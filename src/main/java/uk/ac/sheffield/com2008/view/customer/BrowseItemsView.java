@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.customer;
 import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
 import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
@@ -46,8 +47,25 @@ public class BrowseItemsView extends UserView {
         JPanel topPanel = new Panel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel welcomeLabel = new JLabel("welcome");
-        topPanel.add(welcomeLabel, BorderLayout.WEST);
+        JPanel row = new Panel(new FlowLayout(FlowLayout.LEFT));
+        JLabel filterLabel = new JLabel("Filter by: ");
+        String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
+        JComboBox<String> filterComboBox = new JComboBox<>(categories);
+
+        filterComboBox.setToolTipText("Select a category to filter the products");
+        // Add an ActionListener to the filter combo box
+        filterComboBox.addActionListener(e -> {
+            String selectedCategory = (String) filterComboBox.getSelectedItem();
+            String initialLetter = ProductCategoryHelper.getInitialLetter(selectedCategory);
+            // Call the filter method based on the selected starting letter
+            browseItemsController.setCurrentFilter(initialLetter);
+        });
+        row.add(filterLabel);
+        row.add(filterComboBox);
+        row.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
+        topPanel.add(row);
+
+        add(row, BorderLayout.NORTH);
 
 
         JPanel topButtonsPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
@@ -76,7 +94,7 @@ public class BrowseItemsView extends UserView {
 
         productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
-        add(productPanel);
+        add(productPanel, BorderLayout.CENTER);
     }
 
     public void refreshTable(List<Product> productList) {
