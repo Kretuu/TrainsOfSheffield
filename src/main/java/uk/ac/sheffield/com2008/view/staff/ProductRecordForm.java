@@ -8,8 +8,8 @@ import uk.ac.sheffield.com2008.model.entities.products.*;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.Button;
-import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 
 import javax.swing.*;
@@ -17,68 +17,26 @@ import javax.swing.border.Border;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.text.NumberFormat;
-
-import java.util.*;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class ProductRecordForm extends StaffView {
 
     private final FormController formController;
-    private JPanel cardPanel;
-    private CardLayout cardLayout;
     private final JButton submitButton;
-    private Map<String, Class<?>> classMap = new HashMap<>();
-    JComboBox<String> gaugesComboBox;
-
-    JLabel gaugeLabel;
-
-    JLabel errorMessage;
-
-    //Panels
-    JPanel locomotivePanel;
-    JPanel rollingStockPanel;
-    JPanel trackPanel;
-    JPanel controllerPanel;
-    JPanel trainSetPanel;
-    JPanel trackPackPanel;
-    JPanel currentPanel;
-
-    JComboBox<String> categoryComboBox;
-
     private final Map<String, CustomInputField> sharedInputFields = new HashMap<>();
-
-    JFormattedTextField quantityField;
-    Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
-    private Map<Product, Integer> selectedProductsMap = new HashMap<>();
-
     //Locomotive
     private final Map<String, CustomInputField> locomotiveInputFields = new HashMap<>();
-    private JComboBox<String> powerTypeComboBox;
-
     //Rolling stock
     private final Map<String, CustomInputField> rollingStockInputFields = new HashMap<>();
-    private JComboBox<String> classesComboBox;
-
     //Track
     private final Map<String, CustomInputField> trackInputFields = new HashMap<>();
-    private JComboBox<String> trackTypeComboBox;
-
     //Controller
     private final Map<String, CustomInputField> controllerInputFields = new HashMap<>();
-    private JComboBox<String> controllerTypeComboBox;
-
     private final Map<String, CustomInputField> trainSetInputFields = new HashMap<>();
     private final Map<String, CustomInputField> trackPackInputFields = new HashMap<>();
-    JRadioButton starterOval;
-    JRadioButton extension;
-
-
     private final String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
             "Train Set", "Track Pack"};
     private final Map<String, Character> catChar = Map.of(
@@ -89,7 +47,35 @@ public class ProductRecordForm extends StaffView {
             "Train Set", 'M',
             "Track Pack", 'P'
     );
-
+    JComboBox<String> gaugesComboBox;
+    JLabel gaugeLabel;
+    JLabel errorMessage;
+    //Panels
+    JPanel locomotivePanel;
+    JPanel rollingStockPanel;
+    JPanel trackPanel;
+    JPanel controllerPanel;
+    JPanel trainSetPanel;
+    JPanel trackPackPanel;
+    JPanel currentPanel;
+    JComboBox<String> categoryComboBox;
+    JFormattedTextField quantityField;
+    Map<String, Product.Gauge> gauges = new LinkedHashMap<>();
+    JRadioButton starterOval;
+    JRadioButton extension;
+    JLabel itemSelectedTP;
+    JLabel itemSelectedTS;
+    JPanel inSetPanel;
+    JPanel inPackPanel;
+    Product selectedSetProduct;
+    private JPanel cardPanel;
+    private CardLayout cardLayout;
+    private Map<String, Class<?>> classMap = new HashMap<>();
+    private Map<Product, Integer> selectedProductsMap = new HashMap<>();
+    private JComboBox<String> powerTypeComboBox;
+    private JComboBox<String> classesComboBox;
+    private JComboBox<String> trackTypeComboBox;
+    private JComboBox<String> controllerTypeComboBox;
     private Map<JPanel, Map<String, CustomInputField>> categorySpecificFields = new HashMap<>();
 
     public ProductRecordForm(FormController formController) {
@@ -117,7 +103,7 @@ public class ProductRecordForm extends StaffView {
         initializeUI();
     }
 
-    public void onRefresh(){
+    public void onRefresh() {
         removeAll();
         setPanels();
         initializeUI();
@@ -125,7 +111,7 @@ public class ProductRecordForm extends StaffView {
         repaint();
     }
 
-    private void setPanels(){
+    private void setPanels() {
         locomotivePanel = locomotivePanel();
         rollingStockPanel = rollingStocksPanel();
         trackPanel = trackPanel();
@@ -325,7 +311,6 @@ public class ProductRecordForm extends StaffView {
         pageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(pageScroll);
     }
-
 
     private JPanel getCategoryPanel(String category) {
         if ("Locomotive".equals(category)) {
@@ -597,12 +582,6 @@ public class ProductRecordForm extends StaffView {
 
     }
 
-    JLabel itemSelectedTP;
-    JLabel itemSelectedTS;
-    JPanel inSetPanel;
-    JPanel inPackPanel;
-    Product selectedSetProduct;
-
     private JPanel trainSetsPanel() {
         JPanel panel = new Panel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -695,8 +674,6 @@ public class ProductRecordForm extends StaffView {
         inSetPanel.setLayout(new BoxLayout(inSetPanel, BoxLayout.Y_AXIS));
         for (Map.Entry<Product, Integer> entry : products.entrySet()) {
             String selectedProductName = entry.getKey().printName();
-            System.out.println(selectedProductName);
-            String selectedProductCode = entry.getKey().getProductCode();
             Integer qty = entry.getValue();
 
             JPanel subItemsPanel = new JPanel(new GridBagLayout());
@@ -709,7 +686,6 @@ public class ProductRecordForm extends StaffView {
             Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
             subItemsPanel.setBorder(emptyBorder);
 
-            JLabel itemCodeLabel = new JLabel(selectedProductCode);
             JLabel itemNameLabel = new JLabel(selectedProductName);
             JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel((int) qty, 1, Integer.MAX_VALUE, 1));
             quantitySpinner.addChangeListener(e -> {
@@ -727,10 +703,6 @@ public class ProductRecordForm extends StaffView {
 
             gbc.gridx++;
             gbc.weightx = 1.0;
-            gbc.anchor = GridBagConstraints.WEST;
-            subItemsPanel.add(itemCodeLabel, gbc);
-
-            gbc.gridx++;
             gbc.anchor = GridBagConstraints.WEST;
             subItemsPanel.add(itemNameLabel, gbc);
 

@@ -1,11 +1,10 @@
 package uk.ac.sheffield.com2008.view.modals;
 
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.staff.EditFormController;
-import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.view.staff.EditProductRecordForm;
 import uk.ac.sheffield.com2008.view.components.Panel;
-import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
+import uk.ac.sheffield.com2008.view.staff.EditProductRecordForm;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class UpdateProductSetModal extends JDialog {
 
-    public UpdateProductSetModal(EditFormController editFormController, JFrame parentFrame, EditProductRecordForm editProductRecordForm, List<Product> filteredProducts){
+    public UpdateProductSetModal(EditFormController editFormController, JFrame parentFrame, EditProductRecordForm editProductRecordForm, List<Product> filteredProducts) {
         super(parentFrame, "", true);
         setSize(500, 400);
 
@@ -40,6 +39,7 @@ public class UpdateProductSetModal extends JDialog {
         // Create and add radio buttons for each product
         for (Product product : filteredProducts) {
             JRadioButton radioButton = new JRadioButton(product.printName());
+            radioButton.setBackground(Colors.BACKGROUND);
             radioButton.setActionCommand(product.getProductCode());
             radioButton.addActionListener(e -> {
                 // Retrieve the selected product name using the action command (product code)
