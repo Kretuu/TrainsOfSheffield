@@ -95,8 +95,6 @@ public class EditProductStockModal extends JDialog {
             dispose();
             //Refresh the UI
             staffController.onNavigateTo();
-            // Repopulate the table with updated data
-//            staffController.repopulateTable();
         });
         buttonPanel2.add(updateButton);
 

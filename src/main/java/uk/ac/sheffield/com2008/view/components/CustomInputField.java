@@ -34,6 +34,7 @@ public class CustomInputField implements DocumentListener {
     public CustomInputField(String label, Runnable updateButtonState, boolean emptyAllowed, boolean isPassword) {
         this.updateButtonState = updateButtonState;
         this.emptyAllowed = emptyAllowed;
+        if(emptyAllowed) this.isValid = true;
         createComponents(label, isPassword);
         addListeners();
     }

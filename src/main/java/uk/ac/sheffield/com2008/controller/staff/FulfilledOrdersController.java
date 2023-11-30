@@ -2,7 +2,9 @@ package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
+import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.FulfilledOrdersView;
@@ -39,5 +41,14 @@ public class FulfilledOrdersController extends ViewController {
 
     public List<Order> getFulfilledOrders() {
         return fulfilledOrders;
+    }
+
+    public User getOrderUser(Order order) {
+        try {
+            return UserDAO.getUserByUuid(order.getUserUUID());
+        } catch (SQLException e) {
+            navigation.setLayoutMessage("Order details", "Could not connect to database.", true);
+        }
+        return null;
     }
 }

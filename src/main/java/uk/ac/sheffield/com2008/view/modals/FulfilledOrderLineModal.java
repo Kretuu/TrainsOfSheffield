@@ -3,6 +3,8 @@ package uk.ac.sheffield.com2008.view.modals;
 import uk.ac.sheffield.com2008.controller.staff.FulfilledOrdersController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
+import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
@@ -12,9 +14,14 @@ import java.util.List;
 
 public class FulfilledOrderLineModal extends JDialog {
     public FulfilledOrderLineModal(FulfilledOrdersController fulfilledOrdersController, JFrame parentFrame, Order order) {
-
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
 
+        User user = fulfilledOrdersController.getOrderUser(order);
+        if(user == null) {
+            dispose();
+            return;
+        }
+        PersonalDetails personalDetails = user.getPersonalDetails();
         // Create a panel to hold the content
         JPanel panel = new Panel(new BorderLayout());
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
@@ -38,6 +45,8 @@ public class FulfilledOrderLineModal extends JDialog {
 
 
         StringBuilder orderLinesText = new StringBuilder();
+        orderLinesText.append("User's name: ").append(personalDetails.getForename()).append(" ")
+                .append(personalDetails.getSurname()).append("\n");
         orderLinesText.append("Order Number: ").append(order.getOrderNumber()).append("\n");
         orderLinesText.append("Date Ordered: ").append(order.getDateOrdered()).append("\n");
         orderLinesText.append("Status: ").append(order.getStatus()).append("\n\n");

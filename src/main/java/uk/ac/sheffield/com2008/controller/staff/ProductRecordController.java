@@ -28,7 +28,6 @@ public class ProductRecordController extends ViewController {
         try {
             allProducts = ProductManager.getProductsByCategory(filterInitialLetter);
         } catch (SQLException e) {
-            e.printStackTrace();
             navigation.setLayoutMessage(
                     "Product Record Error",
                     "Could not connect to database. Latest products list was not fetched", true);
@@ -52,6 +51,8 @@ public class ProductRecordController extends ViewController {
             navigation.setLayoutMessage(
                     "Product Delete",
                     "Product was deleted successfully", false);
+            allProducts.remove(product);
+            productRecordView.populateTable(allProducts);
         } catch (SQLException e) {
             navigation.setLayoutMessage(
                     "Product Delete Error",

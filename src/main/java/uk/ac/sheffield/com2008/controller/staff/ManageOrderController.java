@@ -3,8 +3,10 @@ package uk.ac.sheffield.com2008.controller.staff;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.exceptions.*;
 import uk.ac.sheffield.com2008.model.dao.OrderDAO;
+import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.domain.managers.OrderManager;
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.modals.OrderLineModal;
@@ -79,6 +81,15 @@ public class ManageOrderController extends ViewController {
             JOptionPane.showMessageDialog(modal, "Error: " + errorMessage);
             modal.unselectFulfilledCheckbox();
         }
+    }
+
+    public User getOrderUser(Order order) {
+        try {
+            return UserDAO.getUserByUuid(order.getUserUUID());
+        } catch (SQLException e) {
+            navigation.setLayoutMessage("Order details", "Could not connect to database.", true);
+        }
+        return null;
     }
 
 }

@@ -359,10 +359,7 @@ public class ProductRecordForm extends StaffView {
 
         // Individual Name
         gbc.gridx++;
-        CustomInputField indivNameField = new CustomInputField("Individual Name:", this::updateButtonState, false);
-        indivNameField.setValidationFunction(() -> FieldsValidationManager.validateForLength(
-                indivNameField.getjTextField().getText(),
-                3));
+        CustomInputField indivNameField = new CustomInputField("Individual Name:", this::updateButtonState, true);
         locomotiveInputFields.put("individualName", indivNameField);
         gbc.anchor = GridBagConstraints.WEST;
         indivNameField.addToPanel(panel, gbc);

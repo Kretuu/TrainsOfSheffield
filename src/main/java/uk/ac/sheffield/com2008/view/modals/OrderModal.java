@@ -47,7 +47,7 @@ public class OrderModal extends JDialog {
             content.add(headingPanel);
         }
 
-        JPanel mainContent = somefunction();
+        JPanel mainContent = generateOrderContents();
 
         JPanel bottomPanel = new Panel();
         JButton closeButton = new Button("Close");
@@ -59,7 +59,7 @@ public class OrderModal extends JDialog {
         pack();
     }
 
-    private JPanel somefunction() {
+    private JPanel generateOrderContents() {
         JPanel mainContent = new Panel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
