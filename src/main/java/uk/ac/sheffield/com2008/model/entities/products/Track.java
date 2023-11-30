@@ -81,4 +81,11 @@ public class Track extends Product {
     public String getDescriptor(){
         return descriptor;
     }
+
+    public void setTrackType(TrackType trackType){
+        this.trackType = trackType;
+    }
+    public void setDescriptor(String descriptor){
+        this.descriptor = descriptor;
+    }
 }
