@@ -16,26 +16,35 @@ import java.util.List;
 
 public class BrowseItemsController extends ViewController {
 
-    public BrowseItemsView browseItemsView;
+    private final BrowseItemsView browseItemsView;
+    private String filterInitialLetter = "";
 
     public BrowseItemsController(NavigationManager navigationManager, Navigation id) {
         //initialise view link
         super(navigationManager, id);
         view = new BrowseItemsView(this);
         browseItemsView = (BrowseItemsView) view;
-
     }
 
     public void onNavigateTo() {
-        List<Product> allProducts;
+        List<Product> products;
         try {
-            allProducts = ProductManager.getAllProducts();
+            products = ProductManager.getProductsByCategory(filterInitialLetter);
         } catch (SQLException e) {
-            allProducts = new ArrayList<>();
+            products = new ArrayList<>();
             navigation.setLayoutMessage(
                     "Browse Items Error", "Cannot load list of products from database", true);
         }
-        browseItemsView.refreshTable(allProducts);
+        browseItemsView.refreshTable(products);
+    }
+
+    public void setCurrentFilter(String initialLetter) {
+        if (initialLetter.equals("All")) {
+            this.filterInitialLetter = "";
+        } else {
+            this.filterInitialLetter = initialLetter;
+        }
+        onNavigateTo();
     }
 
     /**
