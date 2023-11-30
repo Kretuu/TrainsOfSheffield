@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.view.components;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.View;
@@ -10,16 +11,17 @@ import java.awt.*;
 import java.lang.reflect.Type;
 
 public class MainLayout extends JPanel {
-    private final JPanel panel = new JPanel(new BorderLayout());
-    private JPanel view = new JPanel();
+    private final JPanel panel = new Panel(new BorderLayout());
+    private JPanel view = new Panel();
     private JButton logoutButton;
-    private final JPanel navigation = new JPanel();
+    private final JPanel navigation = new Panel();
     private final NavigationManager navigationManager;
 
     public MainLayout(NavigationManager navigationManager) {
         this.setLayout(new BorderLayout());
         this.navigationManager = navigationManager;
         createLayout();
+        setBackground(Colors.BACKGROUND);
     }
     public void setContent(View v) {
         updateLayout(v);
@@ -30,11 +32,11 @@ public class MainLayout extends JPanel {
 
     public void purgeContent() {
         panel.remove(view);
-        this.view = new JPanel();
+        this.view = new Panel();
     }
 
     private void createLayout() {
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new Panel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel welcomeLabel = new JLabel("Welcome to Trains Of Sheffield shop ");

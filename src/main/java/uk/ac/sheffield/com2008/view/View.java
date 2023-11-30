@@ -1,11 +1,12 @@
 package uk.ac.sheffield.com2008.view;
 
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import java.util.*;
 
-public abstract class View extends JPanel {
+public abstract class View extends Panel {
     private Map<Navigation, JButton> navigation = new LinkedHashMap<>();
 
     protected void setNavigation(Map<Navigation, JButton> navigationMap){

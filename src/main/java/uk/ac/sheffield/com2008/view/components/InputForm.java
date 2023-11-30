@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public abstract class InputForm extends JPanel {
+public abstract class InputForm extends Panel {
     private final JButton submitButton;
     private final JPanel content;
     private final JLabel errorMessage;
@@ -23,7 +23,7 @@ public abstract class InputForm extends JPanel {
      *                          by default.
      */
     public InputForm(View view, String submitButtonLabel, String cancelButtonLabel) {
-        this.content = new JPanel();
+        this.content = new Panel();
         this.submitButton = new Button(submitButtonLabel);
         this.errorMessage = new JLabel(" ");
         this.view = view;
@@ -41,7 +41,7 @@ public abstract class InputForm extends JPanel {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel errorMessageHolder = new JPanel();
+        JPanel errorMessageHolder = new Panel();
         errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
         errorMessageHolder.add(errorMessage);
         content.add(errorMessageHolder);
@@ -63,7 +63,7 @@ public abstract class InputForm extends JPanel {
 
         createTextFields(content);
 
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2,10,0));
+        JPanel buttonsPanel = new Panel(new GridLayout(1, 2,10,0));
         buttonsPanel.add(cancelButton);
         buttonsPanel.add(submitButton);
         content.add(buttonsPanel);

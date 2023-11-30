@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
@@ -42,7 +43,7 @@ public class ManageUserRolesView extends ManagerView {
     private void initialiseUI() {
         setLayout(new BorderLayout());
 
-        JPanel headerPanel = new JPanel();
+        JPanel headerPanel = new Panel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
         JLabel appointStaffTitle = new JLabel("Appoint staff");
@@ -50,14 +51,14 @@ public class ManageUserRolesView extends ManagerView {
         appointStaffTitle.setBorder(new EmptyBorder(15, 0, 15, 0));
         appointStaffTitle.setAlignmentX(CENTER_ALIGNMENT);
 
-        JPanel appointStaffContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JPanel appointStaffForm = new JPanel(new GridLayout(1, 2, 30, 0));
+        JPanel appointStaffContainer = new Panel(new FlowLayout(FlowLayout.CENTER));
+        JPanel appointStaffForm = new Panel(new GridLayout(1, 2, 30, 0));
 
         userEmail = new CustomInputField("Email", this::updateButtonState, true);
         userEmail.setValidationFunction(() -> verifyCustomerEmail(userEmail.getjTextField().getText()));
         userEmail.addToPanel(appointStaffForm);
 
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new Panel();
         promoteUserButton.addActionListener(e -> controller.appointStaffRole(userEmail.getjTextField().getText()));
         buttonPanel.add(promoteUserButton);
         appointStaffForm.add(buttonPanel);
@@ -67,7 +68,7 @@ public class ManageUserRolesView extends ManagerView {
         headerPanel.add(appointStaffContainer);
 
 
-        JPanel centerPanel = new JPanel();
+        JPanel centerPanel = new Panel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         JLabel tableTitle = new JLabel("Staff users");
         tableTitle.setFont(new Font(null, Font.BOLD, 16));

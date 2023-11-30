@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.navigation;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.controller.auth.ProvideAddressController;
@@ -41,6 +42,7 @@ public class NavigationManager {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.addWindowListener(new NavigationFrameWindowListener(this));
         frame.setVisible(true);
+        frame.setBackground(Colors.BACKGROUND);
 
         controllers = new HashMap<>();
         registerControllers();

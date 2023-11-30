@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.customer.BrowseItemsController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductCustomerTableMapper;
@@ -42,14 +43,14 @@ public class BrowseItemsView extends UserView {
         setLayout(new BorderLayout());
 
         // Create a JPanel for the top section
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new Panel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel welcomeLabel = new JLabel("welcome");
         topPanel.add(welcomeLabel, BorderLayout.WEST);
 
 
-        JPanel topButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel topButtonsPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
         JButton staffAreaButton = new Button("Staff Area");
         JButton basketButton = new Button("Basket");
         topButtonsPanel.add(basketButton);
@@ -62,7 +63,7 @@ public class BrowseItemsView extends UserView {
         topPanel.add(topButtonsPanel, BorderLayout.EAST);
 
         // Create a JPanel for the scroll panel with product labels
-        JPanel productPanel = new JPanel();
+        JPanel productPanel = new Panel();
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
         productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 

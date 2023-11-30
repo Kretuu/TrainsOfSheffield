@@ -7,6 +7,8 @@ import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductTableMapper;
 import uk.ac.sheffield.com2008.view.modals.EditProductStockModal;
 
+import uk.ac.sheffield.com2008.view.components.Panel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
@@ -38,16 +40,16 @@ public class ManageStockView extends StaffView {
         setLayout(new BorderLayout());
 
         // top panel
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new Panel(new GridLayout(2, 1));
 
-        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel row1 = new Panel(new FlowLayout(FlowLayout.CENTER));
         //Create a label for products in stock
         JLabel viewLabel = new JLabel("Products In Stock");
         row1.add(viewLabel);
         topPanel.add(row1);
 
 
-        /*JPanel bottomPanel = new JPanel();
+        /*JPanel bottomPanel = new Panel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
         // Create a Manage Order button
@@ -60,7 +62,7 @@ public class ManageStockView extends StaffView {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));*/
 
 
-        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel filterPanel = new Panel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         JComboBox<String> filterComboBox = new JComboBox<>(categories);
@@ -83,7 +85,7 @@ public class ManageStockView extends StaffView {
 
 
         // Create a JPanel for the scroll panel with product labels
-        JPanel productPanel = new JPanel();
+        JPanel productPanel = new Panel();
         productPanel.setLayout(new BoxLayout(productPanel, BoxLayout.Y_AXIS));
 
         LinkedList<CustomColumn> columns = new LinkedList<>() {{

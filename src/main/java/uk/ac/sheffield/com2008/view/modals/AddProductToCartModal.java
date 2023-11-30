@@ -8,6 +8,7 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.util.math.Rounding;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -28,17 +29,17 @@ public class AddProductToCartModal extends JDialog {
     public AddProductToCartModal(BrowseItemsController browseItemsController, JFrame parentFrame, Product product) {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
         // Create a panel to hold the content
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new Panel(new BorderLayout());
 
         // Give the panel some padding
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         panel.setBorder(emptyBorder);
 
         // Create a panel for the top section
-        JPanel topPanel = new JPanel(new GridBagLayout());
+        JPanel topPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbcTop = new GridBagConstraints();
 
-        JPanel productDetails = new JPanel();
+        JPanel productDetails = new Panel();
         productDetails.setLayout(new BoxLayout(productDetails, BoxLayout.Y_AXIS));
 
         // Create "Add To Cart" label at the top
@@ -75,7 +76,7 @@ public class AddProductToCartModal extends JDialog {
         topPanel.add(productDetails, gbcTop);
 
         //extra details
-        JPanel extraDetails = new JPanel(new GridBagLayout());
+        JPanel extraDetails = new Panel(new GridBagLayout());
         GridBagConstraints gbcTopExtra = new GridBagConstraints();
         gbcTopExtra.insets = new Insets(5, 15, 5, 15);
 
@@ -121,9 +122,9 @@ public class AddProductToCartModal extends JDialog {
         panel.add(topPanel, BorderLayout.NORTH);
 
         // Create a panel for quantity and add to cart button
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new Panel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
 
         // Create "Quantity:" label
         JLabel quantityLabel = new JLabel("Quantity:");
@@ -163,7 +164,7 @@ public class AddProductToCartModal extends JDialog {
         });
         buttonPanel.add(addToCartButton);
 
-        JPanel summaryInfoPanel = new JPanel(new GridBagLayout());
+        JPanel summaryInfoPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -190,7 +191,7 @@ public class AddProductToCartModal extends JDialog {
             noStockLabel.setForeground(Color.RED);
             noStockLabel.setFont(noStockLabel.getFont().deriveFont(Font.BOLD));
             bottomPanel.add(noStockLabel);
-            JPanel noStockPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            JPanel noStockPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
             noStockPanel.add(noStockLabel);
             addToCartButton.setEnabled(false);
             bottomPanel.add(noStockPanel);

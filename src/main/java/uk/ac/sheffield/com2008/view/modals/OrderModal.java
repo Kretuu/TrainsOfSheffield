@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,7 +17,7 @@ public class OrderModal extends JDialog {
     public OrderModal(JFrame frame, Order order, String header, String additionalText) {
         super(frame, header, true);
         this.order = order;
-        this.content = new JPanel();
+        this.content = new Panel();
 
         initialiseUI(additionalText);
 
@@ -37,7 +38,7 @@ public class OrderModal extends JDialog {
         content.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         if(!additionalText.isEmpty()) {
-            JPanel headingPanel = new JPanel(new BorderLayout());
+            JPanel headingPanel = new Panel(new BorderLayout());
             JLabel headingLabel = new JLabel("<html>" + additionalText + "</html>");
             headingLabel.setFont(new Font(null, Font.BOLD, 14));
             headingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -48,7 +49,7 @@ public class OrderModal extends JDialog {
 
         JPanel mainContent = somefunction();
 
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new Panel();
         JButton closeButton = new Button("Close");
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
@@ -59,7 +60,7 @@ public class OrderModal extends JDialog {
     }
 
     private JPanel somefunction() {
-        JPanel mainContent = new JPanel(new GridBagLayout());
+        JPanel mainContent = new Panel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         c.gridx = 0;

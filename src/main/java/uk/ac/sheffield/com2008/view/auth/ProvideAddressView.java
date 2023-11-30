@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.auth.ProvideAddressController;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
 import uk.ac.sheffield.com2008.view.components.UpdateAddressTemplate;
@@ -24,7 +25,7 @@ public class ProvideAddressView extends AuthView {
         super();
         this.controller = controller;
         this.inputForm = createInputForm();
-        JPanel header = new JPanel();
+        JPanel header = new Panel();
         JLabel label = new JLabel("Provide address");
         label.setFont(new Font(null, Font.BOLD, 16));
         header.add(label);

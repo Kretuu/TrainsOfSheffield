@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.util.DateUtils;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.View;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
 
@@ -29,7 +30,7 @@ public abstract class UpdateCreditCardModal extends JDialog {
     public UpdateCreditCardModal(JFrame frame, BankingCard bankingCard, View view) {
         super(frame, "Banking Card Details", true);
         this.view = view;
-        this.content = new JPanel();
+        this.content = new Panel();
         this.bankingCard = bankingCard;
 
         initialiseUI();
@@ -68,7 +69,7 @@ public abstract class UpdateCreditCardModal extends JDialog {
                 holderName.addToPanel(panel);
                 inputFields.put("holderName", holderName);
 
-                JPanel bottomInformationPanel = new JPanel(new GridLayout(1, 2));
+                JPanel bottomInformationPanel = new Panel(new GridLayout(1, 2));
 
 
                 bottomInformationPanel.add(createExpiryDate());
@@ -147,10 +148,10 @@ public abstract class UpdateCreditCardModal extends JDialog {
     }
 
     private JPanel createExpiryDate() {
-        JPanel expiryDate = new JPanel(new GridLayout(2, 1));
+        JPanel expiryDate = new Panel(new GridLayout(2, 1));
         JLabel expiryDateLabel = new JLabel("Expiry Date");
 
-        JPanel expiryDateInputs = new JPanel();
+        JPanel expiryDateInputs = new Panel();
         JComboBox<Integer> months = new JComboBox<>(IntStream.rangeClosed(1, 12).boxed().toArray(Integer[]::new));
         comboBoxes.put("months", months);
         expiryDateInputs.add(months);

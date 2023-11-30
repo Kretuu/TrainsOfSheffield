@@ -4,18 +4,21 @@ import java.awt.*;
 
 public class Colors {
     //Pallette
-    private static final Color greenLight = Color.decode("#4FA161");
-    private static final Color greenDark = Color.decode("#266e36");
+    private static final Color greenLight = Color.decode("#5BBA6F");
+    private static final Color greenDark = Color.decode("#4FA161");
+    private static final Color greenLightest = Color.decode("#f0fdf4");
 
     private static final Color white = Color.decode("#FBFBFB");
     private static final Color charcoal = Color.decode("#464655");
     private static final Color black = Color.decode("#353535");
 
 
-    public static Color TEXT_FIELD_FOCUSED = Color.BLACK;
-    public static Color TEXT_FIELD_UNFOCUSED = Color.DARK_GRAY;
+    public static Color TEXT_FIELD_FOCUSED = black;
+    public static Color TEXT_FIELD_UNFOCUSED = charcoal;
     public static Color TEXT_FIELD_ERROR = Color.RED;
 
+    public static Color BACKGROUND = greenLightest;
+    public static Color WHITE_BACKGROUND = white;
 
     public static Color TABLE_HEADER = greenDark;
     public static Color TABLE_CONTENT = white;

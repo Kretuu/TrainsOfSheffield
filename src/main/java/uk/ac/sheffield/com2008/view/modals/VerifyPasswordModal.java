@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.modals;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,7 +17,7 @@ public abstract class VerifyPasswordModal extends JDialog {
 
     public VerifyPasswordModal(JFrame frame, View view) {
         super(frame, "Banking Card Details", true);
-        this.content = new JPanel();
+        this.content = new Panel();
         this.view = view;
 
         initialiseUI();

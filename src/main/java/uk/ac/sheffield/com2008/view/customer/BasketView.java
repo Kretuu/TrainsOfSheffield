@@ -13,6 +13,7 @@ import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.modals.NotificationModal;
 import uk.ac.sheffield.com2008.view.modals.OrderModal;
 import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
@@ -57,11 +58,11 @@ public class BasketView extends UserView {
             orderLines  = (ArrayList<OrderLine>) userBasket.getOrderLines();
         }
 
-        JPanel topPanel = new JPanel();
+        JPanel topPanel = new Panel();
         topPanel.setLayout(new BorderLayout());
 
         // Create a JPanel for the scroll panel with orderline rows
-        JPanel basketPanel = new JPanel();
+        JPanel basketPanel = new Panel();
         basketPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -153,7 +154,7 @@ public class BasketView extends UserView {
         add(topPanel, BorderLayout.NORTH);
 
         //total cost and confirm order button
-        JPanel bottomSection = new JPanel();
+        JPanel bottomSection = new Panel();
         // Create empty border for inner padding
         Border emptyBorder2 = BorderFactory.createEmptyBorder(5, 0, 70, 30);
         bottomSection.setBorder(emptyBorder2);
@@ -165,7 +166,7 @@ public class BasketView extends UserView {
         confirmButton.setFont(confirmButton.getFont().deriveFont(Font.BOLD, 24));
         confirmButton.addActionListener(e -> basketViewController.confirmOrder());
 
-        JPanel errorMessageHolder = new JPanel();
+        JPanel errorMessageHolder = new Panel();
         errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
         errorMessageHolder.add(errorMessage);
         bottomSection.add(errorMessageHolder, BorderLayout.CENTER);
@@ -174,7 +175,7 @@ public class BasketView extends UserView {
         totalTextLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         confirmButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
-        JPanel eastBottomSectionHolder = new JPanel();
+        JPanel eastBottomSectionHolder = new Panel();
         eastBottomSectionHolder.setLayout(new BoxLayout(eastBottomSectionHolder, BoxLayout.Y_AXIS));
         eastBottomSectionHolder.add(totalTextLabel);
         eastBottomSectionHolder.add(Box.createVerticalStrut(10));

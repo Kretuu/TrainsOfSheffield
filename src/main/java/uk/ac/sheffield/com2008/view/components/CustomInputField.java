@@ -90,7 +90,7 @@ public class CustomInputField implements DocumentListener {
     }
 
     public void addToPanel(JPanel panel) {
-        JPanel internalPanel = new JPanel(new GridLayout(3, 1));
+        JPanel internalPanel = new Panel(new GridLayout(3, 1));
         if(!label.getText().isEmpty()){
             internalPanel.add(label);
         }
@@ -100,7 +100,7 @@ public class CustomInputField implements DocumentListener {
     }
 
     public void addToPanel(JPanel panel, GridBagConstraints gbc){
-        JPanel internalPanel = new JPanel(new GridBagLayout());
+        JPanel internalPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbcInternal = new GridBagConstraints();
         gbcInternal.fill = GridBagConstraints.HORIZONTAL;
         gbcInternal.anchor = GridBagConstraints.WEST;

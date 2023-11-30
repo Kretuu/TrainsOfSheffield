@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.components.customTable;
 
 import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.ViewController;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.TableMapper;
 
@@ -18,7 +19,7 @@ public class CustomTable<Type> extends JPanel {
     private final int columns;
     private final LinkedList<String> headers;
     private final LinkedList<Double> weights;
-    private JPanel mainPanel = new JPanel(new GridBagLayout());
+    private JPanel mainPanel = new Panel(new GridBagLayout());
     private Font defaultFont;
     private final JFrame frame;
     private Border defaultBorder;
@@ -53,7 +54,7 @@ public class CustomTable<Type> extends JPanel {
                 new EmptyBorder(10, 10, 10, 0)
         );
 
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new Panel(new BorderLayout());
         panel.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
         mainPanel.setBackground(Colors.TABLE_CONTENT);
 
@@ -70,7 +71,7 @@ public class CustomTable<Type> extends JPanel {
             c.weighty = 0;
             c.fill = GridBagConstraints.HORIZONTAL;
 
-            JPanel panel = new JPanel(new BorderLayout());
+            JPanel panel = new Panel(new BorderLayout());
             panel.setBackground(Colors.TABLE_HEADER);
             JLabel jLabel = new JLabel(header);
             jLabel.setFont(defaultFont);
@@ -90,7 +91,7 @@ public class CustomTable<Type> extends JPanel {
     public void populateTable(List<Type> objects, TableMapper<Type> mapper){
         List<LinkedList<Object>> orderColumns = objects.stream().map(mapper::constructColumns).toList();
         removeAll();
-        mainPanel = new JPanel(new GridBagLayout());
+        mainPanel = new Panel(new GridBagLayout());
         mainPanel.setBackground(Colors.TABLE_CONTENT);
         constructHeader();
 
@@ -133,7 +134,7 @@ public class CustomTable<Type> extends JPanel {
         preferredDimension.width = frame.getWidth() - 100;
         mainPanel.setPreferredSize(preferredDimension);
 
-        JPanel panel = new JPanel(new FlowLayout());
+        JPanel panel = new Panel(new FlowLayout());
         panel.add(mainPanel);
 
         JScrollPane scrollPane = new JScrollPane(panel,

@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +21,7 @@ public class LoginView extends AuthView {
         this.loginController = loginController;
         this.inputForm = createInputForm();
 
-        JPanel header = new JPanel();
+        JPanel header = new Panel();
         JLabel label = new JLabel("Log in");
         label.setFont(new Font(null, Font.BOLD, 16));
         header.add(label);

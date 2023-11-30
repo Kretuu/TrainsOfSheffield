@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.modals;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.View;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,15 +14,15 @@ public abstract class NotificationModal extends JDialog {
 
     public NotificationModal(JFrame frame, View view, String modalName, String notificationMessage) {
         super(frame, modalName, true);
-        JPanel content = new JPanel(new BorderLayout());
+        JPanel content = new Panel(new BorderLayout());
 
         content.setBorder(new EmptyBorder(15, 15, 15, 15));
-        JPanel labelPanel = new JPanel(new BorderLayout());
+        JPanel labelPanel = new Panel(new BorderLayout());
         JLabel notificationLabel = new JLabel("<html>" + notificationMessage + "</html>");
         notificationLabel.setFont(new Font(null, Font.PLAIN, 14));
         labelPanel.add(notificationLabel);
 
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2,10,0));
+        JPanel buttonsPanel = new Panel(new GridLayout(1, 2,10,0));
         JButton submitButton = new Button("Confirm");
         submitButton.addActionListener(new AuthorisationActionListener(view) {
             @Override

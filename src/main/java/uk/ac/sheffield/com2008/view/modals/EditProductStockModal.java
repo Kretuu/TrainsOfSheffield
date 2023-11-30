@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.staff.ManageStockView;
 
 import javax.swing.*;
@@ -24,16 +25,16 @@ public class EditProductStockModal extends JDialog {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
         this.manageStockView = manageStockView; // Assign the reference
         // Create a panel to hold the content
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new Panel(new BorderLayout());
 
         // Give the panel some padding
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         panel.setBorder(emptyBorder);
 
         // Create a panel for the top section
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new Panel(new BorderLayout());
 
-        JPanel buttonPanel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel buttonPanel2 = new Panel(new FlowLayout(FlowLayout.RIGHT));
 
         // Create "Edit Stock" label at the top
         JLabel titleLabel = new JLabel("Edit Stock");
@@ -59,9 +60,9 @@ public class EditProductStockModal extends JDialog {
 
 
         // Create a panel for quantity and update button
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new Panel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
 
         // Create "Quantity:" label
         JLabel quantityLabel = new JLabel("Quantity :");
@@ -101,7 +102,7 @@ public class EditProductStockModal extends JDialog {
         buttonPanel2.add(updateButton);
 
 
-        JPanel summaryInfoPanel = new JPanel(new GridBagLayout());
+        JPanel summaryInfoPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
