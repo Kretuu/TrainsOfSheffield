@@ -105,7 +105,7 @@ public class TrackPack extends ProductSet {
                     "<ul>\n" +
                     "  <li>2 or more Track pieces</li>\n" +
                     "</ul></html>";
-            if(setItems.size() <= 1){
+            if(setItems.size() == 0){
                 return errorMsg;
             }
 
