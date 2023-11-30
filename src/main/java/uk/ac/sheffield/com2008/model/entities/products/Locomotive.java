@@ -108,4 +108,16 @@ public class Locomotive extends Product {
         return output;
     }
 
+    public String getBrClass(){
+        return brClass;
+    }
+    public String getIndividualName(){
+        return individualName;
+    }
+    public int getEra(){
+        return era;
+    }
+    public DCCType getDccType(){
+        return dccType;
+    }
 }
