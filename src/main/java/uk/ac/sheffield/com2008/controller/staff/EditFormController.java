@@ -77,6 +77,7 @@ public class EditFormController extends ViewController {
             String errorMsg = ((ProductSet) productUnderEdit).validateSet();
             if (errorMsg != null) {
                 editProductRecordForm.setErrorMessage(errorMsg);
+                return;
             }
         }
 

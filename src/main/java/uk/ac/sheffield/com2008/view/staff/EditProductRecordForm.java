@@ -145,9 +145,6 @@ public class EditProductRecordForm extends StaffView{
 
     private void initializeUI() {
         JPanel content = new Panel();
-
-        Product productUnderEdit = editFormController.getProductUnderEdit();
-
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         selectedProductsMap = new HashMap<>();
