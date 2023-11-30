@@ -120,4 +120,17 @@ public class Locomotive extends Product {
     public DCCType getDccType(){
         return dccType;
     }
+
+    public void setBrClass(String brClass){
+        this.brClass = brClass;
+    }
+    public void setIndividualName(String individualName){
+        this.individualName = individualName;
+    }
+    public void setEra(int era){
+        this.era = era;
+    }
+    public void setDccType(DCCType dccType){
+        this.dccType = dccType;
+    }
 }

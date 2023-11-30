@@ -98,4 +98,8 @@ public abstract class ProductSet extends Product {
     public long getSetId(){
         return setId;
     }
+
+    public void setSetName(String setName){
+        this.setName = setName;
+    }
 }

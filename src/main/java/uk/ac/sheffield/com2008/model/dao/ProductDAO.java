@@ -190,5 +190,71 @@ public class ProductDAO {
         }
     }
 
+    public static void updateProduct(Product product) throws SQLException{
+        StringBuilder updateQueryBuilder = new StringBuilder();
+        updateQueryBuilder.append("UPDATE Products SET ")
+                .append("name = ?, ")
+                .append("price = ?, ")
+                .append("gauge = ?, ")
+                .append("brand = ?, ")
+                .append("isSet = ?, ")
+                .append("stock = ? ")
+                .append("WHERE productCode = ?");
+
+        String updateQuery = updateQueryBuilder.toString();
+
+        DatabaseConnectionHandler.update(
+                updateQuery,
+                product.getName(),
+                product.getPrice(),
+                product.getGauge().toString(),
+                product.getBrand(),
+                product.isSet(),
+                product.getStock(),
+                product.getProductCode()
+        );
+
+        /*
+        if(product.isSet() && product instanceof ProductSet) {
+            ProductSet set = (ProductSet) product;
+
+            // create a new set linking to this product code
+            String newSetQuery = "INSERT INTO ProductSets (productCode)" +
+                    " VALUES (?)";
+            DatabaseConnectionHandler.insert(
+                    newSetQuery,
+                    product.getProductCode());
+
+            String reselectSetQuery = "SELECT * FROM ProductSets PS WHERE productCode = (?)";
+            ProductSetMapper mapper = new ProductSetMapper();
+
+            List<ProductSet> pSet = DatabaseConnectionHandler.select(
+                    mapper,
+                    reselectSetQuery,
+                    product.getProductCode());
+            if(pSet.isEmpty()) throw new RuntimeException();
+            int setId = (int) pSet.get(0).getSetId();
+
+            //create new set items that link to this set id
+            ArrayList<ProductSetItem> setItems = (ArrayList<ProductSetItem>) set.getSetItems();
+            StringBuilder newSetItemQuery = new StringBuilder()
+                    .append("INSERT INTO ProductSetItems (setId, productCode, quantity) VALUES ");
+            LinkedList<Object> params = new LinkedList<>();
+            for (ProductSetItem setItem : setItems) {
+                newSetItemQuery.append("(?, ?, ?), ");
+                params.add(setId);
+                params.add(setItem.getProduct().getProductCode());
+                params.add(setItem.getQuantity());
+            }
+            newSetItemQuery.setLength(newSetItemQuery.length() - 2);
+
+            DatabaseConnectionHandler.insert(
+                    newSetItemQuery.toString(), params.toArray()
+            );
+
+        }
+         */
+    }
+
 
 }

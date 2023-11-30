@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
+import uk.ac.sheffield.com2008.exceptions.InvalidDatabaseDataException;
 import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
@@ -42,7 +43,7 @@ public class EditFormController extends ViewController {
      * Pass in the product
      * @param productUnderEdit
      */
-    public void tryUpdateProduct(Product productUnderEdit){
+    public void tryUpdateProduct(Product productUnderEdit) throws InvalidDatabaseDataException {
         editProductRecordForm.setErrorMessage("");
 
         if(!editProductRecordForm.validateAllFields()){
@@ -65,6 +66,9 @@ public class EditFormController extends ViewController {
         }
 
         //load the product with the new values
+        productUnderEdit = editProductRecordForm.loadProductByType(
+                productUnderEdit
+        );
 
         //validate if it is a set
         if(productUnderEdit instanceof ProductSet){
@@ -76,7 +80,17 @@ public class EditFormController extends ViewController {
         }
 
         //update the database to reflect the new state of this set
+        try{
+            ProductDAO.updateProduct(productUnderEdit);
+        }catch(SQLException e){
+            navigation.setLayoutMessage("Update Error",
+                    "Could not connect to database",
+                    true);
+            e.printStackTrace();
+        }
 
+        //finally navigate back
+        getNavigation().navigate(Navigation.PRODUCT_RECORD);
     }
 
     public List<Product> getAllProducts(){

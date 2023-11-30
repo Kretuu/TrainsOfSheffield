@@ -83,4 +83,11 @@ public class Controller extends Product {
     public PowerType getPowerType(){
         return powerType;
     }
+
+    public void setDescriptor(String descriptor){
+        this.descriptor = descriptor;
+    }
+    public void setPowerType(PowerType powerType){
+        this.powerType = powerType;
+    }
 }
