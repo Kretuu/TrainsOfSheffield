@@ -68,6 +68,7 @@ public class FormController extends ViewController {
         //otherwise create a product of the passed in type
         Product loadedProduct = productRecordForm.getProductFromInputs(productCode.charAt(0));
 
+        //validate the set if it is a set
         if(loadedProduct instanceof ProductSet){
             String errorMsg = ((ProductSet) loadedProduct).validateSet();
             if(errorMsg != null){
@@ -76,6 +77,7 @@ public class FormController extends ViewController {
             }
         }
 
+        //try to create this new product
         try{
             ProductDAO.createProduct(loadedProduct);
         }catch(SQLException e){
