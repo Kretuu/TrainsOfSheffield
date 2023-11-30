@@ -14,8 +14,8 @@ public abstract class ProductSet extends Product {
 
     //protected int setId;
     protected String setName;
-    private long setId;
     protected List<ProductSetItem> setItems;
+    private long setId;
 
     protected ProductSet(
             String productCode,
@@ -35,32 +35,18 @@ public abstract class ProductSet extends Product {
     protected ProductSet(String productCode, long setId, ProductSetItem productSetItem) {
         super(productCode);
         this.setId = setId;
-        this.setItems = new ArrayList<>() {{ add(productSetItem); }};
-    }
-
-    /**
-     * returns the presentable way of displaying a Locomotive
-     * Used for PRINTING the name out in the GUI
-     * @return
-     */
-    public String printName(){
-        return getProductCode() + ", " + setName;
-    }
-
-    /**
-     * returns the name that should go in the database
-     * @return
-     */
-    public String deriveName(){
-        return setName;
+        this.setItems = new ArrayList<>() {{
+            add(productSetItem);
+        }};
     }
 
     /**
      * Takes the database name
+     *
      * @param name name in database format (e.g "The Mega Track Pack,EXTENSION")
      * @return list of objects that match the field needed for this class in the constructor
      */
-    public static List<Object> parseName(String name){
+    public static List<Object> parseName(String name) {
         String[] nameAttributes = name.split(",");
         List<Object> output = new ArrayList<>();
 
@@ -68,26 +54,44 @@ public abstract class ProductSet extends Product {
         return output;
     }
 
+    /**
+     * returns the presentable way of displaying a Locomotive
+     * Used for PRINTING the name out in the GUI
+     *
+     * @return
+     */
+    public String printName() {
+        return getProductCode() + ", " + setName;
+    }
 
-    public void setSetItems(List<ProductSetItem> setItems){
-        this.setItems = setItems;
+    /**
+     * returns the name that should go in the database
+     *
+     * @return
+     */
+    public String deriveName() {
+        return setName;
     }
 
     public List<ProductSetItem> getSetItems() {
         return this.setItems;
     }
 
-    public String getSetName(){
+    public void setSetItems(List<ProductSetItem> setItems) {
+        this.setItems = setItems;
+    }
+
+    public String getSetName() {
         return setName;
+    }
+
+    public void setSetName(String setName) {
+        this.setName = setName;
     }
 
     public abstract String validateSet();
 
-    public long getSetId(){
+    public long getSetId() {
         return setId;
-    }
-
-    public void setSetName(String setName){
-        this.setName = setName;
     }
 }

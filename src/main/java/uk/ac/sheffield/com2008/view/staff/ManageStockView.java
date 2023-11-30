@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
 import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
@@ -16,7 +17,7 @@ import java.util.List;
 public class ManageStockView extends StaffView {
 
     private final ProductTableMapper mapper;
-    StaffController staffController;
+    private final StaffController staffController;
     private CustomTable<Product> customTable;
 
     public ManageStockView(StaffController staffController) {
@@ -48,19 +49,6 @@ public class ManageStockView extends StaffView {
         topPanel.add(row1);
 
 
-        /*JPanel bottomPanel = new Panel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-
-        // Create a Manage Order button
-        JButton manageOrderButton = new JButton("Manage Order");
-        bottomPanel.add(manageOrderButton);
-
-
-        // Add indentation between buttons using EmptyBorder
-        int buttonIndentation = 10;
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));*/
-
-
         JPanel filterPanel = new Panel(new FlowLayout(FlowLayout.LEFT));
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
@@ -75,12 +63,6 @@ public class ManageStockView extends StaffView {
         filterPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
         topPanel.add(filterPanel);
         add(topPanel, BorderLayout.NORTH);
-        //topPanel.add(filterPanel, BorderLayout.SOUTH);
-
-
-        // Add the bottom panel to the bottom of the frame
-       /* add(bottomPanel, BorderLayout.SOUTH);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));*/
 
 
         // Create a JPanel for the scroll panel with product labels
@@ -103,7 +85,7 @@ public class ManageStockView extends StaffView {
         filterComboBox.addActionListener(e -> {
             String selectedCategory = (String) filterComboBox.getSelectedItem();
             // Get the initial letter based on the selected category
-            String initialLetter = getInitialLetter(selectedCategory);
+            String initialLetter = ProductCategoryHelper.getInitialLetter(selectedCategory);
             // Call the filter method based on the selected starting letter
             staffController.setCurrentFilter(initialLetter);
         });
@@ -112,25 +94,6 @@ public class ManageStockView extends StaffView {
     public void populateTable(List<Product> products) {
         customTable.updateDimension(staffController, 700);
         customTable.populateTable(products, mapper);
-    }
-
-    // Method to get the initial letter based on the selected category
-    private String getInitialLetter(String selectedCategory) {
-        if ("Locomotive".equals(selectedCategory)) {
-            return "L";
-        } else if ("Controller".equals(selectedCategory)) {
-            return "C";
-        } else if ("Track".equals(selectedCategory)) {
-            return "R";
-        } else if ("Rolling Stock".equals(selectedCategory)) {
-            return "S";
-        } else if ("Train Set".equals(selectedCategory)) {
-            return "M";
-        } else if ("Track Pack".equals(selectedCategory)) {
-            return "P";
-        } else {
-            return "";
-        }
     }
 }
 

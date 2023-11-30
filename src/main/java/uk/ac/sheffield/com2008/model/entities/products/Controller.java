@@ -7,30 +7,7 @@ import java.util.List;
 
 public class Controller extends Product {
     private String descriptor;
-    public enum PowerType{
-        ANALOGUE("Analogue"),
-        DIGITAL("Digital");
-
-        private final String name;
-        PowerType(String name){
-            this.name = name;
-        }
-
-        public String deriveName(){
-            return this.name;
-        }
-        public static Controller.PowerType deriveType(String name){
-            for(Controller.PowerType d : Controller.PowerType.values()){
-                if(d.deriveName().equals(name)){
-                    return d;
-                }
-            }
-            return null;
-        }
-
-    };
     private PowerType powerType;
-
     public Controller(
             String productCode,
             String name,
@@ -47,28 +24,12 @@ public class Controller extends Product {
     }
 
     /**
-     * returns the presentable way of displaying a Controller
-     * Used for PRINTING the name out in the GUI
-     * @return
-     */
-    public String printName(){
-        return getProductCode() + ", " + descriptor;
-    }
-
-    /**
-     * returns the name that should go in the database
-     * @return
-     */
-    public String deriveName(){
-        return descriptor + "," + powerType;
-    }
-
-    /**
      * Takes the database name
+     *
      * @param name name in database format (e.g "DCC Controller,DIGITAL")
      * @return list of objects that match the field needed for this class in the constructor
      */
-    public static List<Object> parseName(String name){
+    public static List<Object> parseName(String name) {
         String[] nameAttributes = name.split(",");
         List<Object> output = new ArrayList<>();
 
@@ -77,17 +38,63 @@ public class Controller extends Product {
         return output;
     }
 
-    public String getDescriptor(){
+    /**
+     * returns the presentable way of displaying a Controller
+     * Used for PRINTING the name out in the GUI
+     *
+     * @return
+     */
+    public String printName() {
+        return getProductCode() + ", " + descriptor;
+    }
+
+    /**
+     * returns the name that should go in the database
+     *
+     * @return
+     */
+    public String deriveName() {
+        return descriptor + "," + powerType;
+    }
+
+    public String getDescriptor() {
         return descriptor;
     }
-    public PowerType getPowerType(){
+
+    public void setDescriptor(String descriptor) {
+        this.descriptor = descriptor;
+    }
+
+    public PowerType getPowerType() {
         return powerType;
     }
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
-    }
-    public void setPowerType(PowerType powerType){
+    public void setPowerType(PowerType powerType) {
         this.powerType = powerType;
+    }
+
+    public enum PowerType {
+        ANALOGUE("Analogue"),
+        DIGITAL("Digital");
+
+        private final String name;
+
+        PowerType(String name) {
+            this.name = name;
+        }
+
+        public static Controller.PowerType deriveType(String name) {
+            for (Controller.PowerType d : Controller.PowerType.values()) {
+                if (d.deriveName().equals(name)) {
+                    return d;
+                }
+            }
+            return null;
+        }
+
+        public String deriveName() {
+            return this.name;
+        }
+
     }
 }

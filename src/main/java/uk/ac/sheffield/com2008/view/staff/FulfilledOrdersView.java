@@ -16,7 +16,7 @@ import java.util.List;
 public class FulfilledOrdersView extends StaffView {
 
     private final OrderTableMapper mapper;
-    FulfilledOrdersController fulfilledOrdersController;
+    private final FulfilledOrdersController fulfilledOrdersController;
     private CustomTable<Order> customTable;
 
     public FulfilledOrdersView(FulfilledOrdersController fulfilledOrdersController) {
@@ -52,20 +52,6 @@ public class FulfilledOrdersView extends StaffView {
 
         JPanel bottomPanel = new Panel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-
-        /*// Create a home button
-        JButton navigationButton = new JButton("Home");
-        bottomPanel.add(navigationButton);
-
-
-        // Add indentation between buttons using EmptyBorder
-        int buttonIndentation = 40;
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, buttonIndentation, 0, 0));
-
-        // Add the bottom panel to the bottom of the frame
-        add(bottomPanel, BorderLayout.SOUTH);
-        navigationButton.addActionListener(e -> fulfilledOrdersController.getNavigation().navigate(Navigation.STAFF));*/
-
 
         // Create a JPanel for the scroll panel with table
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));

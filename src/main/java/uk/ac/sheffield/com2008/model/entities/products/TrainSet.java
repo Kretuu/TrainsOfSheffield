@@ -51,7 +51,7 @@ public class TrainSet extends ProductSet {
                     return errMsg;
                 }
             }
-            if(product instanceof TrackPack){
+            if (product instanceof TrackPack) {
                 hasTrackPack = true;
             }
 

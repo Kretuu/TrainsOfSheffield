@@ -9,13 +9,13 @@ import java.util.List;
 /**
  * This is for where once we have our trackpacks configured as an Extension or StarterOval
  * we can manipulate them how we like.
- *
+ * <p>
  * If we load a TrackPack from the Database, we assume it is already configured.
  */
 public class TrackPack extends ProductSet {
 
-    public enum TrackPackType {STARTER,EXTENSION}
     protected TrackPackType trackPackType;
+
     public TrackPack(
             String productCode,
             String name,
@@ -35,16 +35,13 @@ public class TrackPack extends ProductSet {
         super(productCode, setId, productSetItem);
     }
 
-    public String deriveName(){
-        return setName + "," + trackPackType.toString();
-    }
-
     /**
      * Takes the database name
+     *
      * @param name name in database format (e.g "Mega Cool Track Pack,EXTENSION")
      * @return list of objects that match the field needed for this class in the constructor
      */
-    public static List<Object> parseName(String name){
+    public static List<Object> parseName(String name) {
         String[] nameAttributes = name.split(",");
         List<Object> output = new ArrayList<>();
 
@@ -53,14 +50,19 @@ public class TrackPack extends ProductSet {
         return output;
     }
 
+    public String deriveName() {
+        return setName + "," + trackPackType.toString();
+    }
+
     /**
      * Ensures track pack is composed of correct items
+     *
      * @return errors or null
      */
-    public String validateSet(){
-        String errorMsg = null;
+    public String validateSet() {
+        String errorMsg;
 
-        if(trackPackType == TrackPackType.STARTER){
+        if (trackPackType == TrackPackType.STARTER) {
             errorMsg = "<html><p>Starter Oval must contain:</p>\n" +
                     "<ul>\n" +
                     "  <li>8 Same Curved Tracks</li>\n" +
@@ -68,7 +70,7 @@ public class TrackPack extends ProductSet {
                     "</ul></html>";
 
             //should contain 2 items.
-            if(setItems.size() != 2){
+            if (setItems.size() != 2) {
                 return errorMsg;
             }
             //confirm the curved and straight tracks amounts are correct
@@ -76,41 +78,38 @@ public class TrackPack extends ProductSet {
             int straightSetItems = 0;
             for (ProductSetItem setItem : setItems) {
                 Product product = setItem.getProduct();
-                if (product instanceof Track) {
-                    Track track = (Track) product;
+                if (product instanceof Track track) {
                     if (track.getTrackType() == Track.TrackType.CURVE) {
                         curvedSetItems++;
-                        if(setItem.getQuantity()!= 8){
+                        if (setItem.getQuantity() != 8) {
                             return errorMsg;
                         }
-                    }
-                    else{
+                    } else {
                         straightSetItems++;
-                        if(setItem.getQuantity()!= 2){
+                        if (setItem.getQuantity() != 2) {
                             return errorMsg;
                         }
                     }
-                }
-                else{
+                } else {
                     return errorMsg;
                 }
 
-                if(curvedSetItems > 1 || straightSetItems > 1){
+                if (curvedSetItems > 1 || straightSetItems > 1) {
                     return errorMsg;
                 }
             }
 
-        }else{
+        } else {
             errorMsg = "<html><p>Extension Track Pack must contain:</p>\n" +
                     "<ul>\n" +
                     "  <li>2 or more Track pieces</li>\n" +
                     "</ul></html>";
-            if(setItems.size() == 0){
+            if (setItems.isEmpty()) {
                 return errorMsg;
             }
 
-            if(setItems.size() == 1){
-                if(setItems.get(0).getQuantity() < 2){
+            if (setItems.size() == 1) {
+                if (setItems.get(0).getQuantity() < 2) {
                     return errorMsg;
                 }
             }
@@ -127,11 +126,13 @@ public class TrackPack extends ProductSet {
         return null; //valid
     }
 
-    public TrackPackType getTrackPackType(){
+    public TrackPackType getTrackPackType() {
         return trackPackType;
     }
 
-    public void setTrackPackType(TrackPackType trackPackType){
+    public void setTrackPackType(TrackPackType trackPackType) {
         this.trackPackType = trackPackType;
     }
+
+    public enum TrackPackType {STARTER, EXTENSION}
 }

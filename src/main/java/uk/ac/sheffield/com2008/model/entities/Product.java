@@ -1,9 +1,6 @@
 package uk.ac.sheffield.com2008.model.entities;
 
-import java.util.Objects;
-
 public abstract class Product {
-    public enum Gauge {OO, TT, N}
     private String productCode;
     private String name;
     private float price;
@@ -11,8 +8,7 @@ public abstract class Product {
     private String brand;
     private boolean isSet;
     private int stock;
-
-    public Product(String productCode, String name, float price, Gauge gauge, String brand, boolean isSet, int stock){
+    public Product(String productCode, String name, float price, Gauge gauge, String brand, boolean isSet, int stock) {
         this.productCode = productCode;
         this.name = name;
         this.price = price;
@@ -21,18 +17,19 @@ public abstract class Product {
         this.isSet = isSet;
         this.stock = stock;
     }
-  
+
     public Product(String productCode) {
         this.productCode = productCode;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return productCode + " '" + name + "' " + gauge.toString() + " Gauge - " + brand + " " + price + " QTY: " + stock;
     }
 
     /**
      * Returns the products presentable name, not how the name is in the database
+     *
      * @return
      */
     public String printName() {
@@ -97,8 +94,7 @@ public abstract class Product {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Product)) return false;
-        Product object = (Product) obj;
+        if (!(obj instanceof Product object)) return false;
         return this.name.equals(object.getName())
                 && this.isSet == object.isSet()
                 && this.brand.equals(object.getBrand())
@@ -108,4 +104,6 @@ public abstract class Product {
     }
 
     public abstract String deriveName();
+
+    public enum Gauge {OO, TT, N}
 }

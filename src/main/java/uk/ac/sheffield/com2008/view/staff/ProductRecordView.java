@@ -4,7 +4,6 @@ import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.controller.staff.EditFormController;
 import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.products.TrackPack;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
@@ -35,12 +34,8 @@ public class ProductRecordView extends StaffView {
             public void onClick(Product product) {
                 productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
 
-                if (product instanceof TrackPack) {
-                    TrackPack productSet = (TrackPack) product;
-                }
                 ViewController nextController = productRecordController.getNavigation().getCurrentController();
-                if (nextController instanceof EditFormController) {
-                    EditFormController editFormController = (EditFormController) nextController;
+                if (nextController instanceof EditFormController editFormController) {
                     editFormController.setProductUnderEdit(product);
                     editFormController.forceRefresh();
                 }

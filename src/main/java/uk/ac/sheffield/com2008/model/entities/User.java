@@ -7,12 +7,11 @@ import java.util.stream.Collectors;
 
 public class User {
     private final String uuid;
+    private final List<Role> roles;
+    private final PersonalDetails personalDetails;
     private String email;
     private Order basket;
-    private PersonalDetails personalDetails;
-
     private Address address;
-    private final List<Role> roles;
 
     public User(String uuid, String email, Order basket, PersonalDetails personalDetails, String rolesString, Address address) {
         this.uuid = uuid;
@@ -60,7 +59,7 @@ public class User {
     }
 
     public void addRole(Role role) {
-        if(!roles.contains(role)) roles.add(role);
+        if (!roles.contains(role)) roles.add(role);
     }
 
     public boolean hasRole(Role role) {
@@ -75,10 +74,6 @@ public class User {
         return personalDetails;
     }
 
-    public void setPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
-    }
-
     public enum Role {
         CUSTOMER, STAFF, MANAGER;
 
@@ -88,7 +83,7 @@ public class User {
         }
 
         public static String parseRolesToString(List<Role> roles) {
-            if(roles.isEmpty()) return null;
+            if (roles.isEmpty()) return null;
 
             StringBuilder builder = new StringBuilder();
             roles.forEach(role -> builder.append(role.toString()).append(";"));

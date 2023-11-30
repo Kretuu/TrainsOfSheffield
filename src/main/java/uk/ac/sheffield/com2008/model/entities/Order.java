@@ -2,24 +2,20 @@ package uk.ac.sheffield.com2008.model.entities;
 
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 public class Order {
-
-    //TODO: Refactor: Order.getOrderLine() (then do whatever). remove the ".getOrderLinePrice" bullshit
-
     private final int orderNumber;
+    private final String userUUID;
+    private final List<OrderLine> orderLines = new ArrayList<>();
     private Date dateOrdered;
     private float totalPrice;
-    public enum Status {PENDING, CONFIRMED, FULFILLED}
     private Status status;
-    private List<OrderLine> orderLines = new ArrayList<>();
-    private final String userUUID;
 
-    private float totalAmount = 0.0f;
-
-    public Order(int orderNumber, Date dateOrdered, float totalPrice, Status status, String userUUID){
+    public Order(int orderNumber, Date dateOrdered, float totalPrice, Status status, String userUUID) {
         this.orderNumber = orderNumber;
         this.dateOrdered = dateOrdered;
         this.totalPrice = totalPrice;
@@ -27,9 +23,9 @@ public class Order {
         this.userUUID = userUUID;
     }
 
-
     /**
      * Get list of OrderLines
+     *
      * @return list of OrderLines
      */
     public List<OrderLine> getOrderLines() {
@@ -54,6 +50,7 @@ public class Order {
 
     /**
      * add single OrderLine object to list
+     *
      * @param orderLine OrderLine
      */
     public void addOrderLine(OrderLine orderLine) {
@@ -61,21 +58,14 @@ public class Order {
     }
 
     /**
-     * Set orderLines list. Used only in DAO class.
-     * @param orderLines list of OrderLine objects
-     */
-    public void setOrderLines(List<OrderLine> orderLines) {
-        this.orderLines = orderLines;
-    }
-
-    /**
      * Add an orderline to this order. +Recalculates total price for order.
-     * @param product the product object
+     *
+     * @param product  the product object
      * @param quantity the quantity
      */
-    public void addProduct(Product product, Integer quantity){
+    public void addProduct(Product product, Integer quantity) {
 
-        if(hasProduct(product)){
+        if (hasProduct(product)) {
             throw new RuntimeException("Tried to add a product to an Order that already has this product. Modify the quantity instead.");
         }
         orderLines.add(new OrderLine(quantity, product));
@@ -84,63 +74,60 @@ public class Order {
 
     /**
      * Returns whether given product is in this order
+     *
      * @param product
      * @return
      */
-    public boolean hasProduct(Product product){
+    public boolean hasProduct(Product product) {
         return orderLines.stream().anyMatch(orderLine -> orderLine.hasProduct(product));
     }
 
     /**
      * Changes the quantity in an orderline. +Recalculates total price for order.
      */
-    public void modifyQuantity(OrderLine orderline, int addedQuantity){
+    public void modifyQuantity(OrderLine orderline, int addedQuantity) {
         orderline.setQuantity(orderline.getQuantity() + addedQuantity);
         calculateTotalPrice();
     }
 
     /**
      * Removes given orderline from this object's orderlines list
+     *
      * @param orderLine orderline to remove
      */
-    public void removeOrderline(OrderLine orderLine){
-        if(hasProduct(orderLine.getProduct())){
+    public void removeOrderline(OrderLine orderLine) {
+        if (hasProduct(orderLine.getProduct())) {
             orderLines.remove(orderLine);
             calculateTotalPrice();
-        }
-        else{
+        } else {
             throw new RuntimeException("Tried to remove a product that doesnt exist in order.");
         }
     }
 
-    public void calculateTotalPrice(){
+    public void calculateTotalPrice() {
         totalPrice = 0;
         orderLines.forEach(OrderLine::calculatePrice);
         orderLines.forEach(orderLine -> totalPrice += orderLine.getPrice());
     }
 
-    public Integer getQuantityOfProduct(Product product) {
-        if(!hasProduct(product)) return null;
-        return getOrderLineFromProduct(product).getQuantity();
-    }
-
-    public void setAsConfirmed(){
+    public void setAsConfirmed() {
         status = Status.CONFIRMED;
     }
-    public void setAsFulfilled(){
+
+    public void setAsFulfilled() {
         status = Status.FULFILLED;
     }
 
-    public float getTotalPrice(){
+    public float getTotalPrice() {
         return totalPrice;
     }
 
     /**
      * @return product * quantity of that product in the order
      */
-    public float getOrderLinePrice(Product product){
+    public float getOrderLinePrice(Product product) {
         OrderLine orderLine = getOrderLineFromProduct(product);
-        if(orderLine == null)
+        if (orderLine == null)
             throw new RuntimeException("Order Object does not contain this product");
 
         return orderLine.getPrice();
@@ -150,50 +137,40 @@ public class Order {
      * @param product
      * @return quantity of given product in this order
      */
-    public int getProductQuantity(Product product){
+    public int getProductQuantity(Product product) {
         OrderLine orderLine = getOrderLineFromProduct(product);
-        if(orderLine == null) throw new RuntimeException("Order Object does not contain this product");
+        if (orderLine == null) throw new RuntimeException("Order Object does not contain this product");
 
         return orderLine.getQuantity();
     }
 
     public OrderLine getOrderLineFromProduct(Product product) {
         List<OrderLine> orderLines = this.orderLines.stream().filter(orderLine -> orderLine.hasProduct(product)).toList();
-        if(orderLines.isEmpty()) return null;
+        if (orderLines.isEmpty()) return null;
         return orderLines.get(0);
     }
 
-    public String getUserUUID(){
+    public String getUserUUID() {
         return userUUID;
     }
-    public int getOrderNumber(){
+
+    public int getOrderNumber() {
         return orderNumber;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "ORDERNUM:  " + orderNumber + " STATUS: " + status.toString() + " TOTAL PRICE: " + totalPrice;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Order o)) return false;
+        if (!(obj instanceof Order o)) return false;
         return new HashSet<>(o.getOrderLines()).equals(new HashSet<>(this.orderLines))
                 && o.getOrderNumber() == this.orderNumber && o.getTotalPrice() == this.totalPrice
                 && o.getDateOrdered() == this.dateOrdered && o.getStatus().equals(this.status);
     }
 
-    public int getTotalOrder() {
-        Set<Integer> uniqueOrderNumbers = new HashSet<>();
-
-        for (OrderLine orderLine : orderLines) {
-            Product product = orderLine.getProduct();
-            if (hasProduct(product)) {
-               // uniqueOrderNumbers.add(getOrderLineFromProduct(product).());
-            }
-        }
-
-        return uniqueOrderNumbers.size();
-    }
+    public enum Status {PENDING, CONFIRMED, FULFILLED}
 
 }

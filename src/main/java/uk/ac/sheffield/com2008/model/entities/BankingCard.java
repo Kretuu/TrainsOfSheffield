@@ -3,9 +3,9 @@ package uk.ac.sheffield.com2008.model.entities;
 import java.util.Date;
 
 public class BankingCard {
-    private String holderName;
+    private final String holderName;
+    private final Date expiryDate;
     private String number;
-    private Date expiryDate;
     private String cvv;
 
     public BankingCard(String holderName, String number, Date expiryDate, String cvv) {
@@ -23,23 +23,23 @@ public class BankingCard {
         return holderName;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
     public Date getExpiryDate() {
         return expiryDate;
-    }
-
-    public void setCvv(String cvv) {
-        this.cvv = cvv;
     }
 
     public String getNumber() {
         return number;
     }
 
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     public String getCvv() {
         return cvv;
+    }
+
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
     }
 }

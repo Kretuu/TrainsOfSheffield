@@ -8,7 +8,6 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.*;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
-import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.Panel;
@@ -22,7 +21,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EditProductRecordForm extends StaffView {
 
@@ -39,16 +37,7 @@ public class EditProductRecordForm extends StaffView {
     private final Map<String, CustomInputField> controllerInputFields = new HashMap<>();
     private final Map<String, CustomInputField> trainSetInputFields = new HashMap<>();
     private final Map<String, CustomInputField> trackPackInputFields = new HashMap<>();
-    private final String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
-            "Train Set", "Track Pack"};
-    private final Map<String, Character> catChar = Map.of(
-            "Locomotive", 'L',
-            "Rolling Stock", 'S',
-            "Track", 'R',
-            "Controller", 'C',
-            "Train Set", 'M',
-            "Track Pack", 'P'
-    );
+    private final Map<String, Class<?>> classMap = new HashMap<>();
     JComboBox<String> gaugesComboBox;
     JLabel gaugeLabel;
     JLabel errorMessage;
@@ -70,9 +59,6 @@ public class EditProductRecordForm extends StaffView {
     JPanel inSetPanel;
     JPanel inPackPanel;
     Product selectedSetProduct;
-    private JPanel cardPanel;
-    private CardLayout cardLayout;
-    private Map<String, Class<?>> classMap = new HashMap<>();
     private Map<Product, Integer> selectedProductsMap = new HashMap<>();
     private JComboBox<String> powerTypeComboBox;
     private JComboBox<String> classesComboBox;
@@ -84,6 +70,8 @@ public class EditProductRecordForm extends StaffView {
         this.editFormController = editFormController;
         this.submitButton = new Button("Save");
 
+        String[] categories = {"Locomotive", "Rolling Stock", "Track", "Controller",
+                "Train Set", "Track Pack"};
         categoryComboBox = new JComboBox<>(categories);
         this.submitButton.addActionListener(e -> {
             try {
@@ -119,8 +107,6 @@ public class EditProductRecordForm extends StaffView {
         initializeUI();
         revalidate();
         repaint();
-
-        // TODO: fill in fields
     }
 
     private Map<Product, Integer> getProductsInSet(ProductSet set) {
@@ -142,49 +128,41 @@ public class EditProductRecordForm extends StaffView {
         GridBagConstraints gbc = new GridBagConstraints();
 
         // Create a panel with CardLayout to hold different category panels
-        cardLayout = new CardLayout();
-        cardPanel = new Panel(cardLayout);
+        CardLayout cardLayout = new CardLayout();
+        JPanel cardPanel = new Panel(cardLayout);
 
         Product productUnderEdit = editFormController.getProductUnderEdit();
         categorySpecificFields = new HashMap<>();
-        if(productUnderEdit instanceof Locomotive){
+        if (productUnderEdit instanceof Locomotive) {
             locomotivePanel = locomotivePanel();
             cardPanel.add(locomotivePanel);
             categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
             currentPanel = locomotivePanel;
-        }
-        else if(productUnderEdit instanceof RollingStock){
+        } else if (productUnderEdit instanceof RollingStock) {
             rollingStockPanel = rollingStocksPanel();
             cardPanel.add(rollingStockPanel);
             categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
             currentPanel = rollingStockPanel;
-        }
-        else if(productUnderEdit instanceof Track){
+        } else if (productUnderEdit instanceof Track) {
             trackPanel = trackPanel();
             cardPanel.add(trackPanel);
             categorySpecificFields.put(trackPanel, trackInputFields);
             currentPanel = trackPanel;
-        }
-        else if(productUnderEdit instanceof Controller){
+        } else if (productUnderEdit instanceof Controller) {
             controllerPanel = controllersPanel();
             cardPanel.add(controllerPanel);
             categorySpecificFields.put(controllerPanel, controllerInputFields);
             currentPanel = controllerPanel;
-        }
-        else if(productUnderEdit instanceof TrackPack){
+        } else if (productUnderEdit instanceof TrackPack) {
             trackPackPanel = trackPackPanel();
             cardPanel.add(trackPackPanel);
             categorySpecificFields.put(trackPackPanel, trackPackInputFields);
             currentPanel = trackPackPanel;
-        }
-        else if(productUnderEdit instanceof TrainSet){
+        } else if (productUnderEdit instanceof TrainSet) {
             trainSetPanel = trainSetsPanel();
             cardPanel.add(trainSetPanel);
             categorySpecificFields.put(trainSetPanel, trainSetInputFields);
             currentPanel = trainSetPanel;
-        }
-        else{
-            // throw error?
         }
 
         gbc.gridx = 0;
@@ -396,9 +374,8 @@ public class EditProductRecordForm extends StaffView {
         gbc.gridx += 2;
         gbc.anchor = GridBagConstraints.NORTH;
         panel.add(new JLabel("Class:"), gbc);
-        java.util.List<String> classes = Arrays.stream(RollingStock.Class_.values())
-                .map(RollingStock.Class_::deriveName)
-                .collect(Collectors.toList());
+        List<String> classes = Arrays.stream(RollingStock.Class_.values())
+                .map(RollingStock.Class_::deriveName).toList();
         classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
         gbc.anchor = GridBagConstraints.WEST;
         classesComboBox.setSelectedItem(editingRollingStock.getClass_().deriveName());
@@ -759,12 +736,12 @@ public class EditProductRecordForm extends StaffView {
     }
 
     private void updateButtonState() {
-        if(currentPanel == null){
+        if (currentPanel == null) {
             return;
         }
 
         Map<String, CustomInputField> categoryFields = categorySpecificFields.get(currentPanel);
-        if(categoryFields == null){ //this is aids but it works
+        if (categoryFields == null) { //this is aids but it works
             return;
         }
 
@@ -780,28 +757,26 @@ public class EditProductRecordForm extends StaffView {
     public Product loadProductByType(Product productUnderEdit) throws InvalidDatabaseDataException {
         char type = productUnderEdit.getProductCode().charAt(0);
         switch (type) {
-            case 'L': {
-                if(!(productUnderEdit instanceof Locomotive)){
+            case 'L' -> {
+                if (!(productUnderEdit instanceof Locomotive locomotive)) {
                     throw new InvalidDatabaseDataException("ProductCode doesnt reflect Type");
                 }
-                Locomotive locomotive = (Locomotive) productUnderEdit;
-                locomotive.setPrice(Float.valueOf(sharedInputFields.get("price").getjTextField().getText()));
+                locomotive.setPrice(Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()));
                 locomotive.setGauge(gauges.get((String) gaugesComboBox.getSelectedItem()));
                 locomotive.setBrand(sharedInputFields.get("brand").getjTextField().getText());
-                locomotive.setStock(Integer.valueOf(quantityField.getText()));
+                locomotive.setStock(Integer.parseInt(quantityField.getText()));
                 locomotive.setBrClass(locomotiveInputFields.get("brClass").getjTextField().getText());
                 locomotive.setIndividualName(locomotiveInputFields.get("individualName").getjTextField().getText());
-                locomotive.setEra(Integer.valueOf(locomotiveInputFields.get("era").getjTextField().getText()));
+                locomotive.setEra(Integer.parseInt(locomotiveInputFields.get("era").getjTextField().getText()));
                 locomotive.setDccType(Locomotive.DCCType.deriveType((String) powerTypeComboBox.getSelectedItem()));
                 locomotive.setName(locomotive.deriveName());
                 return locomotive;
             }
-            case 'S': {
-                if(!(productUnderEdit instanceof RollingStock)){
+            case 'S' -> {
+                if (!(productUnderEdit instanceof RollingStock rollingStock)) {
                     throw new InvalidDatabaseDataException("ProductCode doesnt reflect Type");
                 }
-                RollingStock rollingStock = (RollingStock) productUnderEdit;
-                rollingStock.setPrice(Float.valueOf(sharedInputFields.get("price").getjTextField().getText()));
+                rollingStock.setPrice(Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()));
                 rollingStock.setGauge(gauges.get((String) gaugesComboBox.getSelectedItem()));
                 rollingStock.setBrand(sharedInputFields.get("brand").getjTextField().getText());
                 rollingStock.setStock(Integer.parseInt(quantityField.getText()));
@@ -812,12 +787,11 @@ public class EditProductRecordForm extends StaffView {
                 rollingStock.setName(rollingStock.deriveName());
                 return rollingStock;
             }
-            case 'R': {
-                if(!(productUnderEdit instanceof Track)){
+            case 'R' -> {
+                if (!(productUnderEdit instanceof Track track)) {
                     throw new InvalidDatabaseDataException("ProductCode doesnt reflect Type");
                 }
-                Track track = (Track) productUnderEdit;
-                track.setPrice(Float.valueOf(sharedInputFields.get("price").getjTextField().getText()));
+                track.setPrice(Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()));
                 track.setGauge(gauges.get((String) gaugesComboBox.getSelectedItem()));
                 track.setBrand(sharedInputFields.get("brand").getjTextField().getText());
                 track.setStock(Integer.parseInt(quantityField.getText()));
@@ -826,12 +800,11 @@ public class EditProductRecordForm extends StaffView {
                 track.setName(track.deriveName());
                 return track;
             }
-            case 'C': {
-                if(!(productUnderEdit instanceof Controller)){
+            case 'C' -> {
+                if (!(productUnderEdit instanceof Controller controller)) {
                     throw new InvalidDatabaseDataException("ProductCode doesnt reflect Type");
                 }
-                Controller controller = (Controller) productUnderEdit;
-                controller.setPrice(Float.valueOf(sharedInputFields.get("price").getjTextField().getText()));
+                controller.setPrice(Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()));
                 controller.setGauge(gauges.get((String) gaugesComboBox.getSelectedItem()));
                 controller.setBrand(sharedInputFields.get("brand").getjTextField().getText());
                 controller.setStock(Integer.parseInt(quantityField.getText()));
@@ -840,17 +813,16 @@ public class EditProductRecordForm extends StaffView {
                 controller.setName(controller.deriveName());
                 return controller;
             }
-            case 'M': {
-                if(!(productUnderEdit instanceof TrainSet)){
+            case 'M' -> {
+                if (!(productUnderEdit instanceof TrainSet trainSet)) {
                     throw new InvalidDatabaseDataException("ProductCode doesnt reflect Type");
                 }
-                TrainSet trainSet = (TrainSet) productUnderEdit;
                 ArrayList<ProductSetItem> setItems = new ArrayList<>();
                 for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
                     ProductSetItem setItem = new ProductSetItem(entry.getKey(), entry.getValue());
                     setItems.add(setItem);
                 }
-                trainSet.setPrice(Float.valueOf(sharedInputFields.get("price").getjTextField().getText()));
+                trainSet.setPrice(Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()));
                 trainSet.setGauge(gauges.get((String) gaugesComboBox.getSelectedItem()));
                 trainSet.setBrand(sharedInputFields.get("brand").getjTextField().getText());
                 trainSet.setStock(Integer.parseInt(quantityField.getText()));
@@ -859,11 +831,10 @@ public class EditProductRecordForm extends StaffView {
                 trainSet.setName(trainSet.deriveName());
                 return trainSet;
             }
-            case 'P': {
-                if(!(productUnderEdit instanceof TrackPack)){
+            case 'P' -> {
+                if (!(productUnderEdit instanceof TrackPack trackPack)) {
                     throw new InvalidDatabaseDataException("ProductCode doesnt reflect Type");
                 }
-                TrackPack trackPack = (TrackPack) productUnderEdit;
                 ArrayList<ProductSetItem> setItems = new ArrayList<>();
                 for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
                     ProductSetItem setItem = new ProductSetItem(entry.getKey(), entry.getValue());
@@ -873,7 +844,7 @@ public class EditProductRecordForm extends StaffView {
                 if (extension.isSelected()) {
                     tpType = TrackPack.TrackPackType.EXTENSION;
                 }
-                trackPack.setPrice(Float.valueOf(sharedInputFields.get("price").getjTextField().getText()));
+                trackPack.setPrice(Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()));
                 trackPack.setGauge(gauges.get((String) gaugesComboBox.getSelectedItem()));
                 trackPack.setBrand(sharedInputFields.get("brand").getjTextField().getText());
                 trackPack.setStock(Integer.parseInt(quantityField.getText()));
@@ -883,8 +854,7 @@ public class EditProductRecordForm extends StaffView {
                 trackPack.setName(trackPack.deriveName());
                 return trackPack;
             }
-            default:
-                throw new RuntimeException("Unknown Type: " + type);
+            default -> throw new RuntimeException("Unknown Type: " + type);
         }
     }
 }

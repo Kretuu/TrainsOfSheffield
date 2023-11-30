@@ -10,7 +10,8 @@ public class Address {
     private String city;
     private String postCode;
 
-    public Address() {}
+    public Address() {
+    }
 
     public Address(String combinedHouseNumber, String street, String city, String postCode) {
         List<String> combinedHouseNumberList = Arrays.stream(combinedHouseNumber.split("/")).toList();
@@ -49,13 +50,13 @@ public class Address {
         return city;
     }
 
-    public String getCombinedHouseNo() {
-        if(flatIdentifier == null) return String.valueOf(houseNumber);
-        return new StringBuilder().append(houseNumber).append("/").append(flatIdentifier).toString();
-    }
-
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getCombinedHouseNo() {
+        if (flatIdentifier == null) return String.valueOf(houseNumber);
+        return new StringBuilder().append(houseNumber).append("/").append(flatIdentifier).toString();
     }
 
     public String getPostCode() {
