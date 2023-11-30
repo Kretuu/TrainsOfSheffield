@@ -7,7 +7,8 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
-import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductTableMapper;
+import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductRecordTableMapper;
+import uk.ac.sheffield.com2008.view.modals.NotificationModal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,15 +20,29 @@ public class ProductRecordView extends StaffView {
 
     ProductRecordController productRecordController;
     private CustomTable<Product> customTable;
-    private final ProductTableMapper mapper;
+    private final ProductRecordTableMapper mapper;
     private JComboBox<String> filterComboBox;
 
     public ProductRecordView(ProductRecordController productRecordController) {
         this.productRecordController = productRecordController;
-        this.mapper = new ProductTableMapper("Edit") {
+        this.mapper = new ProductRecordTableMapper() {
             @Override
             public void onClick(Product product) {
                 productRecordController.getNavigation().navigate(Navigation.EDIT_PRODUCT_RECORD);
+            }
+
+            @Override
+            public void onDelete(Product product) {
+                StringBuilder messageBuilder = new StringBuilder()
+                        .append("Do you really want to delete product record of name ")
+                        .append(product.printName()).append("? This cannot be undone.");
+                new NotificationModal(productRecordController.getNavigation().getFrame(), ProductRecordView.this,
+                        "Delete product record", messageBuilder.toString()) {
+                    @Override
+                    public void onSubmit() {
+                        productRecordController.deleteProduct(product);
+                    }
+                }.setVisible(true);
             }
         };
 

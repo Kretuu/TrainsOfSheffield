@@ -20,7 +20,7 @@ public class ProductDAO {
     }
 
     public static List<Product> getAllProducts() throws SQLException {
-        String query = "SELECT * FROM Products";
+        String query = "SELECT * FROM Products WHERE isDiscontinued <> 1";
 
         ProductMapper mapper = new ProductMapper();
         return DatabaseConnectionHandler.select(mapper, query);
@@ -32,7 +32,7 @@ public class ProductDAO {
         StringBuilder stringBuilder = new StringBuilder("SELECT * FROM Products WHERE productCode IN (");
         stringBuilder.append("?, ".repeat(productCodes.length));
         stringBuilder.setLength(stringBuilder.length() - 2);
-        stringBuilder.append(")");
+        stringBuilder.append(") AND isDiscontinued <> 1");
         String query = stringBuilder.toString();
 
         ProductMapper mapper = new ProductMapper();
@@ -47,7 +47,7 @@ public class ProductDAO {
      * @return
      */
     private static Product getProductByField(String fieldName, Object value) throws SQLException {
-        String query = "SELECT * FROM Products WHERE " + fieldName + " = ?";
+        String query = "SELECT * FROM Products WHERE " + fieldName + " = ? AND isDiscontinued <> 1";
 
         ProductMapper mapper = new ProductMapper();
         List<Product> productList = DatabaseConnectionHandler.select(mapper, query, value);
@@ -58,10 +58,31 @@ public class ProductDAO {
     }
 
     public static List<Product> getProductsByCategory(String initialLetter) throws SQLException {
-        String query = "SELECT * FROM Products WHERE productCode LIKE ?";
+        String query = "SELECT * FROM Products WHERE productCode LIKE ? AND isDiscontinued <> 1";
         ProductMapper mapper = new ProductMapper();
         String categoryWildcard = initialLetter + "%";
         return DatabaseConnectionHandler.select(mapper, query, categoryWildcard);
+    }
+
+    public static void deleteProduct(Product product) throws SQLException {
+        String query = "DELETE FROM Products WHERE productCode = ?";
+        DatabaseConnectionHandler.delete(query, product.getProductCode());
+    }
+
+    public static boolean productExistInNonPendingOrders(Product product) throws SQLException {
+        StringBuilder queryBuilder = new StringBuilder()
+                .append("SELECT COUNT(*) FROM Orders INNER JOIN OrderLines OL ON Orders.orderNumber = OL.orderNumber ")
+                .append("INNER JOIN Products P ON OL.productCode = P.productCode WHERE Orders.status <> 'PENDING' ")
+                .append("AND P.productCode = ?");
+        String query = queryBuilder.toString();
+
+        long result = DatabaseConnectionHandler.count(query, product.getProductCode());
+        return result > 0;
+    }
+
+    public static void discontinueProduct(Product product) throws SQLException {
+        String query = "UPDATE Products SET isDiscontinued = 1 WHERE productCode = ?";
+        DatabaseConnectionHandler.update(query, product.getProductCode());
     }
 
 
