@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.staff.ManageStockView;
 
 import javax.swing.*;
@@ -70,7 +71,7 @@ public class EditProductStockModal extends JDialog {
         });
         buttonPanel.add(quantitySpinner);
 
-        JButton updateButton = new JButton("Update");
+        JButton updateButton = new Button("Update");
         updateButton.addActionListener(e -> {
             staffController.updateProductQuantity(product, selectedQuantity);
             System.out.println("Updated quantity: " + selectedQuantity);

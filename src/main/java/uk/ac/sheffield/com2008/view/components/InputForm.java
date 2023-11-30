@@ -24,10 +24,10 @@ public abstract class InputForm extends JPanel {
      */
     public InputForm(View view, String submitButtonLabel, String cancelButtonLabel) {
         this.content = new JPanel();
-        this.submitButton = new JButton(submitButtonLabel);
+        this.submitButton = new Button(submitButtonLabel);
         this.errorMessage = new JLabel(" ");
         this.view = view;
-        this.cancelButton = new JButton(cancelButtonLabel == null ? "Cancel" : cancelButtonLabel);
+        this.cancelButton = new Button(cancelButtonLabel == null ? "Cancel" : cancelButtonLabel);
 
         initialiseUI();
         add(content);

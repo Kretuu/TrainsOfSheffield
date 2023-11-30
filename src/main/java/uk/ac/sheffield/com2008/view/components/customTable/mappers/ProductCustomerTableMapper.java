@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.components.customTable.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import java.util.LinkedList;
@@ -13,7 +14,7 @@ public abstract class ProductCustomerTableMapper implements TableMapper<Product>
         list.add(object.printName());
         list.add(ProductCategoryHelper.deriveCategory(object.getProductCode()));
 
-        JButton viewButton = new JButton("Add to Cart");
+        JButton viewButton = new Button("Add to Cart");
         viewButton.addActionListener(e -> onClick(object));
         list.add(viewButton);
 

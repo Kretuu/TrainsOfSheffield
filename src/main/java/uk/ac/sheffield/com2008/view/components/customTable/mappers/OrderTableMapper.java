@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.view.components.customTable.mappers;
 
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import java.util.Date;
@@ -17,7 +18,7 @@ public abstract class OrderTableMapper implements TableMapper<Order> {
         list.add(object.getStatus().toString());
         list.add(object.getTotalPrice());
 
-        JButton button = new JButton("View Details");
+        JButton button = new Button("View Details");
         button.addActionListener(e -> onClick(object));
         list.add(button);
         return list;

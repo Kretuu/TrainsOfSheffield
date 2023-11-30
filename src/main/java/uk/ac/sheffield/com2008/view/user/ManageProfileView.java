@@ -10,6 +10,7 @@ import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
 import uk.ac.sheffield.com2008.view.components.UpdateAddressTemplate;
@@ -48,7 +49,7 @@ public class ManageProfileView extends UserView {
         JPanel subNav = new JPanel(new BorderLayout());
         subNav.setLayout(new BoxLayout(subNav, BoxLayout.X_AXIS));
 
-        JButton modifyCard = new JButton("Update Banking Card");
+        JButton modifyCard = new Button("Update Banking Card");
         modifyCard.addActionListener(e -> startChangeBankDetailsProcess());
 
         subNav.add(modifyCard);

@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.modals;
 import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -61,7 +62,7 @@ public class OrderLineModal extends JDialog {
         panel.add(new JScrollPane(orderLinesTextArea), BorderLayout.CENTER);
 
         // Create a panel for Delete button and Fulfill checkbox
-        JButton deleteButton = new JButton("Delete Order");
+        JButton deleteButton = new Button("Delete Order");
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(deleteButton);
 

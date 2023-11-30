@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.manager;
 
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.View;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import java.util.LinkedHashMap;
@@ -13,8 +14,8 @@ public abstract class ManagerView extends View {
     public void updateNavigation() {
         Map<Navigation, JButton> navigationMap = new LinkedHashMap<>();
 
-        navigationMap.put(Navigation.STAFF, new JButton("Staff Area"));
-        navigationMap.put(Navigation.CUSTOMER, new JButton("Customer Area"));
+        navigationMap.put(Navigation.STAFF, new Button("Staff Area"));
+        navigationMap.put(Navigation.CUSTOMER, new Button("Customer Area"));
 
         setNavigation(navigationMap);
     }

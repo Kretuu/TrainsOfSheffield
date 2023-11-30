@@ -3,6 +3,8 @@ package uk.ac.sheffield.com2008.view.components.customTable.mappers;
 import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
+import uk.ac.sheffield.com2008.view.components.Button;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,10 +20,10 @@ public abstract class ProductRecordTableMapper implements TableMapper<Product> {
 
         JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonsPanel.setBackground(Colors.TABLE_CONTENT);
-        JButton editButton = new JButton("Edit");
+        JButton editButton = new Button("Edit");
         editButton.addActionListener(e -> onClick(object));
 
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new Button("Delete");
         deleteButton.addActionListener(e -> onDelete(object));
 
         buttonsPanel.add(editButton);

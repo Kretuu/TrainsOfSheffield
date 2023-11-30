@@ -4,6 +4,7 @@ import org.w3c.dom.css.Rect;
 import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
@@ -26,7 +27,7 @@ public class ManageUserRolesView extends ManagerView {
     public ManageUserRolesView(ManageUserRolesController controller) {
         this.controller = controller;
         this.content = new JPanel();
-        this.promoteUserButton = new JButton("Appoint staff");
+        this.promoteUserButton = new Button("Appoint staff");
         this.mapper = new ManagerUserTableMapper(controller);
 
         LinkedList<CustomColumn> columns = new LinkedList<>() {{

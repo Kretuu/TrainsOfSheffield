@@ -3,6 +3,7 @@ package uk.ac.sheffield.com2008.view.components.customTable.mappers;
 import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
 import uk.ac.sheffield.com2008.model.entities.PersonalDetails;
 import uk.ac.sheffield.com2008.model.entities.User;
+import uk.ac.sheffield.com2008.view.components.Button;
 
 import javax.swing.*;
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ public class ManagerUserTableMapper implements TableMapper<User> {
         list.add(details.getForename());
         list.add(details.getSurname());
 
-        JButton revokeStaff = new JButton("Revoke staff");
+        JButton revokeStaff = new Button("Revoke staff");
         revokeStaff.addActionListener(e -> controller.revokeStaffRole(object));
         list.add(revokeStaff);
 

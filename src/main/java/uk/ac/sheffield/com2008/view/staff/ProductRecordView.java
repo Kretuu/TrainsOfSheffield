@@ -5,6 +5,7 @@ import uk.ac.sheffield.com2008.controller.staff.ProductRecordController;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.listeners.AuthorisationActionListener;
+import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductRecordTableMapper;
@@ -66,7 +67,7 @@ public class ProductRecordView extends StaffView {
         JLabel filterLabel = new JLabel("Filter by: ");
         String[] categories = {"All", "Locomotive", "Controller", "Rolling Stock", "Track", "Train Set", "Track Pack"};
         filterComboBox = new JComboBox<>(categories);
-        JButton addRecordButton = new JButton("Create New Record");
+        JButton addRecordButton = new Button("Create New Record");
         addRecordButton.addActionListener(new AuthorisationActionListener(this) {
             @Override
             public void action(ActionEvent e) {
