@@ -214,17 +214,11 @@ public class ProductDAO {
                 product.getProductCode()
         );
 
-        /*
+
         if(product.isSet() && product instanceof ProductSet) {
             ProductSet set = (ProductSet) product;
 
-            // create a new set linking to this product code
-            String newSetQuery = "INSERT INTO ProductSets (productCode)" +
-                    " VALUES (?)";
-            DatabaseConnectionHandler.insert(
-                    newSetQuery,
-                    product.getProductCode());
-
+            //get the set id associated with this product set
             String reselectSetQuery = "SELECT * FROM ProductSets PS WHERE productCode = (?)";
             ProductSetMapper mapper = new ProductSetMapper();
 
@@ -232,8 +226,15 @@ public class ProductDAO {
                     mapper,
                     reselectSetQuery,
                     product.getProductCode());
-            if(pSet.isEmpty()) throw new RuntimeException();
+            if (pSet.isEmpty()) throw new RuntimeException();
             int setId = (int) pSet.get(0).getSetId();
+
+            //delete all set items associated to this set id currently in database
+            String deleteAllSetItemsQuery = "DELETE FROM ProductSetItems WHERE setId = ?";
+            DatabaseConnectionHandler.delete(
+                    deleteAllSetItemsQuery,
+                    setId
+            );
 
             //create new set items that link to this set id
             ArrayList<ProductSetItem> setItems = (ArrayList<ProductSetItem>) set.getSetItems();
@@ -253,7 +254,6 @@ public class ProductDAO {
             );
 
         }
-         */
     }
 
 

@@ -146,6 +146,13 @@ public class EditProductRecordForm extends StaffView{
         JPanel content = new JPanel();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        selectedProductsMap = new HashMap<>();
+        inSetPanel.removeAll();
+        inPackPanel.removeAll();
+        submitButton.setEnabled(false);
+        content.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
         // Create a panel with CardLayout to hold different category panels
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
@@ -191,14 +198,6 @@ public class EditProductRecordForm extends StaffView{
         else{
             // throw error?
         }
-
-
-        selectedProductsMap = new HashMap<>();
-        inSetPanel.removeAll();
-        inPackPanel.removeAll();
-        submitButton.setEnabled(false);
-        content.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
