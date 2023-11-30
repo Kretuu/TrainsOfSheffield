@@ -38,8 +38,8 @@ public class ManageUserRolesController extends ViewController {
                     "Could not connect to database. Users list was not fetched.", true);
         }
 
-//        standardUserList = new ArrayList<>();
-//        staffList = new ArrayList<>();
+        standardUserList = new ArrayList<>();
+        staffList = new ArrayList<>();
         for(User user : allUsers) {
             if(!user.hasRole(User.Role.STAFF)) {
                 standardUserList.add(user);

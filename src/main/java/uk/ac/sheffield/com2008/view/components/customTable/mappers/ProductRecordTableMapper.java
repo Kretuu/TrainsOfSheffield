@@ -20,10 +20,10 @@ public abstract class ProductRecordTableMapper implements TableMapper<Product> {
 
         JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonsPanel.setBackground(Colors.TABLE_CONTENT);
-        JButton editButton = new Button("Edit");
+        JButton editButton = new Button("Edit", 25);
         editButton.addActionListener(e -> onClick(object));
 
-        JButton deleteButton = new Button("Delete");
+        JButton deleteButton = new Button("Delete", 25);
         deleteButton.addActionListener(e -> onDelete(object));
 
         buttonsPanel.add(editButton);

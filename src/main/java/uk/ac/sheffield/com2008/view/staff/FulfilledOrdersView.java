@@ -77,7 +77,7 @@ public class FulfilledOrdersView extends StaffView {
             add(new CustomColumn(0.2, "Total price"));
             add(new CustomColumn(0.1, null));
         }};
-        customTable = new CustomTable<>(columns);
+        customTable = new CustomTable<>(columns, fulfilledOrdersController);
 
         panel.add(customTable);
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));

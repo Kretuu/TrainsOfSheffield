@@ -20,7 +20,7 @@ public abstract class ProductTableMapper implements TableMapper<Product> {
         list.add(ProductCategoryHelper.deriveCategory(object.getProductCode()));
         list.add(object.getStock());
 
-        JButton editButton = new Button(actionName);
+        JButton editButton = new Button(actionName, 25);
         editButton.addActionListener(e -> onClick(object));
         list.add(editButton);
         return list;

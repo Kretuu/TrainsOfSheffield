@@ -20,7 +20,7 @@ public class CustomTable<Type> extends JPanel {
     private final LinkedList<Double> weights;
     private JPanel mainPanel = new JPanel(new GridBagLayout());
     private Font defaultFont;
-    private Dimension size;
+    private final JFrame frame;
     private Border defaultBorder;
 
     /**
@@ -29,18 +29,19 @@ public class CustomTable<Type> extends JPanel {
      * @param columns LinkedList of CustomColumn which includes weight and colum name. Weight
      *                determines how column widths should be weighted.
      */
-    public CustomTable(LinkedList<CustomColumn> columns) {
+    public CustomTable(LinkedList<CustomColumn> columns, ViewController controller) {
         this.weights = columns.stream().map(CustomColumn::weight).collect(Collectors.toCollection(LinkedList::new));
         this.headers = columns.stream().map(CustomColumn::columnName)
                 .collect(Collectors.toCollection(LinkedList::new));
         this.columns = columns.size();
+        this.frame = controller.getNavigation().getFrame();
 
-        size = getPreferredSize();
+//        size = getPreferredSize();
         initialiseVariables();
     }
 
     private void initialiseVariables() {
-        setLayout(new FlowLayout(FlowLayout.CENTER));
+        setLayout(new BorderLayout());
 
         Font tableFont = getFont();
         String family = tableFont.getFamily();
@@ -109,11 +110,11 @@ public class CustomTable<Type> extends JPanel {
                 if(column instanceof JComponent component) {
                     cellElement = new JPanel();
                     cellElement.setBackground(Colors.TABLE_CONTENT);
-                    component.setPreferredSize(new Dimension(component.getPreferredSize().width, 26));
-                    component.setMaximumSize(new Dimension(component.getPreferredSize().width, 26));
+                    component.setPreferredSize(new Dimension(component.getPreferredSize().width, 25));
+                    component.setMaximumSize(new Dimension(component.getPreferredSize().width, 25));
                     cellElement.setBorder(BorderFactory.createCompoundBorder(
                             new MatteBorder(0, 0, 1, 0, Color.BLACK),
-                            new EmptyBorder(3, 10, 3, 0)
+                            new EmptyBorder(4, 10, 3, 0)
                     ));
                     cellElement.add(component);
                 } else {
@@ -127,8 +128,9 @@ public class CustomTable<Type> extends JPanel {
             }
             rowIndex++;
         }
+
         Dimension preferredDimension = mainPanel.getPreferredSize();
-        preferredDimension.width = size.width;
+        preferredDimension.width = frame.getWidth() - 100;
         mainPanel.setPreferredSize(preferredDimension);
 
         JPanel panel = new JPanel(new FlowLayout());
@@ -138,7 +140,7 @@ public class CustomTable<Type> extends JPanel {
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         );
-        scrollPane.setPreferredSize(size);
+//        scrollPane.setPreferredSize(size);
         add(scrollPane);
         revalidate();
         repaint();
@@ -150,9 +152,5 @@ public class CustomTable<Type> extends JPanel {
      * @param height Height of the table
      */
     public void updateDimension(ViewController controller, int height) {
-        Dimension dimension = controller.getNavigation().getFrame().getSize();
-        dimension.width = dimension.width - 100;
-        dimension.height = height;
-        this.size = dimension;
     }
 }

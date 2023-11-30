@@ -24,7 +24,7 @@ public class ManagerUserTableMapper implements TableMapper<User> {
         list.add(details.getForename());
         list.add(details.getSurname());
 
-        JButton revokeStaff = new Button("Revoke staff");
+        JButton revokeStaff = new Button("Revoke staff", 25);
         revokeStaff.addActionListener(e -> controller.revokeStaffRole(object));
         list.add(revokeStaff);
 

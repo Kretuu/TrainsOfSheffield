@@ -2,6 +2,7 @@ package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.staff.ManageStockView;
 
@@ -40,7 +41,19 @@ public class EditProductStockModal extends JDialog {
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Create a label that can be customized
-        productName = new JLabel("<html><div style='width: 100%;'>" + product.printName() + "</div></html>");
+        StringBuilder customLabelText = new StringBuilder()
+                .append("<html><div style='width: 100%;'>").append(product.printName()).append("<br>");
+        if(product instanceof ProductSet) {
+            customLabelText.append("Contents:<br><ul>");
+            ((ProductSet) product).getSetItems().forEach(setItem -> {
+                customLabelText.append("<li>").append(setItem.getProduct().printName()).append(" | <b>x")
+                        .append(setItem.getQuantity()).append("</b></li>");
+            });
+            customLabelText.append("</ul>");
+        }
+        customLabelText.append("</div></html>");
+
+        productName = new JLabel(customLabelText.toString());
         topPanel.add(productName, BorderLayout.CENTER);
         panel.add(topPanel, BorderLayout.NORTH);
 
@@ -59,7 +72,7 @@ public class EditProductStockModal extends JDialog {
         int currentStockQuantity = product.getStock();
 
         // Quantity Spinner
-        SpinnerNumberModel spinnerModel = new SpinnerNumberModel(currentStockQuantity, currentStockQuantity, Integer.MAX_VALUE, 1);
+        SpinnerNumberModel spinnerModel = new SpinnerNumberModel(currentStockQuantity, 0, Integer.MAX_VALUE, 1);
         quantitySpinner = new JSpinner(spinnerModel); // Initial value, min, max, step
 
         // Create an Update Button

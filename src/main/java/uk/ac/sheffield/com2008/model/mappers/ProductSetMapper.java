@@ -24,8 +24,8 @@ public class ProductSetMapper implements RowMapper<ProductSet> {
            columnNames.add(metaData.getColumnName(i));
         }
 
-
-        ProductSetItem productSetItem = columnNames.stream().anyMatch(name -> name.equals("name"))
+        ProductSetItem productSetItem = (columnNames.stream().anyMatch(name -> name.equals("name"))
+                && resultSet.getString("name") != null)
                 ? productSetItemMapper.mapResultSetToEntity(resultSet) : null;
         switch (productCode.charAt(0)) {
             case 'M' -> {

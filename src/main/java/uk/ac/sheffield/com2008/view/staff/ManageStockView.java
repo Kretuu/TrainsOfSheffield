@@ -92,7 +92,7 @@ public class ManageStockView extends StaffView {
             add(new CustomColumn(0.2, "Quantity"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns);
+        customTable = new CustomTable<>(columns, staffController);
 
         productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));

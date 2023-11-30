@@ -71,7 +71,7 @@ public class BrowseItemsView extends UserView {
             add(new CustomColumn(0.2, "Category"));
             add(new CustomColumn(0.2, null));
         }};
-        customTable = new CustomTable<>(columns);
+        customTable = new CustomTable<>(columns, browseItemsController);
 
         productPanel.add(customTable);
         productPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
@@ -79,7 +79,7 @@ public class BrowseItemsView extends UserView {
     }
 
     public void refreshTable(List<Product> productList) {
-        customTable.updateDimension(browseItemsController, 700);
+        customTable.updateDimension(browseItemsController, 500);
         customTable.populateTable(productList, mapper);
     }
 }

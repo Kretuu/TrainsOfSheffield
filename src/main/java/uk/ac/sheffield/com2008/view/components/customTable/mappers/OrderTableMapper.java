@@ -18,7 +18,7 @@ public abstract class OrderTableMapper implements TableMapper<Order> {
         list.add(object.getStatus().toString());
         list.add(object.getTotalPrice());
 
-        JButton button = new Button("View Details");
+        JButton button = new Button("View Details", 25);
         button.addActionListener(e -> onClick(object));
         list.add(button);
         return list;

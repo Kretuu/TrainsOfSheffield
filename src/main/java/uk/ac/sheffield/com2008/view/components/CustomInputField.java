@@ -88,14 +88,10 @@ public class CustomInputField implements DocumentListener {
             }
         });
     }
-    public void setRowWeight(double weight) {
-        this.rowWeight = weight;
-    }
-
 
     public void addToPanel(JPanel panel) {
         JPanel internalPanel = new JPanel(new GridLayout(3, 1));
-        if(!label.getText().equals("")){
+        if(!label.getText().isEmpty()){
             internalPanel.add(label);
         }
         internalPanel.add(jTextField);

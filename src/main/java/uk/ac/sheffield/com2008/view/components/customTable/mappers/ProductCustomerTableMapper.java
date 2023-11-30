@@ -14,7 +14,7 @@ public abstract class ProductCustomerTableMapper implements TableMapper<Product>
         list.add(object.printName());
         list.add(ProductCategoryHelper.deriveCategory(object.getProductCode()));
 
-        JButton viewButton = new Button("Add to Cart");
+        JButton viewButton = new Button("Add to Cart", 25);
         viewButton.addActionListener(e -> onClick(object));
         list.add(viewButton);
 

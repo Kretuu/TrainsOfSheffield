@@ -18,15 +18,13 @@ import java.util.List;
 
 public class ManageUserRolesView extends ManagerView {
     private final ManageUserRolesController controller;
-    private final JPanel content;
     private final JButton promoteUserButton;
-    private CustomTable<User> customTable;
+    private final CustomTable<User> customTable;
     private CustomInputField userEmail;
     private JPanel panel;
     private final ManagerUserTableMapper mapper;
     public ManageUserRolesView(ManageUserRolesController controller) {
         this.controller = controller;
-        this.content = new JPanel();
         this.promoteUserButton = new Button("Appoint staff");
         this.mapper = new ManagerUserTableMapper(controller);
 
@@ -36,14 +34,13 @@ public class ManageUserRolesView extends ManagerView {
             add(new CustomColumn(0.3, "Surname"));
             add(new CustomColumn(0.1, null));
         }};
-        this.customTable = new CustomTable<>(columns);
+        this.customTable = new CustomTable<>(columns, controller);
 
         initialiseUI();
-        add(content);
     }
 
     private void initialiseUI() {
-        content.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
 
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
@@ -81,10 +78,10 @@ public class ManageUserRolesView extends ManagerView {
         centerPanel.add(new JSeparator());
         centerPanel.add(tableTitle);
         centerPanel.add(customTable);
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 40, 40));
 
-        content.add(headerPanel, BorderLayout.NORTH);
-        content.add(centerPanel, BorderLayout.CENTER);
-
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     public void populateTable(List<User> staffList) {
