@@ -108,13 +108,11 @@ public class EditProductRecordForm extends StaffView{
         inPackPanel = new JPanel();
         itemSelectedTP = new JLabel("None");
         itemSelectedTS = new JLabel("None");
-
-        setPanels();
     }
 
     public void onRefresh(){
         removeAll();
-        setPanels();
+        //setPanels();
         initializeUI();
         revalidate();
         repaint();
@@ -128,7 +126,6 @@ public class EditProductRecordForm extends StaffView{
         controllerPanel = controllersPanel();
         trainSetPanel = trainSetsPanel();
         trackPackPanel = trackPackPanel();
-        currentPanel = locomotivePanel;
         categorySpecificFields = new HashMap<>();
         categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
         categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
@@ -263,11 +260,49 @@ public class EditProductRecordForm extends StaffView{
         gbc.fill = GridBagConstraints.BOTH;
 
         //TODO: Load up the correct panel for editing
-        //cardPanel.add(locomotivePanel);
-        // Set the identifier based on the selected category
-        //cardLayout.show(cardPanel, "Locomotive");
+        categorySpecificFields = new HashMap<>();
+        if(productUnderEdit instanceof Locomotive){
+            locomotivePanel = locomotivePanel();
+            cardPanel.add(locomotivePanel);
+            categorySpecificFields.put(locomotivePanel, locomotiveInputFields);
+            currentPanel = locomotivePanel;
+        }
+        else if(productUnderEdit instanceof RollingStock){
+            rollingStockPanel = rollingStocksPanel();
+            cardPanel.add(rollingStockPanel);
+            categorySpecificFields.put(rollingStockPanel, rollingStockInputFields);
+            currentPanel = rollingStockPanel;
+        }
+        else if(productUnderEdit instanceof Track){
+            trackPanel = trackPanel();
+            cardPanel.add(trackPanel);
+            categorySpecificFields.put(trackPanel, trackInputFields);
+            currentPanel = trackPanel;
+        }
+        else if(productUnderEdit instanceof Controller){
+            controllerPanel = controllersPanel();
+            cardPanel.add(controllerPanel);
+            categorySpecificFields.put(controllerPanel, controllerInputFields);
+            currentPanel = controllerPanel;
+        }
+        else if(productUnderEdit instanceof TrackPack){
+            trackPackPanel = trackPackPanel();
+            cardPanel.add(trackPackPanel);
+            categorySpecificFields.put(trackPackPanel, trackPackInputFields);
+            currentPanel = trackPackPanel;
+        }
+        else if(productUnderEdit instanceof TrainSet){
+            trainSetPanel = trainSetsPanel();
+            cardPanel.add(trainSetPanel);
+            categorySpecificFields.put(trainSetPanel, trainSetInputFields);
+            currentPanel = trainSetPanel;
+        }
+        else{
+            // throw error?
+        }
 
-        //content.add(cardPanel, gbc);
+        cardLayout.show(cardPanel, "panel");
+        content.add(cardPanel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy++;
@@ -282,6 +317,7 @@ public class EditProductRecordForm extends StaffView{
 
     private JPanel locomotivePanel() {
 
+        Locomotive editingLocomotive = (Locomotive) editFormController.getProductUnderEdit();
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -295,6 +331,7 @@ public class EditProductRecordForm extends StaffView{
                 brClassField.getjTextField().getText(),
                 2));
         locomotiveInputFields.put("brClass", brClassField);
+        brClassField.getjTextField().setText(editingLocomotive.getBrClass());
         brClassField.addToPanel(panel, gbc);
 
         // Individual Name
@@ -304,6 +341,7 @@ public class EditProductRecordForm extends StaffView{
                 indivNameField.getjTextField().getText(),
                 3));
         locomotiveInputFields.put("individualName", indivNameField);
+        indivNameField.getjTextField().setText(editingLocomotive.getIndividualName());
         gbc.anchor = GridBagConstraints.WEST;
         indivNameField.addToPanel(panel, gbc);
 
@@ -313,6 +351,7 @@ public class EditProductRecordForm extends StaffView{
         eraField.setValidationFunction(() -> FieldsValidationManager.validateEra(
                 eraField.getjTextField().getText()));
         locomotiveInputFields.put("era", eraField);
+        eraField.getjTextField().setText(String.valueOf(editingLocomotive.getEra()));
         gbc.anchor = GridBagConstraints.WEST;
         eraField.addToPanel(panel, gbc);
 
@@ -324,6 +363,7 @@ public class EditProductRecordForm extends StaffView{
                 .map(Locomotive.DCCType::deriveName)
                 .toArray(String[]::new);
         powerTypeComboBox = new JComboBox<>(powerTypes);
+        powerTypeComboBox.setSelectedItem(editingLocomotive.getDccType().deriveName());
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(powerTypeComboBox, gbc);
 
@@ -684,7 +724,14 @@ public class EditProductRecordForm extends StaffView{
     }
 
     private void updateButtonState() {
+        if(currentPanel == null){
+            return;
+        }
+
         Map<String, CustomInputField> categoryFields = categorySpecificFields.get(currentPanel);
+        if(categoryFields == null){ //this is aids but it works
+            return;
+        }
 
         submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
                 && categoryFields.values().stream().allMatch(CustomInputField::isValid)
