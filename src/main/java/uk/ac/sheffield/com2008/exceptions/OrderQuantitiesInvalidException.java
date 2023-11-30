@@ -15,7 +15,6 @@ public class OrderQuantitiesInvalidException extends Exception {
     }
 
 
-
     public void addMessage(String message) {
         this.message = message;
     }

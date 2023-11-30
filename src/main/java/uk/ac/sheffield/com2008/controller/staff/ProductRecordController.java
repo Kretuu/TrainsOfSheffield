@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.controller.staff;
 
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.exceptions.ProductNotExistException;
-import uk.ac.sheffield.com2008.model.dao.ProductDAO;
 import uk.ac.sheffield.com2008.model.domain.managers.ProductManager;
 import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.navigation.Navigation;
@@ -19,13 +18,13 @@ public class ProductRecordController extends ViewController {
 
     private List<Product> allProducts = new ArrayList<>();
 
-    public ProductRecordController(NavigationManager navigationManager, Navigation id){
+    public ProductRecordController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new ProductRecordView(this);
         productRecordView = (ProductRecordView) view;
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         try {
             allProducts = ProductManager.getProductsByCategory(filterInitialLetter);
         } catch (SQLException e) {
@@ -38,7 +37,7 @@ public class ProductRecordController extends ViewController {
     }
 
     public void setCurrentFilter(String initialLetter) {
-        if(initialLetter.equals("All")) {
+        if (initialLetter.equals("All")) {
             this.filterInitialLetter = "";
         } else {
             this.filterInitialLetter = initialLetter;

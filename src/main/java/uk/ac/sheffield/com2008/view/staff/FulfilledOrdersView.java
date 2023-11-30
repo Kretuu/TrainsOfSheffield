@@ -2,7 +2,7 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FulfilledOrdersController;
 import uk.ac.sheffield.com2008.model.entities.Order;
-import uk.ac.sheffield.com2008.navigation.Navigation;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.OrderTableMapper;
@@ -15,9 +15,9 @@ import java.util.List;
 
 public class FulfilledOrdersView extends StaffView {
 
+    private final OrderTableMapper mapper;
     FulfilledOrdersController fulfilledOrdersController;
     private CustomTable<Order> customTable;
-    private final OrderTableMapper mapper;
 
     public FulfilledOrdersView(FulfilledOrdersController fulfilledOrdersController) {
         this.fulfilledOrdersController = fulfilledOrdersController;
@@ -25,8 +25,8 @@ public class FulfilledOrdersView extends StaffView {
             @Override
             public void onClick(Order order) {
                 new FulfilledOrderLineModal(
-                            fulfilledOrdersController, fulfilledOrdersController.getNavigation().getFrame(), order
-                    ).setVisible(true);
+                        fulfilledOrdersController, fulfilledOrdersController.getNavigation().getFrame(), order
+                ).setVisible(true);
             }
         };
 
@@ -34,15 +34,15 @@ public class FulfilledOrdersView extends StaffView {
     }
 
     public void initializeUI() {
-        final JPanel panel = new JPanel(); // Making 'panel' final
+        final JPanel panel = new Panel(); // Making 'panel' final
 
         setLayout(new BorderLayout());
         int padding = 40;
 
         // top panel
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new Panel(new GridLayout(2, 1));
 
-        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel row1 = new Panel(new FlowLayout(FlowLayout.CENTER));
         //Create a label for Fulfilled Orders
         JLabel viewLabel = new JLabel("Fulfilled Orders");
         // Add the top panel to the top of the frame
@@ -50,7 +50,7 @@ public class FulfilledOrdersView extends StaffView {
         topPanel.add(row1);
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new Panel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
         /*// Create a home button

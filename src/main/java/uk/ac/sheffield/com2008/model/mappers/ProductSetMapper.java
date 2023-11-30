@@ -20,8 +20,8 @@ public class ProductSetMapper implements RowMapper<ProductSet> {
 
         ResultSetMetaData metaData = resultSet.getMetaData();
         List<String> columnNames = new ArrayList<>();
-        for(int i = 1; i <= metaData.getColumnCount(); i++) {
-           columnNames.add(metaData.getColumnName(i));
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+            columnNames.add(metaData.getColumnName(i));
         }
 
         ProductSetItem productSetItem = (columnNames.stream().anyMatch(name -> name.equals("name"))

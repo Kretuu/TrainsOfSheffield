@@ -8,14 +8,11 @@ import uk.ac.sheffield.com2008.model.entities.Product;
 import uk.ac.sheffield.com2008.model.entities.products.ProductSet;
 import uk.ac.sheffield.com2008.util.math.Rounding;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class AddProductToCartModal extends JDialog {
 
@@ -28,17 +25,17 @@ public class AddProductToCartModal extends JDialog {
     public AddProductToCartModal(BrowseItemsController browseItemsController, JFrame parentFrame, Product product) {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
         // Create a panel to hold the content
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new Panel(new BorderLayout());
 
         // Give the panel some padding
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         panel.setBorder(emptyBorder);
 
         // Create a panel for the top section
-        JPanel topPanel = new JPanel(new GridBagLayout());
+        JPanel topPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbcTop = new GridBagConstraints();
 
-        JPanel productDetails = new JPanel();
+        JPanel productDetails = new Panel();
         productDetails.setLayout(new BoxLayout(productDetails, BoxLayout.Y_AXIS));
 
         // Create "Add To Cart" label at the top
@@ -51,9 +48,9 @@ public class AddProductToCartModal extends JDialog {
         productDetails.add(productName);
 
         //create a list of the set items if this product is a set
-        if(product instanceof ProductSet productSet){
+        if (product instanceof ProductSet productSet) {
             StringBuilder htmlList = new StringBuilder("<html><ul>");
-            for(ProductSetItem psi : ((ProductSet) product).getSetItems()){
+            for (ProductSetItem psi : ((ProductSet) product).getSetItems()) {
                 htmlList.append("<li style='width: 100%;'> ")
                         .append(psi.getProduct().printName())
                         .append(" ")
@@ -75,7 +72,7 @@ public class AddProductToCartModal extends JDialog {
         topPanel.add(productDetails, gbcTop);
 
         //extra details
-        JPanel extraDetails = new JPanel(new GridBagLayout());
+        JPanel extraDetails = new Panel(new GridBagLayout());
         GridBagConstraints gbcTopExtra = new GridBagConstraints();
         gbcTopExtra.insets = new Insets(5, 15, 5, 15);
 
@@ -121,9 +118,9 @@ public class AddProductToCartModal extends JDialog {
         panel.add(topPanel, BorderLayout.NORTH);
 
         // Create a panel for quantity and add to cart button
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new Panel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
 
         // Create "Quantity:" label
         JLabel quantityLabel = new JLabel("Quantity:");
@@ -133,7 +130,7 @@ public class AddProductToCartModal extends JDialog {
         int quantityInBasket = 0;
         Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
         userBasket.PrintFullOrder();
-        if(userBasket.hasProduct(product)){
+        if (userBasket.hasProduct(product)) {
             System.out.println("User has this item in basket");
             quantityInBasket = userBasket.getProductQuantity(product);
         }
@@ -163,7 +160,7 @@ public class AddProductToCartModal extends JDialog {
         });
         buttonPanel.add(addToCartButton);
 
-        JPanel summaryInfoPanel = new JPanel(new GridBagLayout());
+        JPanel summaryInfoPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -173,10 +170,10 @@ public class AddProductToCartModal extends JDialog {
         JLabel stockInBasketLabel = new JLabel("already in basket: " + quantityInBasket);
         stockInBasketLabel.setForeground(new Color(117, 117, 117));
 
-        if(quantityInBasket > 0){
+        if (quantityInBasket > 0) {
             summaryInfoPanel.add(stockInBasketLabel, gbc);
         }
-        if(product.getStock() - quantityInBasket > 0){
+        if (product.getStock() - quantityInBasket > 0) {
             gbc.gridy++;
             summaryInfoPanel.add(totalPriceLabel, gbc);
         }
@@ -185,12 +182,12 @@ public class AddProductToCartModal extends JDialog {
         bottomPanel.add(summaryInfoPanel);
         bottomPanel.add(buttonPanel);
 
-        if(stockAvailableToAdd == 0){
+        if (stockAvailableToAdd == 0) {
             noStockLabel = new JLabel("No Stock Left");
             noStockLabel.setForeground(Color.RED);
             noStockLabel.setFont(noStockLabel.getFont().deriveFont(Font.BOLD));
             bottomPanel.add(noStockLabel);
-            JPanel noStockPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            JPanel noStockPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
             noStockPanel.add(noStockLabel);
             addToCartButton.setEnabled(false);
             bottomPanel.add(noStockPanel);
@@ -207,7 +204,7 @@ public class AddProductToCartModal extends JDialog {
         setLocationRelativeTo(parentFrame);
     }
 
-    private void updateTotalPrice(float newPrice){
+    private void updateTotalPrice(float newPrice) {
         totalPriceLabel.setText("Total Price: " + Rounding.roundToDecimalPlaces(newPrice, 2));
     }
 }

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 public class OrderMapper implements RowMapper<Order> {
     /**
      * Maps a given resultSet of one row into an Order instance
+     *
      * @param resultSet row in the query result
      * @return Order instance
      * @throws SQLException
@@ -22,7 +23,7 @@ public class OrderMapper implements RowMapper<Order> {
                 Order.Status.valueOf(resultSet.getString("status")),
                 resultSet.getString("userUUID"));
         //If order is empty, just return what we have
-        if(resultSet.getMetaData().getColumnCount() < 6 || resultSet.getString("OL.productCode") == null) return order;
+        if (resultSet.getMetaData().getColumnCount() < 6 || resultSet.getString("OL.productCode") == null) return order;
 
         Product product = new ProductMapper().mapResultSetToEntity(resultSet);
         OrderLine orderLine = new OrderLine(

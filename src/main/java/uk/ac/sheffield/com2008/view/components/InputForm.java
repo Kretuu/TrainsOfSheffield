@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public abstract class InputForm extends JPanel {
+public abstract class InputForm extends Panel {
     private final JButton submitButton;
     private final JPanel content;
     private final JLabel errorMessage;
@@ -17,13 +17,14 @@ public abstract class InputForm extends JPanel {
 
     /**
      * Constructs Input Form which is reusable over whole app
-     * @param view need to pass current view to have properly working role-based authorisation system
+     *
+     * @param view              need to pass current view to have properly working role-based authorisation system
      * @param submitButtonLabel label for Submit button
      * @param cancelButtonLabel (optional) label for Cancel button. If not provided, button will have label "Cancel"
      *                          by default.
      */
     public InputForm(View view, String submitButtonLabel, String cancelButtonLabel) {
-        this.content = new JPanel();
+        this.content = new Panel();
         this.submitButton = new Button(submitButtonLabel);
         this.errorMessage = new JLabel(" ");
         this.view = view;
@@ -41,7 +42,7 @@ public abstract class InputForm extends JPanel {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel errorMessageHolder = new JPanel();
+        JPanel errorMessageHolder = new Panel();
         errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
         errorMessageHolder.add(errorMessage);
         content.add(errorMessageHolder);
@@ -63,7 +64,7 @@ public abstract class InputForm extends JPanel {
 
         createTextFields(content);
 
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2,10,0));
+        JPanel buttonsPanel = new Panel(new GridLayout(1, 2, 10, 0));
         buttonsPanel.add(cancelButton);
         buttonsPanel.add(submitButton);
         content.add(buttonsPanel);
@@ -71,10 +72,11 @@ public abstract class InputForm extends JPanel {
 
     /**
      * Updates error message which is displayed in top of the form
+     *
      * @param message error message
      */
     public void updateErrorMessage(String message) {
-        if(message == null) {
+        if (message == null) {
             errorMessage.setText(" ");
             return;
         }
@@ -87,6 +89,7 @@ public abstract class InputForm extends JPanel {
 
     /**
      * In this function you can add anything to the panel provided as an argument
+     *
      * @param panel JPanel where all components will be added
      */
     protected abstract void createTextFields(JPanel panel);
@@ -105,6 +108,7 @@ public abstract class InputForm extends JPanel {
      * This button is handy when you want to enable submit button under certain conditions.
      * For example when all fields are properly filled. This function is called when any of the fields content changes
      * so do not put functions which may cause performance issues or ones which perform db calls.
+     *
      * @return true if submit button should be enabled, false otherwise
      */
     protected abstract boolean submitEnabled();

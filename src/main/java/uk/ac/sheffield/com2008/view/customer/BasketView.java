@@ -1,18 +1,16 @@
 package uk.ac.sheffield.com2008.view.customer;
 
-import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.controller.customer.BasketViewController;
 import uk.ac.sheffield.com2008.exceptions.BankDetailsEncryptionException;
 import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
-import uk.ac.sheffield.com2008.model.domain.managers.UserManager;
 import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.modals.NotificationModal;
 import uk.ac.sheffield.com2008.view.modals.OrderModal;
 import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
@@ -30,15 +28,16 @@ import java.util.concurrent.CompletableFuture;
 import static uk.ac.sheffield.com2008.util.math.Rounding.roundToDecimalPlaces;
 
 public class BasketView extends UserView {
+    private final JLabel errorMessage = new JLabel(" ");
     BasketViewController basketViewController;
     JLabel totalTextLabel;
-    private final JLabel errorMessage = new JLabel(" ");
-    public BasketView(BasketViewController basketViewController){
+
+    public BasketView(BasketViewController basketViewController) {
         this.basketViewController = basketViewController;
         InitializeUI();
     }
 
-    public void onRefresh(){
+    public void onRefresh() {
         removeAll();
         InitializeUI();
         revalidate();
@@ -48,20 +47,20 @@ public class BasketView extends UserView {
         totalTextLabel.setText(orderTotal);
     }
 
-    public void InitializeUI(){
+    public void InitializeUI() {
         setLayout(new BorderLayout());
 
         ArrayList<OrderLine> orderLines = new ArrayList<>();
         Order userBasket = basketViewController.getBasket();
-        if(userBasket != null){
-            orderLines  = (ArrayList<OrderLine>) userBasket.getOrderLines();
+        if (userBasket != null) {
+            orderLines = (ArrayList<OrderLine>) userBasket.getOrderLines();
         }
 
-        JPanel topPanel = new JPanel();
+        JPanel topPanel = new Panel();
         topPanel.setLayout(new BorderLayout());
 
         // Create a JPanel for the scroll panel with orderline rows
-        JPanel basketPanel = new JPanel();
+        JPanel basketPanel = new Panel();
         basketPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -76,13 +75,13 @@ public class BasketView extends UserView {
         JLabel basketTitle = new JLabel("Your Basket");
         basketTitle.setFont(basketTitle.getFont().deriveFont(Font.BOLD, 24));
         basketTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        Border titleBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+        Border titleBorder = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         basketTitle.setBorder(titleBorder);
 
         topPanel.add(basketTitle, BorderLayout.NORTH);
 
         //create orderlines
-        for(OrderLine orderLine : orderLines){
+        for (OrderLine orderLine : orderLines) {
 
             Product lineProduct = orderLine.getProduct();
             JLabel orderLineText = new JLabel(lineProduct.printName());
@@ -140,20 +139,19 @@ public class BasketView extends UserView {
         }
 
         // Create a JScrollPane and set the basket panel as its view
-        if(!orderLines.isEmpty()){
+        if (!orderLines.isEmpty()) {
             JScrollPane scrollPane = new JScrollPane(basketPanel);
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
             topPanel.add(scrollPane, BorderLayout.CENTER);
-        }
-        else{
+        } else {
 
         }
 
         add(topPanel, BorderLayout.NORTH);
 
         //total cost and confirm order button
-        JPanel bottomSection = new JPanel();
+        JPanel bottomSection = new Panel();
         // Create empty border for inner padding
         Border emptyBorder2 = BorderFactory.createEmptyBorder(5, 0, 70, 30);
         bottomSection.setBorder(emptyBorder2);
@@ -165,7 +163,7 @@ public class BasketView extends UserView {
         confirmButton.setFont(confirmButton.getFont().deriveFont(Font.BOLD, 24));
         confirmButton.addActionListener(e -> basketViewController.confirmOrder());
 
-        JPanel errorMessageHolder = new JPanel();
+        JPanel errorMessageHolder = new Panel();
         errorMessage.setForeground(Colors.TEXT_FIELD_ERROR);
         errorMessageHolder.add(errorMessage);
         bottomSection.add(errorMessageHolder, BorderLayout.CENTER);
@@ -174,7 +172,7 @@ public class BasketView extends UserView {
         totalTextLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         confirmButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
-        JPanel eastBottomSectionHolder = new JPanel();
+        JPanel eastBottomSectionHolder = new Panel();
         eastBottomSectionHolder.setLayout(new BoxLayout(eastBottomSectionHolder, BoxLayout.Y_AXIS));
         eastBottomSectionHolder.add(totalTextLabel);
         eastBottomSectionHolder.add(Box.createVerticalStrut(10));
@@ -184,7 +182,7 @@ public class BasketView extends UserView {
         add(bottomSection, BorderLayout.SOUTH);
     }
 
-    private void changeQuantityOfOrderline(OrderLine orderLine, int qty, JLabel orderLineTotalLabel){
+    private void changeQuantityOfOrderline(OrderLine orderLine, int qty, JLabel orderLineTotalLabel) {
         basketViewController.changeOrderlineQuantity(orderLine, qty);
         String orderLineTotal = Symbols.getChar("£") + roundToDecimalPlaces(orderLine.getPrice(), 2);
         orderLineTotalLabel.setText(orderLineTotal);
@@ -192,12 +190,12 @@ public class BasketView extends UserView {
         totalTextLabel.setText(orderTotal);
     }
 
-    private void deleteOrderline(OrderLine orderLine){
+    private void deleteOrderline(OrderLine orderLine) {
         basketViewController.deleteOrderline(orderLine);
     }
 
     public void updateErrorMessage(String message) {
-        if(message == null) {
+        if (message == null) {
             errorMessage.setText(" ");
             return;
         }
@@ -207,7 +205,7 @@ public class BasketView extends UserView {
     public void startCardUpdateProcess() {
         String notification = "Your banking card is expired. You need to update the card in order to confirm order.";
         try {
-            if(!basketViewController.hasUserBankingCard()) {
+            if (!basketViewController.hasUserBankingCard()) {
                 notification = "You need to provide your banking details in order to confirm order.";
             }
         } catch (SQLException e) {
@@ -225,7 +223,7 @@ public class BasketView extends UserView {
 
                     @Override
                     public String onConfirm(char[] password) throws SQLException, BankDetailsEncryptionException {
-                        if(UserDAO.verifyPassword(basketViewController.getUser().getEmail(), password) != null) {
+                        if (UserDAO.verifyPassword(basketViewController.getUser().getEmail(), password) != null) {
                             BankingCard bankingCard = basketViewController.getBankingCard(password);
                             CompletableFuture.runAsync(() -> openChangeBankDetailsModal(bankingCard, password));
                             return null;

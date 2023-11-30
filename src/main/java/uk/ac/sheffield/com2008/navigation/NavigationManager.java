@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com2008.navigation;
 
 import uk.ac.sheffield.com2008.cache.AppSessionCache;
+import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.ViewController;
 import uk.ac.sheffield.com2008.controller.auth.LoginController;
 import uk.ac.sheffield.com2008.controller.auth.ProvideAddressController;
@@ -41,6 +42,7 @@ public class NavigationManager {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.addWindowListener(new NavigationFrameWindowListener(this));
         frame.setVisible(true);
+        frame.setBackground(Colors.BACKGROUND);
 
         controllers = new HashMap<>();
         registerControllers();
@@ -58,7 +60,7 @@ public class NavigationManager {
     public static boolean permissionsValid(View view) {
         if (view instanceof AuthView) return true;
         User user = AppSessionCache.getInstance().getUserLoggedIn();
-        if(user == null) return false;
+        if (user == null) return false;
 
         List<User.Role> userRoles = user.getRoles();
         if (view instanceof StaffView && !userRoles.contains(User.Role.STAFF)) return false;
@@ -83,7 +85,7 @@ public class NavigationManager {
         new ProductRecordController(this, Navigation.PRODUCT_RECORD);
         new EditFormController(this, Navigation.EDIT_PRODUCT_RECORD);
         new FormController(this, Navigation.PRODUCTFORM);
-        new FulfilledOrdersController(this,Navigation.FULFILLED_ORDERS);
+        new FulfilledOrdersController(this, Navigation.FULFILLED_ORDERS);
         new SalesController(this, Navigation.SALES);
         new ManageProfileController(this, Navigation.MANAGE_PROFILE);
         new ProvideAddressController(this, Navigation.PROVIDE_ADDRESS);

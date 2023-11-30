@@ -9,7 +9,6 @@ import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.navigation.NavigationManager;
 import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
 
-import javax.swing.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +16,16 @@ import java.util.List;
 
 public class FormController extends ViewController {
 
+    private final ProductRecordForm productRecordForm;
     private List<Product> allProducts = new ArrayList<>();
-    ProductRecordForm productRecordForm;
 
-    public FormController(NavigationManager navigationManager, Navigation id){
+    public FormController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new ProductRecordForm(this);
         productRecordForm = (ProductRecordForm) view;
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         try {
             allProducts = ProductManager.getAllProducts();
         } catch (SQLException e) {
@@ -36,7 +35,7 @@ public class FormController extends ViewController {
     }
 
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return allProducts;
     }
 
@@ -44,12 +43,13 @@ public class FormController extends ViewController {
     /**
      * When called with revalidate all fields, and will check if the product
      * code is unique. If no errors, will build a product from passed in parameters
+     *
      * @param productCode
      */
-    public void tryCreateProduct(String productCode ){
+    public void tryCreateProduct(String productCode) {
         productRecordForm.setErrorMessage("");
 
-        if(!productRecordForm.validateAllFields()){
+        if (!productRecordForm.validateAllFields()) {
             productRecordForm.setErrorMessage("Error: Invalid Fields");
             return;
         }
@@ -60,7 +60,7 @@ public class FormController extends ViewController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if(existsProduct != null){
+        if (existsProduct != null) {
             productRecordForm.setErrorMessage("Error: Product of code " + productCode + " already exists");
             return;
         }
@@ -69,18 +69,18 @@ public class FormController extends ViewController {
         Product loadedProduct = productRecordForm.getProductFromInputs(productCode.charAt(0));
 
         //validate the set if it is a set
-        if(loadedProduct instanceof ProductSet){
+        if (loadedProduct instanceof ProductSet) {
             String errorMsg = ((ProductSet) loadedProduct).validateSet();
-            if(errorMsg != null){
+            if (errorMsg != null) {
                 productRecordForm.setErrorMessage(errorMsg);
                 return;
             }
         }
 
         //try to create this new product
-        try{
+        try {
             ProductDAO.createProduct(loadedProduct);
-        }catch(SQLException e){
+        } catch (SQLException e) {
             navigation.setLayoutMessage("Insertion Error",
                     "Could not connect to database",
                     true);

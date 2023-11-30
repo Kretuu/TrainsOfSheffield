@@ -6,7 +6,7 @@ public class ProductSetItem {
     private final Product product;
     private int quantity;
 
-    public ProductSetItem(Product product, int quantity){
+    public ProductSetItem(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
     }
@@ -29,7 +29,7 @@ public class ProductSetItem {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof ProductSetItem psi)) return false;
+        if (!(obj instanceof ProductSetItem psi)) return false;
         return psi.getQuantity() == this.quantity && psi.getProduct().equals(this.product);
     }
 }

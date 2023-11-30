@@ -8,6 +8,7 @@ import uk.ac.sheffield.com2008.model.entities.products.*;
 import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 
@@ -106,8 +107,8 @@ public class ProductRecordForm extends StaffView {
         gaugesComboBox = new JComboBox<>(gauges.keySet().toArray(new String[0]));
         gaugeLabel = new JLabel("Gauge: ");
 
-        inSetPanel = new JPanel();
-        inPackPanel = new JPanel();
+        inSetPanel = new Panel();
+        inPackPanel = new Panel();
         itemSelectedTP = new JLabel("None");
         itemSelectedTS = new JLabel("None");
 
@@ -142,7 +143,7 @@ public class ProductRecordForm extends StaffView {
     }
 
     private void initializeUI() {
-        JPanel content = new JPanel();
+        JPanel content = new Panel();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         selectedProductsMap = new HashMap<>();
@@ -154,7 +155,7 @@ public class ProductRecordForm extends StaffView {
 
         // Create a panel with CardLayout to hold different category panels
         cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
+        cardPanel = new Panel(cardLayout);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -345,7 +346,7 @@ public class ProductRecordForm extends StaffView {
     }
 
     private JPanel buttonPanel() {
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel buttonsPanel = new Panel(new FlowLayout(FlowLayout.LEFT));
         JButton cancelButton = new Button("Cancel");
         buttonsPanel.add(cancelButton);
         cancelButton.addActionListener(e -> formController.getNavigation().navigate(Navigation.PRODUCT_RECORD));
@@ -356,7 +357,7 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel locomotivePanel() {
 
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -406,7 +407,7 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel rollingStocksPanel() {
 
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -456,7 +457,7 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel trackPanel() {
 
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -487,7 +488,7 @@ public class ProductRecordForm extends StaffView {
 
     private JPanel controllersPanel() {
 
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new Panel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -521,7 +522,7 @@ public class ProductRecordForm extends StaffView {
         classMap.put("Starter Oval Track Pack", Track.class);
         classMap.put("Extension Track Pack", Track.class);
 
-        JPanel panel = new JPanel();
+        JPanel panel = new Panel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         // Set Name
@@ -532,7 +533,7 @@ public class ProductRecordForm extends StaffView {
         trackPackInputFields.put("setName", setNameField);
         setNameField.addToPanel(panel);
 
-        JPanel radioButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel radioButtonsPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
         starterOval = new JRadioButton("Starter Oval Track Pack");
         extension = new JRadioButton("Extension Track Pack");
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -544,11 +545,11 @@ public class ProductRecordForm extends StaffView {
         panel.add(radioButtonsPanel);
 
         // Header panel
-        JPanel headerPanel = new JPanel(new GridLayout(2, 1));
-        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel headerPanel = new Panel(new GridLayout(2, 1));
+        JPanel row1 = new Panel(new FlowLayout(FlowLayout.CENTER));
         JLabel title = new JLabel("Add products to Track Pack: ");
         row1.add(title);
-        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel row2 = new Panel(new FlowLayout(FlowLayout.LEFT));
 
         JButton findButton = new Button("Add a Track:");
         findButton.addActionListener(e -> {
@@ -565,7 +566,7 @@ public class ProductRecordForm extends StaffView {
         panel.add(headerPanel, BorderLayout.NORTH);
 
         // Selected panel
-        JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel selectedPanel = new Panel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
 
         JButton addButton = new Button("Add");
@@ -603,7 +604,7 @@ public class ProductRecordForm extends StaffView {
     Product selectedSetProduct;
 
     private JPanel trainSetsPanel() {
-        JPanel panel = new JPanel();
+        JPanel panel = new Panel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         classMap.put("Locomotive", Locomotive.class);
         classMap.put("Rolling Stock", RollingStock.class);
@@ -620,11 +621,11 @@ public class ProductRecordForm extends StaffView {
         setNameField.addToPanel(panel);
 
         // Header panel
-        JPanel headerPanel = new JPanel(new GridLayout(2, 1));
-        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel headerPanel = new Panel(new GridLayout(2, 1));
+        JPanel row1 = new Panel(new FlowLayout(FlowLayout.CENTER));
         JLabel title = new JLabel("Add products to set: ");
         row1.add(title);
-        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel row2 = new Panel(new FlowLayout(FlowLayout.LEFT));
         String[] itemTypes = {"Locomotive", "Rolling Stock", "Controller", "Track Pack"};
         JComboBox<String> itemTypesComboBox = new JComboBox<>(itemTypes);
         row2.add(itemTypesComboBox);
@@ -645,7 +646,7 @@ public class ProductRecordForm extends StaffView {
         panel.add(headerPanel, BorderLayout.NORTH);
 
         // Selected panel
-        JPanel selectedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel selectedPanel = new Panel(new FlowLayout(FlowLayout.LEFT));
         JLabel selected = new JLabel("Item Selected: ");
 
         JButton addButton = new Button("Add");
@@ -658,17 +659,19 @@ public class ProductRecordForm extends StaffView {
         //Items in set panel
         inSetPanel = new JPanel();
         inSetPanel.setLayout(new BoxLayout(inSetPanel, BoxLayout.Y_AXIS));
-        inSetPanel.setPreferredSize(new Dimension(500, 300));
+        inSetPanel.setBackground(Colors.WHITE_BACKGROUND);
 
+        JPanel setPanelContainer = new JPanel(new FlowLayout());
+        setPanelContainer.setBackground(Colors.WHITE_BACKGROUND);
+        setPanelContainer.add(inSetPanel);
 
-        JScrollPane scrollPane = new JScrollPane(inSetPanel);
+        JScrollPane scrollPane = new JScrollPane(setPanelContainer);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        Dimension preferredSize = inSetPanel.getPreferredSize();
-        scrollPane.setMinimumSize(preferredSize);
+        scrollPane.setPreferredSize(new Dimension(700, 300));
         panel.add(scrollPane);
 
         //Add heading panel to inset panel
-        JPanel inSetHeadingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel inSetHeadingPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
         JLabel displayItemsLabel = new JLabel("Items in set:  ");
         inSetHeadingPanel.add(displayItemsLabel);
         inSetPanel.add(inSetHeadingPanel);
@@ -696,9 +699,8 @@ public class ProductRecordForm extends StaffView {
             String selectedProductCode = entry.getKey().getProductCode();
             Integer qty = entry.getValue();
 
-            JPanel subItemsPanel = new JPanel();
-            GridBagLayout gridBagLayout = new GridBagLayout();
-            subItemsPanel.setLayout(gridBagLayout);
+            JPanel subItemsPanel = new JPanel(new GridBagLayout());
+            subItemsPanel.setBackground(Colors.WHITE_BACKGROUND);
 
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.NORTHWEST;

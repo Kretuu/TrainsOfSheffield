@@ -4,6 +4,7 @@ import uk.ac.sheffield.com2008.config.Symbols;
 import uk.ac.sheffield.com2008.model.domain.data.OrderLine;
 import uk.ac.sheffield.com2008.model.entities.Order;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,7 +17,7 @@ public class OrderModal extends JDialog {
     public OrderModal(JFrame frame, Order order, String header, String additionalText) {
         super(frame, header, true);
         this.order = order;
-        this.content = new JPanel();
+        this.content = new Panel();
 
         initialiseUI(additionalText);
 
@@ -36,8 +37,8 @@ public class OrderModal extends JDialog {
         content.setAlignmentX(Component.LEFT_ALIGNMENT);
         content.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        if(!additionalText.isEmpty()) {
-            JPanel headingPanel = new JPanel(new BorderLayout());
+        if (!additionalText.isEmpty()) {
+            JPanel headingPanel = new Panel(new BorderLayout());
             JLabel headingLabel = new JLabel("<html>" + additionalText + "</html>");
             headingLabel.setFont(new Font(null, Font.BOLD, 14));
             headingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -48,7 +49,7 @@ public class OrderModal extends JDialog {
 
         JPanel mainContent = somefunction();
 
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new Panel();
         JButton closeButton = new Button("Close");
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
@@ -59,7 +60,7 @@ public class OrderModal extends JDialog {
     }
 
     private JPanel somefunction() {
-        JPanel mainContent = new JPanel(new GridBagLayout());
+        JPanel mainContent = new Panel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         c.gridx = 0;
@@ -71,7 +72,7 @@ public class OrderModal extends JDialog {
         mainContent.add(header, c);
 
         int rowIndex = 2;
-        for(OrderLine orderLine : order.getOrderLines()) {
+        for (OrderLine orderLine : order.getOrderLines()) {
             c.gridx = 0;
             c.gridy = rowIndex;
             c.anchor = GridBagConstraints.WEST;
@@ -81,7 +82,7 @@ public class OrderModal extends JDialog {
                             .append(orderLine.getProduct().getName())
                             .append("</b></html>").toString()
             );
-            label1.setBorder(new EmptyBorder(0,0,0,30));
+            label1.setBorder(new EmptyBorder(0, 0, 0, 30));
             mainContent.add(label1, c);
 
             c.gridx = 1;
@@ -93,7 +94,7 @@ public class OrderModal extends JDialog {
                             .append(" <b>x").append(orderLine.getQuantity())
                             .append("</b></html>").toString()
             );
-            label2.setBorder(new EmptyBorder(0,0,0,30));
+            label2.setBorder(new EmptyBorder(0, 0, 0, 30));
             mainContent.add(label2, c);
 
             c.gridx = 2;

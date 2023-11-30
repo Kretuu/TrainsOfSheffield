@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 public class Button extends JButton {
     private boolean isFocused = false;
     private Color background = Colors.BUTTON_CONTENT;
+
     public Button(String content, int height) {
 
         setContentAreaFilled(false);
@@ -17,12 +18,14 @@ public class Button extends JButton {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (!isEnabled()) return;
                 setBackground(Colors.BUTTON_CONTENT_CLICK);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(isFocused) {
+                if (!isEnabled()) return;
+                if (isFocused) {
                     setBackground(Colors.BUTTON_CONTENT_FOCUS);
                 } else {
                     setBackground(Colors.BUTTON_CONTENT);
@@ -32,14 +35,25 @@ public class Button extends JButton {
 
             @Override
             public void mouseEntered(MouseEvent e) {
+                if (!isEnabled()) return;
                 isFocused = true;
                 setBackground(Colors.BUTTON_CONTENT_FOCUS);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
+                if (!isEnabled()) return;
                 isFocused = false;
                 setBackground(Colors.BUTTON_CONTENT);
+            }
+        });
+        addPropertyChangeListener("enabled", evt -> {
+            if (evt.getNewValue() instanceof Boolean b) {
+                if (b) {
+                    setBackground(Colors.BUTTON_CONTENT);
+                } else {
+                    setBackground(Colors.BUTTON_DISABLED);
+                }
             }
         });
         setForeground(Colors.BUTTON_TEXT);

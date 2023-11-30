@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
 
 public class FulfilledOrdersController extends ViewController {
 
-    public FulfilledOrdersView fulfilledOrdersView;
+    private final FulfilledOrdersView fulfilledOrdersView;
 
     private List<Order> fulfilledOrders = new ArrayList<>();
 
-    public FulfilledOrdersController(NavigationManager navigationManager, Navigation id){
+    public FulfilledOrdersController(NavigationManager navigationManager, Navigation id) {
         super(navigationManager, id);
         view = new FulfilledOrdersView(this);
-       fulfilledOrdersView = (FulfilledOrdersView) view;
+        fulfilledOrdersView = (FulfilledOrdersView) view;
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         try {
             fulfilledOrders = OrderDAO.getFulfilledOrders()
                     .stream().sorted((o1, o2) -> o2.getDateOrdered().compareTo(o1.getDateOrdered()))

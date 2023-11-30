@@ -9,8 +9,8 @@ public class AuthUserMapper implements RowMapper<AuthUser> {
     @Override
     public AuthUser mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         return new AuthUser(
-          resultSet.getString("password"),
-          resultSet.getString("salt")
+                resultSet.getString("password"),
+                resultSet.getString("salt")
         );
     }
 }

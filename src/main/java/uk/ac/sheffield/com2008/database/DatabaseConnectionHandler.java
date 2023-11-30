@@ -27,17 +27,17 @@ public class DatabaseConnectionHandler {
 
 
     public static <T> List<T> select(RowMapper<T> mapper, String query, Object... params) throws SQLException {
-        try(
+        try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)
         ) {
-            for(int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
             ResultSet resultSet = statement.executeQuery();
             List<T> resultList = new ArrayList<>();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 resultList.add(mapper.mapResultSetToEntity(resultSet));
             }
             return resultList;
@@ -45,27 +45,27 @@ public class DatabaseConnectionHandler {
     }
 
     public static long count(String query, Object... params) throws SQLException {
-        try(
+        try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)
         ) {
-            for(int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
 
             ResultSet rs = statement.executeQuery();
-            if(rs.next()) return rs.getLong("COUNT(*)");
+            if (rs.next()) return rs.getLong("COUNT(*)");
 
         }
         return 0L;
     }
 
     public static void insert(String query, Object... params) throws SQLException {
-        try(
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)
         ) {
-            for(int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
 
@@ -74,9 +74,9 @@ public class DatabaseConnectionHandler {
     }
 
     public static boolean update(String query, Object... params) throws SQLException {
-        try(
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)
         ) {
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);

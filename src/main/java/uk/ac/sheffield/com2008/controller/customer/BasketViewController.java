@@ -21,7 +21,8 @@ public class BasketViewController extends ViewController {
     public BasketView basketView;
     private Order userBasket;
     private User user;
-    public BasketViewController(NavigationManager navigationManager, Navigation id){
+
+    public BasketViewController(NavigationManager navigationManager, Navigation id) {
         //initialise view link
         super(navigationManager, id);
         view = new BasketView(this);
@@ -29,7 +30,7 @@ public class BasketViewController extends ViewController {
 
     }
 
-    public void onNavigateTo(){
+    public void onNavigateTo() {
         user = AppSessionCache.getInstance().getUserLoggedIn();
         userBasket = user.getBasket();
         userBasket.PrintFullOrder();
@@ -44,16 +45,16 @@ public class BasketViewController extends ViewController {
         }
     }
 
-    public Order getBasket(){
+    public Order getBasket() {
         return userBasket;
     }
 
-    public void changeOrderlineQuantity(OrderLine orderline, int newQty){
+    public void changeOrderlineQuantity(OrderLine orderline, int newQty) {
         orderline.setQuantity(newQty);
         userBasket.calculateTotalPrice();
     }
 
-    public void deleteOrderline(OrderLine orderline){
+    public void deleteOrderline(OrderLine orderline) {
         System.out.println("deleting: " + orderline.getProduct().getName());
         try {
             OrderManager.deleteOrderline(userBasket, orderline);
@@ -67,7 +68,7 @@ public class BasketViewController extends ViewController {
      * confirm the basket order
      * FOR NOW JUST SAVES THE ORDER
      */
-    public void confirmOrder(){
+    public void confirmOrder() {
         String errorMessage = null;
         try {
             OrderManager.confirmOrder(userBasket, user);
@@ -95,7 +96,7 @@ public class BasketViewController extends ViewController {
         }
     }
 
-    public void onNavigateLeave(){
+    public void onNavigateLeave() {
         try {
             OrderManager.saveFullOrderState(userBasket);
         } catch (SQLException e) {
@@ -117,7 +118,7 @@ public class BasketViewController extends ViewController {
 
     public void updateUserBankDetails(BankingCard bankingCard, char[] password)
             throws SQLException, BankDetailsEncryptionException {
-        if(!user.hasRole(User.Role.CUSTOMER)) {
+        if (!user.hasRole(User.Role.CUSTOMER)) {
             user.addRole(User.Role.CUSTOMER);
             UserManager.updateUser(user);
             navigation.refreshNavigation();
