@@ -11,6 +11,7 @@ import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.modals.ProductSetModal;
 import uk.ac.sheffield.com2008.view.components.Button;
+import uk.ac.sheffield.com2008.view.modals.UpdateProductSetModal;
 
 
 import javax.swing.*;
@@ -98,7 +99,7 @@ public class EditProductRecordForm extends StaffView{
 
         categoryComboBox = new JComboBox<>(categories);
         this.submitButton.addActionListener(e -> {
-            // try to update
+            editFormController.tryUpdateProduct(editFormController.getProductUnderEdit());
         });
 
         gauges.put("OO Gauge (1/76th scale)", Product.Gauge.OO);
@@ -111,6 +112,14 @@ public class EditProductRecordForm extends StaffView{
         inPackPanel = new JPanel();
         itemSelectedTP = new JLabel("None");
         itemSelectedTS = new JLabel("None");
+
+        classMap.put("Starter Oval Track Pack", Track.class);
+        classMap.put("Extension Track Pack", Track.class);
+        classMap.put("Locomotive", Locomotive.class);
+        classMap.put("Rolling Stock", RollingStock.class);
+        classMap.put("Track", Track.class);
+        classMap.put("Controller", Controller.class);
+        classMap.put("Track Pack", TrackPack.class);
     }
 
     public void onRefresh(){
@@ -401,7 +410,6 @@ public class EditProductRecordForm extends StaffView{
         java.util.List<String> classes = Arrays.stream(RollingStock.Class_.values())
                 .map(RollingStock.Class_::deriveName)
                 .collect(Collectors.toList());
-        classes.add("Null");
         classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
         gbc.anchor = GridBagConstraints.WEST;
         classesComboBox.setSelectedItem(editingRollingStock.getClass_().deriveName());
@@ -492,8 +500,6 @@ public class EditProductRecordForm extends StaffView{
         editingTrackPack.PrintFullSet();
         System.out.println(selectedProductsMap.size());
         java.util.List<Product> allProducts = editFormController.getAllProducts();
-        classMap.put("Starter Oval Track Pack", Track.class);
-        classMap.put("Extension Track Pack", Track.class);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -538,8 +544,8 @@ public class EditProductRecordForm extends StaffView{
             Class<?> classType = classMap.get(className);
             List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
             // Pass the correct list of filtered products to the modal
-            //ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
-            //modal.setVisible(true);
+            UpdateProductSetModal modal = new UpdateProductSetModal(editFormController, (JFrame) SwingUtilities.getWindowAncestor(findButton), EditProductRecordForm.this, filteredProducts);
+            modal.setVisible(true);
         });
         row2.add(findButton);
         headerPanel.add(row1);
@@ -584,11 +590,6 @@ public class EditProductRecordForm extends StaffView{
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        classMap.put("Locomotive", Locomotive.class);
-        classMap.put("Rolling Stock", RollingStock.class);
-        classMap.put("Track", Track.class);
-        classMap.put("Controller", Controller.class);
-        classMap.put("Track Pack", TrackPack.class);
 
         // Set Name
         CustomInputField setNameField = new CustomInputField("Set Name:", this::updateButtonState, false);
@@ -616,8 +617,8 @@ public class EditProductRecordForm extends StaffView{
             Class<?> classType = classMap.get(className);
             List<Product> filteredProducts = allProducts.stream().filter(classType::isInstance).toList();
             // Pass the correct list of filtered products to the modal
-            //ProductSetModal modal = new ProductSetModal(formController, (JFrame) SwingUtilities.getWindowAncestor(findButton), ProductRecordForm.this, filteredProducts);
-            //modal.setVisible(true);
+            UpdateProductSetModal modal = new UpdateProductSetModal(editFormController, (JFrame) SwingUtilities.getWindowAncestor(findButton), EditProductRecordForm.this, filteredProducts);
+            modal.setVisible(true);
         });
         row2.add(findButton);
         headerPanel.add(row1);
@@ -743,6 +744,37 @@ public class EditProductRecordForm extends StaffView{
         inSetPanel.repaint();
     }
 
+    public void setSelectedSetProduct(Product p) {
+        selectedSetProduct = p;
+        itemSelectedTP.setText(selectedSetProduct.getName());
+        itemSelectedTS.setText(selectedSetProduct.getName());
+    }
+
+    private void validateSharedFields() {
+        for (CustomInputField field : sharedInputFields.values()) {
+            field.validate(field.getjTextField().getText());
+        }
+    }
+
+    /**
+     * revalidates shared input fields, as well as those of
+     * the category selected
+     *
+     * @return
+     */
+    public boolean validateAllFields() {
+        validateSharedFields();
+
+        Map<String, CustomInputField> categoryFields = categorySpecificFields.get(currentPanel);
+        for (CustomInputField field : categoryFields.values()) {
+            field.validate(field.getjTextField().getText());
+        }
+
+        return (sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
+                && categoryFields.values().stream().allMatch(CustomInputField::isValid)
+        );
+    }
+
     private void updateButtonState() {
         if(currentPanel == null){
             return;
@@ -756,5 +788,125 @@ public class EditProductRecordForm extends StaffView{
         submitButton.setEnabled(sharedInputFields.values().stream().allMatch(CustomInputField::isValid)
                 && categoryFields.values().stream().allMatch(CustomInputField::isValid)
         );
+    }
+
+    public void setErrorMessage(String err) {
+        errorMessage.setText(err);
+    }
+
+    public Product loadProductByType(Character type, Product productUnderEdit) {
+
+        switch (type) {
+            case 'L': {
+
+
+                Locomotive locomotive = new Locomotive(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        locomotiveInputFields.get("brClass").getjTextField().getText(),
+                        locomotiveInputFields.get("individualName").getjTextField().getText(),
+                        Integer.parseInt(locomotiveInputFields.get("era").getjTextField().getText()),
+                        Locomotive.DCCType.deriveType((String) powerTypeComboBox.getSelectedItem()));
+                locomotive.setName(locomotive.deriveName());
+                return locomotive;
+            }
+            case 'S': {
+                RollingStock rollingStock = new RollingStock(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        rollingStockInputFields.get("mark").getjTextField().getText(),
+                        rollingStockInputFields.get("kind").getjTextField().getText(),
+                        RollingStock.Class_.deriveType((String) classesComboBox.getSelectedItem()),
+                        Integer.parseInt(rollingStockInputFields.get("era").getjTextField().getText()));
+                rollingStock.setName(rollingStock.deriveName());
+                return rollingStock;
+            }
+            case 'R': {
+                Track track = new Track(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        trackInputFields.get("descriptor").getjTextField().getText(),
+                        Track.TrackType.deriveType((String) trackTypeComboBox.getSelectedItem()));
+                track.setName(track.deriveName());
+                return track;
+            }
+            case 'C': {
+                Controller controller = new Controller(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        false,
+                        Integer.parseInt(quantityField.getText()),
+                        controllerInputFields.get("descriptor").getjTextField().getText(),
+                        Controller.PowerType.deriveType((String) controllerTypeComboBox.getSelectedItem()));
+                controller.setName(controller.deriveName());
+                return controller;
+            }
+            case 'M': {
+                ArrayList<ProductSetItem> setItems = new ArrayList<>();
+                for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
+                    ProductSetItem setItem = new ProductSetItem(entry.getKey(), entry.getValue());
+                    setItems.add(setItem);
+                }
+                TrainSet trainSet = new TrainSet(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        true,
+                        1,
+                        trainSetInputFields.get("setName").getjTextField().getText(),
+                        setItems
+                );
+                trainSet.setName(trainSet.deriveName());
+                return trainSet;
+            }
+            case 'P': {
+                ArrayList<ProductSetItem> setItems = new ArrayList<>();
+                for (Map.Entry<Product, Integer> entry : selectedProductsMap.entrySet()) {
+                    ProductSetItem setItem = new ProductSetItem(entry.getKey(), entry.getValue());
+                    setItems.add(setItem);
+                }
+                TrackPack.TrackPackType tpType = TrackPack.TrackPackType.STARTER;
+                if (extension.isSelected()) {
+                    tpType = TrackPack.TrackPackType.EXTENSION;
+                }
+
+                TrackPack trackPack = new TrackPack(
+                        sharedInputFields.get("productCode").getjTextField().getText(),
+                        "PLACEHOLDER",
+                        Float.parseFloat(sharedInputFields.get("price").getjTextField().getText()),
+                        gauges.get((String) gaugesComboBox.getSelectedItem()),
+                        sharedInputFields.get("brand").getjTextField().getText(),
+                        true,
+                        1,
+                        trackPackInputFields.get("setName").getjTextField().getText(),
+                        tpType,
+                        setItems
+                );
+                trackPack.setName(trackPack.deriveName());
+                return trackPack;
+            }
+            default:
+                throw new RuntimeException("Unknown Type: " + type);
+        }
     }
 }

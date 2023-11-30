@@ -13,7 +13,8 @@ public class RollingStock extends Product {
         THIRD("Third"),
         SECOND("Second"),
         FIRST("First"),
-        STANDARD("Standard");
+        STANDARD("Standard"),
+        NULL("No Class");
 
         private final String name;
         Class_(String name){
@@ -111,8 +112,8 @@ public class RollingStock extends Product {
         List<Object> output = new ArrayList<>();
 
         output.add(nameAttributes[0]);
-        output.add(nameAttributes[1].equals("NULL") ? null : nameAttributes[1]);
-        output.add(nameAttributes[2].equals("NULL") ? null : Class_.valueOf(nameAttributes[2]));
+        output.add(nameAttributes[1].equals("NULL") ? "" : nameAttributes[1]);
+        output.add(Class_.valueOf(nameAttributes[2]));
         output.add(Integer.parseInt(nameAttributes[3]));
         return output;
     }

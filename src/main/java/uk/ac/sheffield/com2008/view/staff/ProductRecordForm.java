@@ -186,6 +186,7 @@ public class ProductRecordForm extends StaffView {
             if (previousCategory != null) {
                 cardPanel.remove(currentPanel);
             }
+            errorMessage.setText("");
 
             // Add the panel for the selected category
             JPanel newCategory = getCategoryPanel(selectedCategory);
@@ -437,7 +438,6 @@ public class ProductRecordForm extends StaffView {
         List<String> classes = Arrays.stream(RollingStock.Class_.values())
                 .map(RollingStock.Class_::deriveName)
                 .collect(Collectors.toList());
-        classes.add("Null");
         classesComboBox = new JComboBox<>(classes.toArray(new String[0]));
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(classesComboBox, gbc);
