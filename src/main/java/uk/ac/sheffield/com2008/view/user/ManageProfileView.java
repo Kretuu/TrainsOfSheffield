@@ -12,9 +12,7 @@ import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.Panel;
-import uk.ac.sheffield.com2008.view.components.CustomInputField;
-import uk.ac.sheffield.com2008.view.components.InputForm;
-import uk.ac.sheffield.com2008.view.components.UpdateAddressTemplate;
+import uk.ac.sheffield.com2008.view.components.*;
 import uk.ac.sheffield.com2008.view.modals.UpdateCreditCardModal;
 import uk.ac.sheffield.com2008.view.modals.VerifyPasswordModal;
 
@@ -29,10 +27,10 @@ import java.util.concurrent.CompletableFuture;
 public class ManageProfileView extends UserView {
     private final ManageProfileController controller;
     private final JPanel content;
+    private final Map<String, CustomInputField> inputFields = new HashMap<>();
     private InputForm inputForm;
     private UpdateAddressTemplate updateAddressTemplate;
     private User user;
-    private final Map<String, CustomInputField> inputFields = new HashMap<>();
 
     public ManageProfileView(ManageProfileController controller) {
         this.controller = controller;
@@ -116,7 +114,7 @@ public class ManageProfileView extends UserView {
         inputFields.get("email").getjTextField().setText(user.getEmail());
         inputFields.get("firstname").getjTextField().setText(personalDetails.getForename());
         inputFields.get("lastname").getjTextField().setText(personalDetails.getSurname());
-        if(address == null) return;
+        if (address == null) return;
 
         inputFields.get("street").getjTextField().setText(address.getStreet());
         inputFields.get("houseNo").getjTextField().setText(String.valueOf(address.getHouseNumber()));
@@ -130,7 +128,7 @@ public class ManageProfileView extends UserView {
 
             @Override
             public String onConfirm(char[] password) throws SQLException, BankDetailsEncryptionException {
-                if(UserDAO.verifyPassword(user.getEmail(), password) != null) {
+                if (UserDAO.verifyPassword(user.getEmail(), password) != null) {
                     BankingCard bankingCard = controller.getBankingCard(password);
                     CompletableFuture.runAsync(() -> openChangeBankDetailsModal(bankingCard, password));
                     return null;

@@ -51,7 +51,7 @@ public abstract class VerifyPasswordModal extends JDialog {
                 try {
                     String errorMessage = onConfirm(password.getjPasswordField().getPassword());
                     this.updateErrorMessage(errorMessage);
-                    if(errorMessage == null) dispose();
+                    if (errorMessage == null) dispose();
                 } catch (SQLException ex) {
                     this.updateErrorMessage("Cannot connect to database.");
                 } catch (Exception ex) {

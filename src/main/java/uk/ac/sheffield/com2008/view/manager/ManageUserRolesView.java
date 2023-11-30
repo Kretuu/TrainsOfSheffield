@@ -1,12 +1,10 @@
 package uk.ac.sheffield.com2008.view.manager;
 
-import org.w3c.dom.css.Rect;
 import uk.ac.sheffield.com2008.controller.manager.ManageUserRolesController;
-import uk.ac.sheffield.com2008.model.dao.UserDAO;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.view.components.Button;
-import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ManagerUserTableMapper;
@@ -21,9 +19,10 @@ public class ManageUserRolesView extends ManagerView {
     private final ManageUserRolesController controller;
     private final JButton promoteUserButton;
     private final CustomTable<User> customTable;
+    private final ManagerUserTableMapper mapper;
     private CustomInputField userEmail;
     private JPanel panel;
-    private final ManagerUserTableMapper mapper;
+
     public ManageUserRolesView(ManageUserRolesController controller) {
         this.controller = controller;
         this.promoteUserButton = new Button("Appoint staff");
@@ -72,7 +71,7 @@ public class ManageUserRolesView extends ManagerView {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         JLabel tableTitle = new JLabel("Staff users");
         tableTitle.setFont(new Font(null, Font.BOLD, 16));
-        tableTitle.setBorder(new EmptyBorder(15, 0,  15, 0));
+        tableTitle.setBorder(new EmptyBorder(15, 0, 15, 0));
         tableTitle.setAlignmentX(CENTER_ALIGNMENT);
 
 
@@ -95,7 +94,7 @@ public class ManageUserRolesView extends ManagerView {
     }
 
     private String verifyCustomerEmail(String email) {
-        if(controller.isCustomerEmailValid(email)) return null;
+        if (controller.isCustomerEmailValid(email)) return null;
         return "There is no customer who has given email";
     }
 }

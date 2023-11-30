@@ -40,8 +40,8 @@ public class ManageUserRolesController extends ViewController {
 
         standardUserList = new ArrayList<>();
         staffList = new ArrayList<>();
-        for(User user : allUsers) {
-            if(!user.hasRole(User.Role.STAFF)) {
+        for (User user : allUsers) {
+            if (!user.hasRole(User.Role.STAFF)) {
                 standardUserList.add(user);
             } else if (!user.hasRole(User.Role.MANAGER)) {
                 staffList.add(user);
@@ -56,8 +56,7 @@ public class ManageUserRolesController extends ViewController {
         try {
             UserManager.revokeStaff(user);
             PersonalDetails personalDetails = user.getPersonalDetails();
-            StringBuilder messageBuilder = new StringBuilder()
-                    .append("User ").append(personalDetails.getForename()).append(" ")
+            StringBuilder messageBuilder = new StringBuilder().append("User ").append(personalDetails.getForename()).append(" ")
                     .append(personalDetails.getSurname()).append(" was successfully revoked staff role");
             navigation.setLayoutMessage("Manage User Roles", messageBuilder.toString(), false);
 
@@ -80,9 +79,7 @@ public class ManageUserRolesController extends ViewController {
         String errorMessage;
         try {
             User user = UserManager.appointStaff(email);
-            StringBuilder messageBuilder = new StringBuilder()
-                    .append("User of email ").append(email).append(" was successfully promoted to staff");
-            navigation.setLayoutMessage("Manage User Roles", messageBuilder.toString(), false);
+            navigation.setLayoutMessage("Manage User Roles", "User of email " + email + " was successfully promoted to staff", false);
 
             staffList.add(user);
             standardUserList.remove(user);

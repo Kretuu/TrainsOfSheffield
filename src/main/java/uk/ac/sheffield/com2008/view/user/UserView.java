@@ -21,11 +21,11 @@ public abstract class UserView extends View {
         navigationMap.put(Navigation.BASKET, new Button("Basket"));
         navigationMap.put(Navigation.MANAGE_PROFILE, new Button("Manage Profile"));
 
-        if(user != null){
-            if(user.getRoles().contains(User.Role.CUSTOMER))
+        if (user != null) {
+            if (user.getRoles().contains(User.Role.CUSTOMER))
                 navigationMap.put(Navigation.ORDER_HISTORY, new Button("Order History"));
 
-            if(user.getRoles().contains(User.Role.STAFF))
+            if (user.getRoles().contains(User.Role.STAFF))
                 navigationMap.put(Navigation.STAFF, new Button("Staff Area"));
         }
 

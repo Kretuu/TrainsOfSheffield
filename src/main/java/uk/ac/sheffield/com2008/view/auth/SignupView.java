@@ -1,10 +1,9 @@
 package uk.ac.sheffield.com2008.view.auth;
 
-import uk.ac.sheffield.com2008.config.Colors;
 import uk.ac.sheffield.com2008.controller.auth.SignupController;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
+import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
 import uk.ac.sheffield.com2008.view.components.Panel;
 

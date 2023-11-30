@@ -5,9 +5,9 @@ import uk.ac.sheffield.com2008.model.entities.BankingCard;
 import uk.ac.sheffield.com2008.util.DateUtils;
 import uk.ac.sheffield.com2008.util.FieldsValidationManager;
 import uk.ac.sheffield.com2008.view.View;
-import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
+import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -90,7 +90,7 @@ public abstract class UpdateCreditCardModal extends JDialog {
             protected void onSubmit() {
                 Integer month = (Integer) comboBoxes.get("months").getSelectedItem();
                 Integer year = (Integer) comboBoxes.get("years").getSelectedItem();
-                if(month == null || year == null) {
+                if (month == null || year == null) {
                     updateErrorMessage("Expiry date is invalid");
                     return;
                 }
@@ -132,7 +132,7 @@ public abstract class UpdateCreditCardModal extends JDialog {
     }
 
     private void populateFieldsWithCardDetails() {
-        if(this.bankingCard == null) return;
+        if (this.bankingCard == null) return;
 
         inputFields.get("cardNumber").getjTextField().setText(bankingCard.getNumber());
         inputFields.get("securityCode").getjTextField().setText(bankingCard.getCvv());
@@ -171,10 +171,10 @@ public abstract class UpdateCreditCardModal extends JDialog {
         months.setSelectedItem(Calendar.getInstance().get(Calendar.MONTH) + 1);
         months.addItemListener(e -> {
             Integer yearItem = years.getSelectedItem() == null ? null : (Integer) years.getSelectedItem();
-            if(e.getStateChange() == ItemEvent.SELECTED && yearItem != null) {
+            if (e.getStateChange() == ItemEvent.SELECTED && yearItem != null) {
                 long dateDiff = new Date().getTime() - DateUtils.getLastDayOfMonth(
                         yearItem, (Integer) e.getItem()).getTime();
-                if(dateDiff > 0) {
+                if (dateDiff > 0) {
                     years.setSelectedItem(Calendar.getInstance().get(Calendar.YEAR) + 1);
                 }
             }
@@ -183,10 +183,10 @@ public abstract class UpdateCreditCardModal extends JDialog {
         years.setSelectedItem(Calendar.getInstance().get(Calendar.YEAR));
         years.addItemListener(e -> {
             Integer monthItem = months.getSelectedItem() == null ? null : (Integer) months.getSelectedItem();
-            if(e.getStateChange() == ItemEvent.SELECTED && monthItem != null) {
+            if (e.getStateChange() == ItemEvent.SELECTED && monthItem != null) {
                 long dateDiff = new Date().getTime() - DateUtils.getLastDayOfMonth(
                         (Integer) e.getItem(), monthItem).getTime();
-                if(dateDiff > 0) {
+                if (dateDiff > 0) {
                     months.setSelectedItem(Calendar.getInstance().get(Calendar.MONTH) + 1);
                 }
             }

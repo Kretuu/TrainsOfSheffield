@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.FulfilledOrdersController;
 import uk.ac.sheffield.com2008.model.entities.Order;
-import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
@@ -16,9 +15,9 @@ import java.util.List;
 
 public class FulfilledOrdersView extends StaffView {
 
+    private final OrderTableMapper mapper;
     FulfilledOrdersController fulfilledOrdersController;
     private CustomTable<Order> customTable;
-    private final OrderTableMapper mapper;
 
     public FulfilledOrdersView(FulfilledOrdersController fulfilledOrdersController) {
         this.fulfilledOrdersController = fulfilledOrdersController;
@@ -26,8 +25,8 @@ public class FulfilledOrdersView extends StaffView {
             @Override
             public void onClick(Order order) {
                 new FulfilledOrderLineModal(
-                            fulfilledOrdersController, fulfilledOrdersController.getNavigation().getFrame(), order
-                    ).setVisible(true);
+                        fulfilledOrdersController, fulfilledOrdersController.getNavigation().getFrame(), order
+                ).setVisible(true);
             }
         };
 

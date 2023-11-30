@@ -37,7 +37,7 @@ public class OrderModal extends JDialog {
         content.setAlignmentX(Component.LEFT_ALIGNMENT);
         content.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        if(!additionalText.isEmpty()) {
+        if (!additionalText.isEmpty()) {
             JPanel headingPanel = new Panel(new BorderLayout());
             JLabel headingLabel = new JLabel("<html>" + additionalText + "</html>");
             headingLabel.setFont(new Font(null, Font.BOLD, 14));
@@ -72,7 +72,7 @@ public class OrderModal extends JDialog {
         mainContent.add(header, c);
 
         int rowIndex = 2;
-        for(OrderLine orderLine : order.getOrderLines()) {
+        for (OrderLine orderLine : order.getOrderLines()) {
             c.gridx = 0;
             c.gridy = rowIndex;
             c.anchor = GridBagConstraints.WEST;
@@ -82,7 +82,7 @@ public class OrderModal extends JDialog {
                             .append(orderLine.getProduct().getName())
                             .append("</b></html>").toString()
             );
-            label1.setBorder(new EmptyBorder(0,0,0,30));
+            label1.setBorder(new EmptyBorder(0, 0, 0, 30));
             mainContent.add(label1, c);
 
             c.gridx = 1;
@@ -94,7 +94,7 @@ public class OrderModal extends JDialog {
                             .append(" <b>x").append(orderLine.getQuantity())
                             .append("</b></html>").toString()
             );
-            label2.setBorder(new EmptyBorder(0,0,0,30));
+            label2.setBorder(new EmptyBorder(0, 0, 0, 30));
             mainContent.add(label2, c);
 
             c.gridx = 2;

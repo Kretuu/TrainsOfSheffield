@@ -12,10 +12,10 @@ import java.lang.reflect.Type;
 
 public class MainLayout extends JPanel {
     private final JPanel panel = new Panel(new BorderLayout());
-    private JPanel view = new Panel();
-    private JButton logoutButton;
     private final JPanel navigation = new Panel();
     private final NavigationManager navigationManager;
+    private JPanel view = new Panel();
+    private JButton logoutButton;
 
     public MainLayout(NavigationManager navigationManager) {
         this.setLayout(new BorderLayout());
@@ -23,6 +23,7 @@ public class MainLayout extends JPanel {
         createLayout();
         setBackground(Colors.BACKGROUND);
     }
+
     public void setContent(View v) {
         updateLayout(v);
         panel.remove(view);
@@ -57,7 +58,7 @@ public class MainLayout extends JPanel {
         Type oldViewType = view.getClass().getGenericSuperclass();
         Type newViewType = v.getClass().getGenericSuperclass();
 
-        if(!newViewType.equals(oldViewType)) {
+        if (!newViewType.equals(oldViewType)) {
             setNavigationBar(v);
         }
     }
@@ -73,7 +74,7 @@ public class MainLayout extends JPanel {
     }
 
     public void updateMessage(String header, String text, boolean isError) {
-        if(isError){
+        if (isError) {
             JOptionPane.showMessageDialog(this, text, header, JOptionPane.ERROR_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, text, header, JOptionPane.INFORMATION_MESSAGE);

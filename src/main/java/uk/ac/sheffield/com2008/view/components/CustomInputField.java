@@ -13,28 +13,15 @@ import java.awt.event.FocusListener;
 import java.util.concurrent.Callable;
 
 public class CustomInputField implements DocumentListener {
+    private final Runnable updateButtonState;
+    private final boolean emptyAllowed;
     private JTextField jTextField;
     private JPasswordField jPasswordField;
     private JLabel label;
     private JLabel errorMessage;
-    private final Runnable updateButtonState;
     private Callable<String> validationFunction = null;
     private boolean isValid = false;
-    private final boolean emptyAllowed;
-
     private double rowWeight = 1;
-
-    public JTextField getjTextField() {
-        return jTextField;
-    }
-
-    public JPasswordField getjPasswordField() {
-        return jPasswordField;
-    }
-
-    public boolean isValid() {
-        return isValid;
-    }
 
     public CustomInputField(String label, Runnable updateButtonState) {
         this(label, updateButtonState, true);
@@ -51,6 +38,18 @@ public class CustomInputField implements DocumentListener {
         addListeners();
     }
 
+    public JTextField getjTextField() {
+        return jTextField;
+    }
+
+    public JPasswordField getjPasswordField() {
+        return jPasswordField;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
     public void setValidationFunction(Callable<String> validationFunction) {
         this.validationFunction = validationFunction;
     }
@@ -62,7 +61,7 @@ public class CustomInputField implements DocumentListener {
     }
 
     private void createComponents(String label, boolean isPassword) {
-        if(isPassword) {
+        if (isPassword) {
             this.jPasswordField = new JPasswordField(20);
             this.jTextField = jPasswordField;
         } else {
@@ -91,7 +90,7 @@ public class CustomInputField implements DocumentListener {
 
     public void addToPanel(JPanel panel) {
         JPanel internalPanel = new Panel(new GridLayout(3, 1));
-        if(!label.getText().isEmpty()){
+        if (!label.getText().isEmpty()) {
             internalPanel.add(label);
         }
         internalPanel.add(jTextField);
@@ -99,7 +98,7 @@ public class CustomInputField implements DocumentListener {
         panel.add(internalPanel);
     }
 
-    public void addToPanel(JPanel panel, GridBagConstraints gbc){
+    public void addToPanel(JPanel panel, GridBagConstraints gbc) {
         JPanel internalPanel = new Panel(new GridBagLayout());
         GridBagConstraints gbcInternal = new GridBagConstraints();
         gbcInternal.fill = GridBagConstraints.HORIZONTAL;
@@ -130,7 +129,7 @@ public class CustomInputField implements DocumentListener {
 
     public void validate(String text) {
         String error = null;
-        if(validationFunction != null) {
+        if (validationFunction != null) {
             try {
                 error = validationFunction.call();
             } catch (Exception e) {
@@ -139,7 +138,7 @@ public class CustomInputField implements DocumentListener {
         }
 
         boolean newValidState;
-        if(error == null) {
+        if (error == null) {
             Color textFieldColor = jTextField.hasFocus() ? Colors.TEXT_FIELD_FOCUSED : Colors.TEXT_FIELD_UNFOCUSED;
             jTextField.setBorder(new LineBorder(textFieldColor));
             errorMessage.setText(" ");
@@ -149,12 +148,12 @@ public class CustomInputField implements DocumentListener {
             jTextField.setBorder(new LineBorder(Colors.TEXT_FIELD_ERROR));
             newValidState = false;
         }
-        if(text.isEmpty() && !emptyAllowed) {
+        if (text.isEmpty() && !emptyAllowed) {
             errorMessage.setText(label.getText() + " cannot be empty");
             jTextField.setBorder(new LineBorder(Colors.TEXT_FIELD_ERROR));
             newValidState = false;
         }
-        if(newValidState != isValid) {
+        if (newValidState != isValid) {
             isValid = newValidState;
             updateButtonState.run();
         }

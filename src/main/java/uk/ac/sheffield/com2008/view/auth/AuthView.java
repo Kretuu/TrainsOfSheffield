@@ -8,6 +8,7 @@ import java.awt.*;
 
 public abstract class AuthView extends View {
     protected JPanel panel;
+
     public AuthView() {
         setLayout(new GridBagLayout());
 

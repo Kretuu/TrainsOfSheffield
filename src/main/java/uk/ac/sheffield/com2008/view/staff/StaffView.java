@@ -19,13 +19,14 @@ public abstract class StaffView extends View {
 
         User user = AppSessionCache.getInstance().getUserLoggedIn();
 
-        if(user != null){
-            if(user.getRoles().contains(User.Role.STAFF)){
+        if (user != null) {
+            if (user.getRoles().contains(User.Role.STAFF)) {
                 navigationMap.put(Navigation.STAFF, new Button("Home"));
                 navigationMap.put(Navigation.PRODUCT_RECORD, new Button("Product Record"));
                 navigationMap.put(Navigation.MANAGE_ORDER, new Button("Manage Orders"));
                 navigationMap.put(Navigation.FULFILLED_ORDERS, new Button("Fulfilled Orders"));
-                navigationMap.put(Navigation.SALES, new Button("Sales"));}
+                navigationMap.put(Navigation.SALES, new Button("Sales"));
+            }
 
             if (user.getRoles().contains(User.Role.MANAGER)) {
                 navigationMap.put(Navigation.MANAGER, new Button("Manager Area"));

@@ -35,11 +35,11 @@ public class UserDAO {
         queryBuilder.append("SELECT uuid, email, forename, surname, roles, Users.houseNumber, Users.postcode, ")
                 .append("roadName, cityName FROM Users LEFT OUTER JOIN Address A ON ")
                 .append("Users.postcode = A.postcode AND Users.houseNumber = A.houseNumber");
-        if(fieldName != null) queryBuilder.append(" WHERE ").append(fieldName).append(" = ?");
+        if (fieldName != null) queryBuilder.append(" WHERE ").append(fieldName).append(" = ?");
         String query = queryBuilder.toString();
 
         UserMapper mapper = new UserMapper();
-        if(fieldName == null) return DatabaseConnectionHandler.select(mapper, query);
+        if (fieldName == null) return DatabaseConnectionHandler.select(mapper, query);
         return DatabaseConnectionHandler.select(mapper, query, value);
     }
 

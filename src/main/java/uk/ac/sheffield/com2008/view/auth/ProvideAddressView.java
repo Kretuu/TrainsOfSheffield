@@ -4,9 +4,9 @@ import uk.ac.sheffield.com2008.cache.AppSessionCache;
 import uk.ac.sheffield.com2008.controller.auth.ProvideAddressController;
 import uk.ac.sheffield.com2008.model.entities.User;
 import uk.ac.sheffield.com2008.navigation.Navigation;
-import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.CustomInputField;
 import uk.ac.sheffield.com2008.view.components.InputForm;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.UpdateAddressTemplate;
 
 import javax.swing.*;
@@ -16,10 +16,10 @@ import java.util.Map;
 
 public class ProvideAddressView extends AuthView {
     private final ProvideAddressController controller;
-    private UpdateAddressTemplate updateAddressTemplate;
     private final InputForm inputForm;
-    private User user;
     private final Map<String, CustomInputField> inputFields = new HashMap<>();
+    private UpdateAddressTemplate updateAddressTemplate;
+    private User user;
 
     public ProvideAddressView(ProvideAddressController controller) {
         super();
@@ -63,8 +63,8 @@ public class ProvideAddressView extends AuthView {
 
     public void updateUser() {
         this.user = AppSessionCache.getInstance().getUserLoggedIn();
-        if(user == null) controller.getNavigation().navigate(Navigation.LOGIN);
-        if(user.getAddress() != null) controller.getNavigation().navigate(Navigation.CUSTOMER);
+        if (user == null) controller.getNavigation().navigate(Navigation.LOGIN);
+        if (user.getAddress() != null) controller.getNavigation().navigate(Navigation.CUSTOMER);
     }
 
     public void purgeTextFields() {

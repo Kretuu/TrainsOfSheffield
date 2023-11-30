@@ -22,7 +22,7 @@ public abstract class NotificationModal extends JDialog {
         notificationLabel.setFont(new Font(null, Font.PLAIN, 14));
         labelPanel.add(notificationLabel);
 
-        JPanel buttonsPanel = new Panel(new GridLayout(1, 2,10,0));
+        JPanel buttonsPanel = new Panel(new GridLayout(1, 2, 10, 0));
         JButton submitButton = new Button("Confirm");
         submitButton.addActionListener(new AuthorisationActionListener(view) {
             @Override

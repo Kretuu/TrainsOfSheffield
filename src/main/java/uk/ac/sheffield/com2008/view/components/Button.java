@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 public class Button extends JButton {
     private boolean isFocused = false;
     private Color background = Colors.BUTTON_CONTENT;
+
     public Button(String content, int height) {
 
         setContentAreaFilled(false);
@@ -22,7 +23,7 @@ public class Button extends JButton {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(isFocused) {
+                if (isFocused) {
                     setBackground(Colors.BUTTON_CONTENT_FOCUS);
                 } else {
                     setBackground(Colors.BUTTON_CONTENT);

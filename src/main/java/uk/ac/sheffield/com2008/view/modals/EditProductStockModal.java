@@ -21,7 +21,7 @@ public class EditProductStockModal extends JDialog {
 
     private ManageStockView manageStockView; // Reference to ManageStockView
 
-    public EditProductStockModal(StaffController staffController, JFrame parentFrame, Product product, ManageStockView manageStockView){
+    public EditProductStockModal(StaffController staffController, JFrame parentFrame, Product product, ManageStockView manageStockView) {
         super(parentFrame, "", true); // Set modal dialog with no title and bound to parent frame
         this.manageStockView = manageStockView; // Assign the reference
         // Create a panel to hold the content
@@ -44,7 +44,7 @@ public class EditProductStockModal extends JDialog {
         // Create a label that can be customized
         StringBuilder customLabelText = new StringBuilder()
                 .append("<html><div style='width: 100%;'>").append(product.printName()).append("<br>");
-        if(product instanceof ProductSet) {
+        if (product instanceof ProductSet) {
             customLabelText.append("Contents:<br><ul>");
             ((ProductSet) product).getSetItems().forEach(setItem -> {
                 customLabelText.append("<li>").append(setItem.getProduct().printName()).append(" | <b>x")
@@ -80,7 +80,7 @@ public class EditProductStockModal extends JDialog {
         quantitySpinner.addChangeListener(e -> {
             // Method called when the spinner value changes
             selectedQuantity = (int) quantitySpinner.getValue();
-            int newQuantity =  selectedQuantity;
+            int newQuantity = selectedQuantity;
             updateStock(newQuantity);
         });
         buttonPanel.add(quantitySpinner);
@@ -125,10 +125,9 @@ public class EditProductStockModal extends JDialog {
         setLocationRelativeTo(parentFrame);
     }
 
-    private void updateStock(int newQuantity){
-        totalStockLabel.setText("Total Stocks : " + newQuantity );
+    private void updateStock(int newQuantity) {
+        totalStockLabel.setText("Total Stocks : " + newQuantity);
     }
-
 
 
 }

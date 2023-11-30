@@ -16,7 +16,8 @@ public class LoginView extends AuthView {
     private final LoginController loginController;
     private final InputForm inputForm;
     private final Map<String, CustomInputField> inputFields = new HashMap<>();
-    public LoginView(LoginController loginController){
+
+    public LoginView(LoginController loginController) {
         super();
         this.loginController = loginController;
         this.inputForm = createInputForm();

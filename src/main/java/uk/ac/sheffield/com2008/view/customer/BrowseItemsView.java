@@ -17,11 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BrowseItemsView extends UserView {
-    BrowseItemsController browseItemsController;
-
-    private CustomTable<Product> customTable;
     private final ProductCustomerTableMapper mapper;
-    public BrowseItemsView(BrowseItemsController browseItemsController){
+    BrowseItemsController browseItemsController;
+    private CustomTable<Product> customTable;
+
+    public BrowseItemsView(BrowseItemsController browseItemsController) {
         this.browseItemsController = browseItemsController;
         this.mapper = new ProductCustomerTableMapper() {
             @Override
@@ -39,7 +39,7 @@ public class BrowseItemsView extends UserView {
         InitializeUI();
     }
 
-    public void InitializeUI(){
+    public void InitializeUI() {
         setLayout(new BorderLayout());
 
         // Create a JPanel for the top section

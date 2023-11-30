@@ -2,12 +2,11 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.StaffController;
 import uk.ac.sheffield.com2008.model.entities.Product;
+import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
 import uk.ac.sheffield.com2008.view.components.customTable.mappers.ProductTableMapper;
 import uk.ac.sheffield.com2008.view.modals.EditProductStockModal;
-
-import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,9 +15,9 @@ import java.util.List;
 
 public class ManageStockView extends StaffView {
 
+    private final ProductTableMapper mapper;
     StaffController staffController;
     private CustomTable<Product> customTable;
-    private final ProductTableMapper mapper;
 
     public ManageStockView(StaffController staffController) {
         super();

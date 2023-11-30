@@ -2,8 +2,8 @@ package uk.ac.sheffield.com2008.view.modals;
 
 import uk.ac.sheffield.com2008.controller.staff.FormController;
 import uk.ac.sheffield.com2008.model.entities.Product;
-import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
 import uk.ac.sheffield.com2008.view.components.Panel;
+import uk.ac.sheffield.com2008.view.staff.ProductRecordForm;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ProductSetModal extends JDialog {
 
-    public ProductSetModal(FormController formController, JFrame parentFrame, ProductRecordForm productRecordForm, List<Product> filteredProducts){
+    public ProductSetModal(FormController formController, JFrame parentFrame, ProductRecordForm productRecordForm, List<Product> filteredProducts) {
         super(parentFrame, "", true);
         setSize(500, 400);
 

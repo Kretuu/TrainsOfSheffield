@@ -12,11 +12,7 @@ import uk.ac.sheffield.com2008.view.components.Panel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class AddProductToCartModal extends JDialog {
 
@@ -52,9 +48,9 @@ public class AddProductToCartModal extends JDialog {
         productDetails.add(productName);
 
         //create a list of the set items if this product is a set
-        if(product instanceof ProductSet productSet){
+        if (product instanceof ProductSet productSet) {
             StringBuilder htmlList = new StringBuilder("<html><ul>");
-            for(ProductSetItem psi : ((ProductSet) product).getSetItems()){
+            for (ProductSetItem psi : ((ProductSet) product).getSetItems()) {
                 htmlList.append("<li style='width: 100%;'> ")
                         .append(psi.getProduct().printName())
                         .append(" ")
@@ -134,7 +130,7 @@ public class AddProductToCartModal extends JDialog {
         int quantityInBasket = 0;
         Order userBasket = AppSessionCache.getInstance().getUserLoggedIn().getBasket();
         userBasket.PrintFullOrder();
-        if(userBasket.hasProduct(product)){
+        if (userBasket.hasProduct(product)) {
             System.out.println("User has this item in basket");
             quantityInBasket = userBasket.getProductQuantity(product);
         }
@@ -174,10 +170,10 @@ public class AddProductToCartModal extends JDialog {
         JLabel stockInBasketLabel = new JLabel("already in basket: " + quantityInBasket);
         stockInBasketLabel.setForeground(new Color(117, 117, 117));
 
-        if(quantityInBasket > 0){
+        if (quantityInBasket > 0) {
             summaryInfoPanel.add(stockInBasketLabel, gbc);
         }
-        if(product.getStock() - quantityInBasket > 0){
+        if (product.getStock() - quantityInBasket > 0) {
             gbc.gridy++;
             summaryInfoPanel.add(totalPriceLabel, gbc);
         }
@@ -186,7 +182,7 @@ public class AddProductToCartModal extends JDialog {
         bottomPanel.add(summaryInfoPanel);
         bottomPanel.add(buttonPanel);
 
-        if(stockAvailableToAdd == 0){
+        if (stockAvailableToAdd == 0) {
             noStockLabel = new JLabel("No Stock Left");
             noStockLabel.setForeground(Color.RED);
             noStockLabel.setFont(noStockLabel.getFont().deriveFont(Font.BOLD));
@@ -208,7 +204,7 @@ public class AddProductToCartModal extends JDialog {
         setLocationRelativeTo(parentFrame);
     }
 
-    private void updateTotalPrice(float newPrice){
+    private void updateTotalPrice(float newPrice) {
         totalPriceLabel.setText("Total Price: " + Rounding.roundToDecimalPlaces(newPrice, 2));
     }
 }

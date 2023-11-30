@@ -38,7 +38,7 @@ public class StaffController extends ViewController {
     }
 
     public void setCurrentFilter(String initialLetter) {
-        if(initialLetter.equals("All")) {
+        if (initialLetter.equals("All")) {
             this.initialLetter = "";
         } else {
             this.initialLetter = initialLetter;

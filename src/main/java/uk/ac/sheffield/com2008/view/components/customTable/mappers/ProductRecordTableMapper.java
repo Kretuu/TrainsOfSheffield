@@ -6,7 +6,6 @@ import uk.ac.sheffield.com2008.util.ProductCategoryHelper;
 import uk.ac.sheffield.com2008.view.components.Button;
 import uk.ac.sheffield.com2008.view.components.Panel;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;

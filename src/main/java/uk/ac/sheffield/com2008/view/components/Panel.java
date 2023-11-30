@@ -3,8 +3,6 @@ package uk.ac.sheffield.com2008.view.components;
 import uk.ac.sheffield.com2008.config.Colors;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class Panel extends JPanel {

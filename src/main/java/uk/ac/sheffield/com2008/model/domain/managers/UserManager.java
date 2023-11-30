@@ -28,7 +28,7 @@ public class UserManager {
             throw new BankDetailsEncryptionException("There was an error with bank details encryption");
         }
 
-        if(BankingDetailsDAO.hasUserBankingDetails(user)) {
+        if (BankingDetailsDAO.hasUserBankingDetails(user)) {
             BankingDetailsDAO.updateBankingDetails(card, user);
         } else {
             BankingDetailsDAO.createBankingDetails(card, user);
@@ -38,7 +38,7 @@ public class UserManager {
     public static BankingCard fetchUserBankDetails(User user, char[] password)
             throws UserHasNoBankDetailsException, SQLException, BankDetailsEncryptionException {
         BankingCard bankingCard = BankingDetailsDAO.getUserBankingCardByUuid(user.getUuid());
-        if(bankingCard == null)
+        if (bankingCard == null)
             throw new UserHasNoBankDetailsException();
 
         String salt = UserDAO.fetchUserSalt(user);
@@ -66,9 +66,9 @@ public class UserManager {
 
     public static User appointStaff(String email) throws SQLException, UserNotExistsException, UserAlreadyHasRoleException {
         User user = UserDAO.getUserByEmail(email);
-        if(user == null) throw new UserNotExistsException();
+        if (user == null) throw new UserNotExistsException();
 
-        if(user.hasRole(User.Role.STAFF))
+        if (user.hasRole(User.Role.STAFF))
             throw new UserAlreadyHasRoleException("User has already been staff member");
 
         user.addRole(User.Role.STAFF);
@@ -78,10 +78,11 @@ public class UserManager {
 
     public static void revokeStaff(User user) throws SQLException, BadRequestException, UserNotExistsException {
         User refreshedUser = UserDAO.getUserByUuid(user.getUuid());
-        if(refreshedUser == null) throw new UserNotExistsException();
+        if (refreshedUser == null) throw new UserNotExistsException();
 
-        if(!refreshedUser.hasRole(User.Role.STAFF)) throw new BadRequestException("Given user is not a staff");
-        if(refreshedUser.hasRole(User.Role.MANAGER)) throw new BadRequestException("Manager cannot get staff role revoked");
+        if (!refreshedUser.hasRole(User.Role.STAFF)) throw new BadRequestException("Given user is not a staff");
+        if (refreshedUser.hasRole(User.Role.MANAGER))
+            throw new BadRequestException("Manager cannot get staff role revoked");
 
         refreshedUser.removeRole(User.Role.STAFF);
         UserDAO.updateUser(refreshedUser);

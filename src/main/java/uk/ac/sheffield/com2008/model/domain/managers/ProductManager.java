@@ -31,7 +31,7 @@ public class ProductManager {
             int stock,
             String setName,
             ArrayList<ProductSetItem> setItems
-    ){
+    ) {
 
         //need 1+ Locomotives
 
@@ -60,10 +60,10 @@ public class ProductManager {
             int stock,
             String setName,
             ArrayList<ProductSetItem> setItems
-    ){
+    ) {
         //check if every item passed in is of type Track
         for (ProductSetItem psi : setItems) {
-            if(!(psi.getProduct() instanceof Track)){
+            if (!(psi.getProduct() instanceof Track)) {
                 throw new RuntimeException("Tried adding a Product not of type Track to an ExtensionTrackPack");
             }
         }
@@ -73,7 +73,9 @@ public class ProductManager {
         for (ProductSetItem psi : setItems) {
             itemCount += psi.getQuantity();
         }
-        if(itemCount < 2){throw new RuntimeException("Tried creating extension track pack with less than 2 items");}
+        if (itemCount < 2) {
+            throw new RuntimeException("Tried creating extension track pack with less than 2 items");
+        }
 
         /*TODO: Create it using PRODUCTDAO.
         will need to make new ProductSet, and ProductSetItems
@@ -81,7 +83,7 @@ public class ProductManager {
     }
 
     /**
-     *Dont know if this event needs to be a thing? Wouldnt we already have the
+     * Dont know if this event needs to be a thing? Wouldnt we already have the
      * 3 types of StarterOvals in the database?
      */
     public static void createStarterOvalTrackPack(
@@ -94,7 +96,7 @@ public class ProductManager {
             int stock,
             String setName,
             ArrayList<ProductSetItem> setItems
-    ){
+    ) {
 
     }
 
@@ -115,10 +117,10 @@ public class ProductManager {
     }
 
     public static void deleteProduct(Product product) throws SQLException, ProductNotExistException {
-        if(ProductDAO.getProductByCode(product.getProductCode()) == null)
+        if (ProductDAO.getProductByCode(product.getProductCode()) == null)
             throw new ProductNotExistException();
 
-        if(ProductDAO.productExistInNonPendingOrders(product)) {
+        if (ProductDAO.productExistInNonPendingOrders(product)) {
             ProductDAO.discontinueProduct(product);
             return;
         }
@@ -133,9 +135,9 @@ public class ProductManager {
                 .collect(Collectors.toMap(o -> o.getProduct().getProductCode(), o -> o));
         List<Product> databaseProducts = ProductDAO.getProductsByCodes(productCodes);
 
-        for(Product dbProduct : databaseProducts) {
+        for (Product dbProduct : databaseProducts) {
             int currentStock = dbProduct.getStock() - productMap.get(dbProduct.getProductCode()).getQuantity();
-            if(currentStock < 0) throw new InvalidProductQuantityException();
+            if (currentStock < 0) throw new InvalidProductQuantityException();
             ProductDAO.updateProductStocks(dbProduct, currentStock);
         }
 

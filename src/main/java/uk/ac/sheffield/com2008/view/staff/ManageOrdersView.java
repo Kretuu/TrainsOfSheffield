@@ -2,7 +2,6 @@ package uk.ac.sheffield.com2008.view.staff;
 
 import uk.ac.sheffield.com2008.controller.staff.ManageOrderController;
 import uk.ac.sheffield.com2008.model.entities.Order;
-import uk.ac.sheffield.com2008.navigation.Navigation;
 import uk.ac.sheffield.com2008.view.components.Panel;
 import uk.ac.sheffield.com2008.view.components.customTable.CustomTable;
 import uk.ac.sheffield.com2008.view.components.customTable.config.CustomColumn;
@@ -17,9 +16,9 @@ import java.util.List;
 
 public class ManageOrdersView extends StaffView {
 
+    private final OrderTableMapper mapper;
     ManageOrderController manageOrderController;
     private CustomTable<Order> customTable;
-    private final OrderTableMapper mapper;
 
     public ManageOrdersView(ManageOrderController manageOrderController) {
         this.manageOrderController = manageOrderController;
@@ -27,8 +26,8 @@ public class ManageOrdersView extends StaffView {
             @Override
             public void onClick(Order order) {
                 new OrderLineModal(
-                            manageOrderController, manageOrderController.getNavigation().getFrame(), order
-                    ).setVisible(true);
+                        manageOrderController, manageOrderController.getNavigation().getFrame(), order
+                ).setVisible(true);
             }
         };
 
