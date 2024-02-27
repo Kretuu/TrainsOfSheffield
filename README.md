@@ -5,6 +5,7 @@
   - login to your database server
   - choose Server -> Data Import from the toolbar
   - select option "Import from self-contained file" and select database.sql file into your database
+3. Edit line 24 of uk.ac.sheffield.com2008.database.DatabaseConnectionHandler to represent "mysqlServerHost:port/databaseName?user=yourUser&password=yourPassword"
 
 ## Installing and setup code
 1. Enter app directory and run this command to build the project. We are expecting to have gradle installed.

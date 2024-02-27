@@ -20,7 +20,8 @@ public class DatabaseConnectionHandler {
     }
 
     public static void connectToDatabase() {
-        config.setJdbcUrl("jdbc:mysql://stusql.dcs.shef.ac.uk:3306/team035?user=team035&password=Sanoib1ai"
+        //Set JDBC URL
+        config.setJdbcUrl("jdbc:mysql://<your mysql server uri>"
                 + "&allowPublicKeyRetrieval=false&useSSL=false");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setMaximumPoolSize(5);
